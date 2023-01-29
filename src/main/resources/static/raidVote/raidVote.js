@@ -1,8 +1,12 @@
 let myChart;
 let channelVotes;
 let maxEntries = 5;
+let blockedDestinations;
 
 function addChannelVotes(channelName, amount) {
+    if (blockedDestinations.has(channelName)) {
+        return;
+    }
     currentChannelVotes = channelVotes.get(channelName);
     if (currentChannelVotes === undefined) {
         channelRgbColorValues = generateColorRgbValues(false);
@@ -48,8 +52,9 @@ function update() {
     myChart.update();
 }
 
-function init(maxEntries_) {
+function init(maxEntries_, blockedDestinations_) {
     maxEntries = maxEntries_;
+    blockedDestinations = new Set(blockedDestinations_.split(',').map(x=>x.trim()));
     channelVotes = new Map();
     if (myChart !== undefined) {
         myChart.destroy();
@@ -115,7 +120,7 @@ function connect() {
                     addChannelVotes(commandObj.channelName, commandObj.amount);
                     break;
                 case 'initRaidVote':
-                    init(commandObj.maxEntries);
+                    init(commandObj.maxEntries, commandObj.blockedDestinations);
                     break;
             }
         });
