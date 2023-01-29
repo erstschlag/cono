@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <title>Channel player control panel</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../webjars/jquery/jquery.min.js"></script>
+        <script src="../webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="../webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="boardCP.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+            .actionButton {
+                height: 50px;
+                width: 50px;
+                background-color: black;
+                background-size: 90% auto;
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
+        </style>
+    </head>
+    <body>
+        <form>
+            <table>
+                <tr>
+                    <td></td>
+                    <td><button id="up" class="actionButton" style="background-image: url('UP.png')"></button></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><button id="left" class="actionButton" style="background-image: url('LEFT.png')"></button></td>
+                    <td><button id="open" class="actionButton" style="background-image: url('OPEN.png')"></button></td>
+                    <td><button id="right" class="actionButton" style="background-image: url('RIGHT.png')"></button></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><button id="down" class="actionButton" style="background-image: url('DOWN.png')"></button></td>
+                    <td></td>
+                </tr>
+            </table>
+            <br>
+            <table>
+                <tr>
+                    <td>Cols</td>
+                    <td><input type="text" id="cols" value="7" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Rows</td>
+                    <td><input type="text" id="rows" value="6" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Winner:</td>
+                    <td>
+                        <select id="winnerCol" disabled>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                        <select id="winnerRow" disabled>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>PriceId:</td>
+                    <td><input type="text" id="priceId" value="48582" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Number of votes till action:</td>
+                    <td><input type="text" id="numVotesForAction" value="5" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Auto action delay MS</td>
+                    <td><input type="text" id="autoMoveDelayMs" value="10000" style="width: 70px;"></td>
+                </tr>
+            </table>
+            <button id="initialize">initialize</button>
+        </form>
+    </body>
+</html>

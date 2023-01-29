@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Eve Sans Neue', sans-serif;
+}
+
+.back {
+    position: absolute;
+    width: 835px;
+    height: 830px;
+    background-image: url('Loading2.png');
+    z-index: 3;
+}
+
+circle {
+    fill: none;
+    stroke: url(#GradientColor);
+    stroke-width: 80px;
+}
+
+#number {
+    position: absolute;
+    width: 300px;
+    text-align: center;
+    top: 300px;
+    left: 220px;
+    font-weight: 600;
+    font-size: 80px;
+    color: #CCC;
+    z-index: 4;
+}
+
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: 0.7;
+}

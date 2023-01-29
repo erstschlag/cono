@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Eve Sans Neue', sans-serif;
+}
+
+#c1 {
+    stroke: url(#GradientColor1);
+    stroke-width: 20px;
+}
+#c2 {
+    stroke: url(#GradientColor2);
+    stroke-width: 20px;
+}
+#c3 {
+    stroke: url(#GradientColor3);
+    stroke-width: 20px;
+}
+#c4 {
+    stroke: url(#GradientColor4);
+    stroke-width: 20px;
+}
+#c5 {
+    stroke: url(#GradientColor5);
+    stroke-width: 20px;
+}
+#t1{
+    position: absolute;
+    top: 92px;
+    left:46px;
+    color: #DDD;
+    text-shadow: 1px 1px 2px black;
+    z-index: 1;
+}
+#t2{
+    position: absolute;
+    top: 112px;
+    left:46px;
+    color: #DDD;
+    text-shadow: 1px 1px 2px black;
+    z-index: 1;
+}
+#t3{
+    position: absolute;
+    top: 132px;
+    left:46px;
+    color: #DDD;
+    text-shadow: 1px 1px 2px black;
+    z-index: 1;
+}
+#t4{
+    position: absolute;
+    top: 152px;
+    left:46px;
+    color: #DDD;
+    text-shadow: 1px 1px 2px black;
+    z-index: 1;
+}
+#t5{
+    position: absolute;
+    top: 172px;
+    left:46px;
+    color: #DDD;
+    text-shadow: 1px 1px 2px black;
+    z-index: 1;
+}
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    opacity: 0.7;
+}

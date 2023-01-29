@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <title>Circular Progress Bar</title>
+        <link rel="stylesheet" href="cooldowns.css">
+        <script defer src="cooldowns.js"></script>
+    </head>
+    <body>
+        <svg id="lines" xmlns="http://www.w3.org/2000/svg" version="1.1" width="835px" height="835px" style="z-index: 1">
+            <defs>
+                <linearGradient id="GradientColor1" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#c76000" />
+                    <stop offset="100%" stop-color="#d88383" />
+                </linearGradient>
+                <linearGradient id="GradientColor2" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#085078" />
+                    <stop offset="100%" stop-color="#85D8CE" />
+                </linearGradient>
+                <linearGradient id="GradientColor3" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#650878" />
+                    <stop offset="100%" stop-color="#d883c1" />
+                </linearGradient>
+                <linearGradient id="GradientColor4" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#087847" />
+                    <stop offset="100%" stop-color="#83d88d" />
+                </linearGradient>
+                <linearGradient id="GradientColor5" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#780808" />
+                    <stop offset="100%" stop-color="#d88383" />
+                </linearGradient>
+            </defs>
+            <line id="c1" x1="100" y1="100" x2="300" y2="100" stroke-linecap="round" />
+            <line id="c2" x1="100" y1="120" x2="300" y2="120" stroke-linecap="round" />
+            <line id="c3" x1="100" y1="140" x2="300" y2="140" stroke-linecap="round" />
+            <line id="c4" x1="100" y1="160" x2="300" y2="160" stroke-linecap="round" />
+            <line id="c5" x1="100" y1="180" x2="300" y2="180" stroke-linecap="round" />
+        </svg>
+        <div id="t1"></div>
+        <div id="t2"></div>
+        <div id="t3"></div>
+        <div id="t4"></div>
+        <div id="t5"></div>
+    </body>
+</html>

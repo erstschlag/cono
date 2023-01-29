@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <title>Guess control panel</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="guessCP.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+        </style>
+    </head>
+    <body>
+        <form>
+            <br>
+            <table>
+                <tr>
+                    <td>Cols</td>
+                    <td><input type="text" id="cols" value="7" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Rows</td>
+                    <td><input type="text" id="rows" value="6" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Start:</td>
+                    <td><input type="text" id="start" value="58" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Winner</td>
+                    <td><input type="text" id="winner" value="" style="width: 70px;" disabled></td>
+                </tr>
+                <tr>
+                    <td>PriceId:</td>
+                    <td><input type="text" id="priceId" value="44992" style="width: 70px;"></td>
+                </tr>
+                <tr>
+                    <td>Guess:</td>
+                    <td><input type="text" id="guess" value="65" style="width: 70px;"></td>
+                </tr>
+            </table>
+            <button id="initialize">initialize</button>
+            <button id="takeGuess">takeGuess</button>
+        </form>
+    </body>
+</html>

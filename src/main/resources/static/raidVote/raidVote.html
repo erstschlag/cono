@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>RaidVote widget</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.1.1/chart.umd.js"></script>
+        <script src="raidVote.js"></script>
+        <style>
+            body {
+                background-image: url('background.png');
+                background-size: 100% 100%;
+                background-repeat: no-repeat;
+                background-color: #333;
+                color: #CCC;
+                margin-left: 8%;
+                margin-right: 15%;
+                margin-top: 8%;
+                margin-bottom: 12%;
+            }
+        </style>
+    </head>
+    <body onload="init(5)">
+        <canvas id="barChart"></canvas>
+    </body>
+</html>

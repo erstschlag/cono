@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <title>Wiggles</title>
+        <script defer src="wiggles.js"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Eve Sans Neue', sans-serif;
+            }
+            .back {
+                opacity: 0;
+                padding-top: 50px;
+                padding-left: 167px;
+                top: 0;
+                left: 0;
+                position: absolute;
+                width: 446px;
+                height: 240px;
+                background-image: url('wiggles.png');
+                text-align: center;
+                font-weight: 600;
+                font-size: 70px;
+                color: #EEE;
+                transition: opacity 1s;
+            }
+            .back.show {
+                opacity: 1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="back" id="back">
+            0
+        </div>
+    </body>
+</html>

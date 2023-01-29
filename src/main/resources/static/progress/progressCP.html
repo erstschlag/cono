@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>Progress control panel</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="progressCP.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+        </style>
+    </head>
+    <body>
+        <form>
+            <table>
+                <tr>
+                    <td>Bits</td>
+                    <td><input type="text" id="progressValue" value="50" style="width: 70px;"></td>
+                </tr>
+            </table>
+            <button id="setProgress">set progress</button>
+            <button id="changeProgress">change progress</button>
+        </form>
+    </body>
+</html>

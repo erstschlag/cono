@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>Generic board</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../webjars/jquery/jquery.min.js"></script>
+        <script src="../webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="../webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="board.js"></script>
+        <style>
+            .player {
+                position: fixed;
+                height: 70px;
+                width: 70px;
+                margin: 15px;
+                background-color: black;
+                background-size: 80% auto;
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
+            .playerCooldown {
+                opacity: 0.8;
+                height: 100%;
+                width: 100%;
+                background: conic-gradient(
+                    rgba(0, 150, 100, 0.7) var(--time-left),
+                    rgba(0, 150, 100, 0.1) var(--time-left));
+            }
+            .tile {
+                position: fixed;
+                height: 90px;
+                width: 90px;
+                margin: 5px;
+                background-color: grey;
+                opacity: 0.6;
+            }
+            .board {
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                height: 601px;
+                width: 701px;
+                margin: 0;
+                background-color: black;
+                background-position: center center;
+                background-size: 100% auto;
+            }
+        </style>
+    </head>
+    <body onload="init(7,6,2,5,44993, 1, 10000)">
+        <div class="board" id="board"></div>
+        <div class="player" id="player">
+            <div class="playerCooldown" id="playerCooldown"></div>
+        </div>
+    </body>
+</html>

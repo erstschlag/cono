@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Playground Dashboard</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+            #chaosSweeper{
+                position: absolute;
+                top: 0;
+                left:0;
+            }
+            #shillBoard{
+                position: absolute;
+                top: 0;
+                left:400px;
+            }
+            #wiggles{
+                position: absolute;
+                top: 320px;
+                left:400px;
+            }
+            #progress{
+                position: absolute;
+                top: 470px;
+                left:0;
+            }
+            #raidVote{
+                position: absolute;
+                top: 470px;
+                left:400px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="chaosSweeper">
+            <h1>ChaosSweeper</h1><br>
+            <object data="../board/boardCP.html"
+                    width="400"
+                    height="400"
+                    type="text/html">
+                Alternative Content
+            </object>
+        </div>
+        <div id="shillBoard">
+            <h1>ShillBoard</h1><br>
+            <object data="../guess/guessCP.html"
+                    width="400"
+                    height="300"
+                    type="text/html">
+                Alternative Content
+            </object>
+        </div>
+        <div id="wiggles">
+            <h1>Wiggles</h1><br>
+            <object data="../wiggles/wigglesCP.html"
+                    width="400"
+                    height="100"
+                    type="text/html">
+                Alternative Content
+            </object>
+        </div>
+        <div id="progress">
+            <h1>Progress</h1><br>
+            <object data="../progress/progressCP.html"
+                    width="400"
+                    height="200"
+                    type="text/html">
+                Alternative Content
+            </object>
+        </div>
+        <div id="raidVote">
+            <h1>RaidVote</h1><br>
+            <object data="../raidVote/raidVoteCP.html"
+                    width="400"
+                    height="200"
+                    type="text/html">
+                Alternative Content
+            </object>
+        </div>
+    </body>
+</html>

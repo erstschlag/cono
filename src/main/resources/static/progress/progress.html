@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <title>Circular Progress Bar</title>
+        <link rel="stylesheet" href="progress.css">
+        <script defer src="progress.js"></script>
+    </head>
+    <body>
+        <svg id="circle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="835px" height="835px" style="z-index: 1">
+            <defs>
+                <linearGradient id="GradientColor">
+                    <stop offset="0%" stop-color="#f7f5bc" />
+                    <stop offset="100%" stop-color="#e6b400" />
+                </linearGradient>
+            </defs>
+            <circle cx="369" cy="369" r="190" stroke-linecap="round" stroke-dasharray="1194" stroke-dashoffset="1194"/>
+        </svg>
+        <div class="back" style="z-index: 2">
+        </div>
+        <div id="number">
+            0%
+        </div>
+    </body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>oAuth</title>
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/main.css" rel="stylesheet">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="/oAuth2.js"></script>
+    </head>
+    <body onload="init();">
+        <form>
+            <table>
+                <tr>
+                    <td>code</td>
+                    <td><input name="code" id="code" type="password" value="code" readonly></td>
+                    <td>
+                        The code that the /authorize response returned in the code query parameter.
+                    </td>
+                </tr>
+            </table>
+            <button type="submit" id="initialize">Initialize</button>
+        </form>
+    </body>
+</html>

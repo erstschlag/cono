@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <title>Generic board</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="guess.js"></script>
+        <style>
+            .tile {
+                position: absolute;
+                height: 90px;
+                width: 90px;
+                margin: 5px;
+                background-color: grey;
+                opacity: 0.6;
+                text-align: center;
+                font-size: 60px;
+                font-family: 'Eve Sans Neue', sans-serif;
+                color: #EEE;
+                padding-top: 7px;
+            }
+            .board {
+                z-index: 1;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                height: 601px;
+                width: 701px;
+                margin: 0;
+                background-color: black;
+                background-position: center center;
+                background-size: 100% auto;
+            }
+            .tileContainer {
+                z-index: 3;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                height: 601px;
+                width: 701px;
+                margin: 0;
+            }
+            .plex {
+                z-index: 2;
+                padding-top: 375px;
+                height: 601px;
+                width: 701px;
+                position: absolute;
+                text-align: right;
+                font-size: 190px;
+                font-family: 'Eve Sans Neue', sans-serif;
+                color: #EEE;
+                opacity: 0.7;
+            }
+        </style>
+    </head>
+    <body onload="init(7,6,58,65,44992)">
+        <div class="plex" id="plex">100</div>
+        <div class="board" id="board"></div>
+        <div class="tileContainer" id="tileContainer"> </div>
+    </body>
+</html>
