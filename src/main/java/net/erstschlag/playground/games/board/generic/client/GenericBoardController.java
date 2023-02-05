@@ -6,12 +6,6 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class GenericBoardController {
-
-    @MessageMapping("/gbm")
-    @SendTo("/topic/gbm")
-    public String boardMove(String move) throws Exception {
-        return move;
-    }
     
     @MessageMapping("/object")
     @SendTo("/topic/object")
