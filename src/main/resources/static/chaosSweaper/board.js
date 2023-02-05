@@ -94,6 +94,7 @@ function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveD
     playerCol = 0;
     playerRow = 0;
     actionsPerformed = 0;
+    document.getElementById('numberOfActions').innerHTML = '' + actionsPerformed;
     run = true;
     reposition(0,0);
 };
