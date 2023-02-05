@@ -46,10 +46,23 @@
                 background-position: center center;
                 background-size: 100% auto;
             }
+            .numberOfActions {
+                z-index: 2;
+                padding-top: 375px;
+                height: 601px;
+                width: 701px;
+                position: absolute;
+                text-align: right;
+                font-size: 190px;
+                font-family: 'Eve Sans Neue', sans-serif;
+                color: #EEE;
+                opacity: 0.7;
+            }
         </style>
     </head>
     <body onload="init(7,6,2,5,44993, 1, 10000)">
         <div class="board" id="board"></div>
+        <div class="numberOfActions" id="numberOfActions">0</div>
         <div class="player" id="player">
             <div class="playerCooldown" id="playerCooldown"></div>
         </div>

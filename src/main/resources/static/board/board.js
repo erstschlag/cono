@@ -11,6 +11,7 @@ let winRow = 0;
 let numberOfVotesForAction = 1;
 let currentNumberOfVotes = 0;
 let votes = [0,0,0,0,0];
+let actionsPerformed = 0;
 let actionPreviewImage = ['UP.png','DOWN.png','LEFT.png','RIGHT.png','OPEN.png'];
 let voteUpIndex = 0;
 let voteDownIndex = 1;
@@ -90,6 +91,7 @@ function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveD
     }
     playerCol = 0;
     playerRow = 0;
+    actionsPerformed = 0;
     reposition(0,0);
 };
 
@@ -108,6 +110,8 @@ function evaluateWinningMove() {
 function executeMove(winningMove) {
     clearCooldown();
     document.getElementById('player').style.backgroundImage = "none";
+    actionsPerformed++;
+    document.getElementById('numberOfActions').innerHTML = '' + actionsPerformed;
     moves[winningMove]();
     currentNumberOfVotes = 0;
     votes = [0,0,0,0,0];
