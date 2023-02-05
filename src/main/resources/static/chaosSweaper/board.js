@@ -12,6 +12,7 @@ let numberOfVotesForAction = 1;
 let currentNumberOfVotes = 0;
 let votes = [0,0,0,0,0];
 let actionsPerformed = 0;
+let run = true;
 let actionPreviewImage = ['UP.png','DOWN.png','LEFT.png','RIGHT.png','OPEN.png'];
 let voteUpIndex = 0;
 let voteDownIndex = 1;
@@ -55,6 +56,7 @@ audioLoss.loop = false;
 audioLoss.volume = 0.3;
 function open() {
     if(winCol === playerCol && winRow === playerRow) {
+        run = false;
         audioWin.play();
         document.getElementById("t_" + playerCol + "_" + playerRow).style.backgroundColor = 'yellow';
     }else {
@@ -92,6 +94,7 @@ function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveD
     playerCol = 0;
     playerRow = 0;
     actionsPerformed = 0;
+    run = true;
     reposition(0,0);
 };
 
@@ -162,6 +165,9 @@ function vote(actionIndex) {
 };
 
 function voteForAction(action) {
+    if (!run) {
+        return;
+    }
     switch (action) {
         case "UP":
             vote(voteUpIndex);
