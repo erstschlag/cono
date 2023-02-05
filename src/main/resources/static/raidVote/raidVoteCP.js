@@ -1,7 +1,4 @@
-function connect() {
-    stompClient = Stomp.over(SockJS('/generic-ws'));
-    stompClient.connect();
-};
+let connection = null;
 
 function initialize() {
     send({
@@ -20,11 +17,11 @@ function addTestEntry() {
 };
 
 function send(object) {
-    stompClient.send("/app/object", {}, JSON.stringify(object));
+    connection.getStompClient().send("/app/object", {}, JSON.stringify(object));
 }
 
 $(function () {
-    connect();
+    connection = Backend.connect();
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

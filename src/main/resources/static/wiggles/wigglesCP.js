@@ -1,11 +1,4 @@
-let stompClient = null;
-
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        console.log('Connected: ' + frame);
-    });
-};
+let connection = null;
 
 function addWiggle(change) {
      send({
@@ -15,11 +8,11 @@ function addWiggle(change) {
 };
 
 function send(object) {
-    stompClient.send("/app/object", {}, JSON.stringify(object));
+    connection.getStompClient().send("/app/object", {}, JSON.stringify(object));
 }
 
 $(function () {
-    connect();
+    connection = Backend.connect();
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

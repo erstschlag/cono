@@ -1,9 +1,4 @@
-let stompClient = null;
-
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect();
-};
+let connection = null;
 
 function initialize() {
     let cols = parseInt($("#cols").val());
@@ -29,11 +24,11 @@ function takeGuess() {
 };
 
 function send(object) {
-    stompClient.send("/app/object", {}, JSON.stringify(object));
+    connection.getStompClient().send("/app/object", {}, JSON.stringify(object));
 }
 
 $(function () {
-    connect();
+    connection = Backend.connect();
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

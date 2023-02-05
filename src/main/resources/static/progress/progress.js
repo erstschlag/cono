@@ -14,20 +14,17 @@ function updateProgress() {
     $('#number').html(Math.round(100 / ONE_HUNDRED_PERCENT * currentVisualProgress) + '%');
 }
 
-function connect() {
-    let stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/object', function (object) {
-            let commandObj = JSON.parse(object.body);
-            if (commandObj.cmd === 'progress') {
-                targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
-            }
-        });
+function connectionSuccessful(stompClient) {
+    stompClient.subscribe('/topic/object', function (object) {
+        let commandObj = JSON.parse(object.body);
+        if (commandObj.cmd === 'progress') {
+            targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
+        }
     });
 }
 
 $(function () {
-    connect();
+    Backend.connect(connectionSuccessful);
     setInterval(() => {
         updateProgress();
     }, REFRESH_RATE);

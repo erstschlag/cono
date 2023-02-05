@@ -22,16 +22,14 @@ function showWidget(show, widget) {
     }
 }
 
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/object', function (object) {
-            var commandObj = JSON.parse(object.body);
-            if(commandObj.cmd === 'wiggle') changeWiggles(commandObj.change);
-        });
+function connectionSuccessful(stompClient) {
+    stompClient.subscribe('/topic/object', function (object) {
+        var commandObj = JSON.parse(object.body);
+        if (commandObj.cmd === 'wiggle')
+            changeWiggles(commandObj.change);
     });
 }
 
 $(function () {
-    connect();
+    Backend.connect(connectionSuccessful);
 });

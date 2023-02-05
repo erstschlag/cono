@@ -187,21 +187,18 @@ function voteForAction(action) {
     }
 };
 
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/object', function (object) {
-            var commandObj = JSON.parse(object.body);
-            if(commandObj.cmd === 'initChaosBoard') {
-                init(commandObj.cols, commandObj.rows, commandObj.winnerCol, commandObj.winnerRow, commandObj.priceId, commandObj.numVotesForAction, commandObj.autoMoveDelayMs);
-            }
-            if(commandObj.cmd === 'chaosBoardAction') {
-                voteForAction(commandObj.action);
-            }
-        });
+function connectionSuccessful(stompClient) {
+    stompClient.subscribe('/topic/object', function (object) {
+        var commandObj = JSON.parse(object.body);
+        if (commandObj.cmd === 'initChaosBoard') {
+            init(commandObj.cols, commandObj.rows, commandObj.winnerCol, commandObj.winnerRow, commandObj.priceId, commandObj.numVotesForAction, commandObj.autoMoveDelayMs);
+        }
+        if (commandObj.cmd === 'chaosBoardAction') {
+            voteForAction(commandObj.action);
+        }
     });
 }
 
 $(function () {
-    connect();
+    Backend.connect(connectionSuccessful);
 });

@@ -110,23 +110,20 @@ function init(maxEntries_, blockedDestinations_) {
     );
 }
 
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/object', function (object) {
-            var commandObj = JSON.parse(object.body);
-            switch (commandObj.cmd) {
-                case 'raidVote':
-                    addChannelVotes(commandObj.channelName, commandObj.amount);
-                    break;
-                case 'initRaidVote':
-                    init(commandObj.maxEntries, commandObj.blockedDestinations);
-                    break;
-            }
-        });
+function connectionSuccessful(stompClient) {
+    stompClient.subscribe('/topic/object', function (object) {
+        var commandObj = JSON.parse(object.body);
+        switch (commandObj.cmd) {
+            case 'raidVote':
+                addChannelVotes(commandObj.channelName, commandObj.amount);
+                break;
+            case 'initRaidVote':
+                init(commandObj.maxEntries, commandObj.blockedDestinations);
+                break;
+        }
     });
 }
 
 $(function () {
-    connect();
+    Backend.connect(connectionSuccessful);
 });
