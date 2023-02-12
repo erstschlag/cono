@@ -86,9 +86,12 @@ function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveD
     
     document.getElementById("board").style.backgroundImage = "url('https://image.eveonline.com/Type/" + priceId + "_1024.png')";
     $( "#board" ).empty();
-    for(currentRow = 0;currentRow<rows;currentRow++) {
-        for(currentCol = 0;currentCol<cols;currentCol++) {
-            $( "#board" ).append("<div class='tile' id='t_" + currentCol + "_" + currentRow + "' style='top:" + currentRow * 100 + "px;left:" + currentCol * 100 + "px'></div>");
+    letterArray = "ABCDEFG".split("");
+    for (currentRow = 0; currentRow < rows; currentRow++) {
+        for (currentCol = 0; currentCol < cols; currentCol++) {
+            $("#board").append("<div class='tile' id='t_" + currentCol + "_" + currentRow + 
+                    "' style='top:" + currentRow * 100 + "px;left:" + currentCol * 100 + "px'>" +
+            letterArray[currentCol] + (currentRow + 1) + "</div>");
         }
     }
     playerCol = 0;
