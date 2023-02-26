@@ -1,4 +1,4 @@
-package net.erstschlag.playground.twitch.user;
+package net.erstschlag.playground.twitch.pubsub;
 
 import com.github.twitch4j.common.enums.SubscriptionPlan;
 

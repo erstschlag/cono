@@ -21,6 +21,16 @@ function connectionSuccessful(stompClient) {
             targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
         }
     });
+    stompClient.subscribe('/topic/twitchRewardRedemptions', function (object) {
+        let redemptionEvent = JSON.parse(object.body);
+        if(redemptionEvent.title === 'Charge!') {
+            targetProgress+= 10;
+        }
+    });
+    stompClient.subscribe('/topic/twitchBitsReceived', function (object) {
+        let bitsEvent = JSON.parse(object.body);
+        targetProgress+= bitsEvent.bitsUsed;
+    });
 }
 
 $(function () {

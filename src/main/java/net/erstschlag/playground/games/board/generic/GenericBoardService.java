@@ -1,8 +1,7 @@
 package net.erstschlag.playground.games.board.generic;
 
-import com.github.twitch4j.pubsub.events.ChannelBitsEvent;
-import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
-import net.erstschlag.playground.twitch.pubsub.TwitchEvent;
+import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
+import net.erstschlag.playground.twitch.pubsub.RewardRedeemedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,18 +18,27 @@ public class GenericBoardService {
     }
 
     @EventListener
-    public void boardAction(TwitchEvent<RewardRedeemedEvent> twitchEvent) {
-        webSocket.convertAndSend("/topic/object", "{\"cmd\":\"chaosBoardAction\", \"action\":\"" + twitchEvent.getEvent().getRedemption().getReward().getTitle() + "\"}");
+    public void rewardRedeemed(RewardRedeemedEvent twitchEvent) {
+        webSocket.convertAndSend("/topic/twitchRewardRedemptions", twitchEvent);
+    }
+    
+    @EventListener
+    public void bitsReceived(ChannelBitsEvent twitchEvent) {
+        webSocket.convertAndSend("/topic/twitchBitsReceived", twitchEvent);
+    }
+    
+    @EventListener
+    public void boardAction(RewardRedeemedEvent twitchEvent) {
+        webSocket.convertAndSend("/topic/object", "{\"cmd\":\"chaosBoardAction\", \"action\":\"" + twitchEvent.getTitle() + "\"}");
     }
 
     @EventListener
-    public void bitsEvent(TwitchEvent<ChannelBitsEvent> twitchEvent) {
-        webSocket.convertAndSend("/topic/object", "{\"cmd\":\"progress\", \"progressChange\":" + twitchEvent.getEvent().getData().getBitsUsed() + "}");
-        webSocket.convertAndSend("/topic/object", "{\"cmd\":\"guess\", \"number\":" + twitchEvent.getEvent().getData().getBitsUsed() + "}");
+    public void bitsEvent(ChannelBitsEvent twitchEvent) {
+        webSocket.convertAndSend("/topic/object", "{\"cmd\":\"guess\", \"number\":" + twitchEvent.getBitsUsed() + "}");
     }
 
-    @EventListener(condition = "#twitchEvent.event.redemption.reward.title eq 'Wiggle your back'")
-    public void wiggleEvent(TwitchEvent<RewardRedeemedEvent> twitchEvent) {
+    @EventListener(condition = "#twitchEvent.title eq 'Wiggle your back'")
+    public void wiggleEvent(RewardRedeemedEvent twitchEvent) {
         String user = "anonymous";
         if (twitchEvent.getUser().isPresent()) {
             user = twitchEvent.getUser().get().getName();
@@ -38,13 +46,8 @@ public class GenericBoardService {
         webSocket.convertAndSend("/topic/object", "{\"cmd\":\"wiggle\", \"change\":1, \"userName\":\"" + user + "\"}");
     }
 
-    @EventListener(condition = "#twitchEvent.event.redemption.reward.title eq 'Charge!'")
-    public void chargeEvent(TwitchEvent<RewardRedeemedEvent> twitchEvent) {
-        webSocket.convertAndSend("/topic/object", "{\"cmd\":\"progress\", \"progressChange\":" + 10 + "}");
-    }
-
-    @EventListener(condition = "#twitchEvent.event.redemption.reward.title eq 'RaidVote'")
-    public void raidVote(TwitchEvent<RewardRedeemedEvent> twitchEvent) {
+    @EventListener(condition = "#twitchEvent.title eq 'RaidVote'")
+    public void raidVote(RewardRedeemedEvent twitchEvent) {
         String user = "anonymous";
         if (twitchEvent.getUser().isPresent()) {
             user = twitchEvent.getUser().get().getName();
@@ -53,7 +56,7 @@ public class GenericBoardService {
         if(twitchEvent.getUser().isPresent() && twitchEvent.getUser().get().getShillings() > 0) {
             amount = 2;
         }
-        String userInput = twitchEvent.getEvent().getRedemption().getUserInput();
+        String userInput = twitchEvent.getUserInput();
         if (userInput.matches("[A-Za-z0-9_]{3,25}")) {
             webSocket.convertAndSend("/topic/object", "{\"cmd\":\"raidVote\", \"channelName\":\"" + userInput.toLowerCase() + "\", \"amount\": " + amount + ", \"userName\":\"" + user + "\"}");
         }

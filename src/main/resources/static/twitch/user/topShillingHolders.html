@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Top shilling holders</title>
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/utils/Backend.js"></script>
+        <script src="/twitch/user/topShillingHolders.js"></script>
+        <style>
+            #data{
+                background-image: url('shillBoardBack.png');
+                background-repeat: no-repeat;
+                height: 800px;
+                font-size: 29px;
+                font-family: 'Eve Sans Neue', sans-serif;
+                color: #EEE;
+                padding-left: 140px;
+                padding-top: 195px;
+            }
+            td{
+                width: 250px; 
+                max-width: 250px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="data"></div>
+    </body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>P4GCP</title>
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="..\utils\Backend.js"></script>
+        <script src="/p4g/p4g.js"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Eve Sans Neue', sans-serif;
+                text-align: center;
+                font-weight: 600;
+                font-size: 40px;
+                color: #FFF;
+            }
+            .back {
+                opacity: 1;
+                padding-top: 0px;
+                padding-left: 0px;
+                top: 0;
+                left: 0;
+                position: absolute;
+                width: 680px;
+                height: 168px;
+                background-image: url('p4gTS.png');
+            }
+            .plex {
+                top: 85px;
+                left: 233px;
+                width: 200px;
+                position: absolute;
+            }
+            .mIsk {
+                top: 85px;
+                left: 430px;
+                width: 200px;
+                position: absolute;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="back" id="back">
+        </div>
+        <div class="plex" id="plex">
+            10000
+            
+        </div>
+        <div class="mIsk" id="mIsk">
+            10000
+        </div>
+    </body>
+</html>

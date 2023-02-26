@@ -1,12 +1,13 @@
 package net.erstschlag.playground.twitch.user;
 
-import com.github.twitch4j.pubsub.events.ChannelBitsEvent;
-import com.github.twitch4j.pubsub.events.ChannelSubscribeEvent;
-import java.util.List;
 import java.util.Optional;
+import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
+import net.erstschlag.playground.twitch.pubsub.ChannelSubscribeEvent;
 import net.erstschlag.playground.twitch.user.repository.UserEntity;
 import net.erstschlag.playground.twitch.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,8 +22,12 @@ public class UserService {
         this.mapstructMapper = mapstructMapper;
     }
 
-    public List<UserDto> getUsers() {
-        return mapstructMapper.userEntitiesToUserDtos(userRepository.findAll());
+    public Page<UserDto> getUsers() {
+        return userRepository.findAll(Pageable.unpaged()).map(mapstructMapper::userEntityToUserDto);
+    }
+
+    public Page<UserDto> getTopShillingHolders(int limit) {
+        return userRepository.findAllByOrderByShillingsDesc(Pageable.ofSize(limit)).map(mapstructMapper::userEntityToUserDto);
     }
 
     public UserDto getUser(String userId, String userName) {
@@ -34,15 +39,15 @@ public class UserService {
     }
 
     public void handleBitsEvent(ChannelBitsEvent event) {
-        registerBits(event.getData().getUserId(), event.getData().getUserName(), event.getData().getBitsUsed());
+        registerBits(event.getUser().get().getId(), event.getUser().get().getName(), event.getBitsUsed());
     }
 
     public void handleSubEvent(ChannelSubscribeEvent event) {
         registerGiftedSub(
-                event.getData().getUserId(),
-                event.getData().getUserName(),
-                event.getData().getIsGift(),
-                SubTier.fromSubPlan(event.getData().getSubPlan()).getTier());
+                event.getUser().get().getId(),
+                event.getUser().get().getName(),
+                event.isGift(),
+                event.getSubTier().getTier());
     }
 
     public final void registerBits(String userId, String userName, int numberOfBits) {
