@@ -15,28 +15,29 @@ function saveData() {
 }
 
 function send(destination, object) {
-    connection.getStompClient().send(destination, {}, JSON.stringify(object));
+    connection.sendObject(destination, object);
 }
 
 function sendStr(destination, user) {
-    connection.getStompClient().send(destination, {}, user);
+    connection.sendStr(destination, user);
 }
 
-function connectionSuccessful(stompClient) {
-    stompClient.subscribe('/topic/pg4', function (object) {
-        var object = JSON.parse(object.body);
-        if (object.user === user) {
-            $("#plex").val(object.plex);
-            $("#mIsk").val(object.mIsk);
-        }
-    });
+function dataReceived(data) {
+    if (data.user === user) {
+        $("#plex").val(data.plex);
+        $("#mIsk").val(data.mIsk);
+    }
+}
+
+function connectedMethod(connection) {
+    connection.subscribe('/topic/pg4', dataReceived);
     getData();
 }
 
 $(function () {
     var urlParams = new URLSearchParams(window.location.search);
     user = urlParams.get('user');
-    connection = Backend.connect(connectionSuccessful);
+    connection = Backend.connect(connectedMethod);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

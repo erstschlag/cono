@@ -66,20 +66,21 @@ function revealBoard() {
     document.getElementById("t_" + guess).style.backgroundColor = 'green';
 }
 
-function connectionSuccessful(stompClient) {
-    stompClient.subscribe('/topic/object', function (object) {
-        var commandObj = JSON.parse(object.body);
-        switch (commandObj.cmd) {
-            case 'initGuess':
-                init(commandObj.cols, commandObj.rows, commandObj.start, commandObj.winner, commandObj.priceId);
-                break;
-            case 'guess':
-                guess(commandObj.number);
-                break;
-        }
-    });
+function messageReceived(message) {
+    switch (message.cmd) {
+        case 'initGuess':
+            init(message.cols, message.rows, message.start, message.winner, message.priceId);
+            break;
+        case 'guess':
+            guess(message.number);
+            break;
+    }
+}
+
+function connectedMethod(connection) {
+    connection.subscribe('/topic/object', messageReceived);
 }
 
 $(function () {
-    Backend.connect(connectionSuccessful);
+    Backend.connect(connectedMethod);
 });

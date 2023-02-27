@@ -6,24 +6,25 @@ function getData() {
 }
 
 function send(destination, object) {
-    connection.getStompClient().send(destination, {}, JSON.stringify(object));
+    connection.sendObject(destination, object);
 }
 
 function sendStr(destination, user) {
-    connection.getStompClient().send(destination, {}, user);
+    connection.sendStr(destination, user);
 }
 
-function connectionSuccessful(stompClient) {
-    stompClient.subscribe('/topic/pg4', function (object) {
-        var object = JSON.parse(object.body);
-        if (object.user === user) {
-            widget = document.getElementById('plex').innerHTML = object.plex;
-            widget = document.getElementById('mIsk').innerHTML = object.mIsk;
-        }
-    });
+function dataReceived(data) {
+    if (data.user === user) {
+        widget = document.getElementById('plex').innerHTML = data.plex;
+        widget = document.getElementById('mIsk').innerHTML = data.mIsk;
+    }
+}
+
+function connectedMethod(connection) {
+    connection.subscribe('/topic/pg4', dataReceived);
     getData();
 }
 
 $(function () {
-    connection = Backend.connect(connectionSuccessful);
+    connection = Backend.connect(connectedMethod);
 });

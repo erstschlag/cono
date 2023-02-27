@@ -39,7 +39,7 @@ function applyOpacity(rgbValues, opacity) {
 }
 
 function sortDescAndSliceMap(map, limit) {
-    return new Map([...map].sort((a, b) => b[1].numberOfVotes - a[1].numberOfVotes).slice(0,limit));
+    return new Map([...map].sort((a, b) => b[1].numberOfVotes - a[1].numberOfVotes).slice(0, limit));
 }
 
 function update() {
@@ -54,7 +54,7 @@ function update() {
 
 function init(maxEntries_, blockedDestinations_) {
     maxEntries = maxEntries_;
-    blockedDestinations = new Set(blockedDestinations_.split(',').map(x=>x.trim()));
+    blockedDestinations = new Set(blockedDestinations_.split(',').map(x => x.trim()));
     channelVotes = new Map();
     if (myChart !== undefined) {
         myChart.destroy();
@@ -110,20 +110,21 @@ function init(maxEntries_, blockedDestinations_) {
     );
 }
 
-function connectionSuccessful(stompClient) {
-    stompClient.subscribe('/topic/object', function (object) {
-        var commandObj = JSON.parse(object.body);
-        switch (commandObj.cmd) {
-            case 'raidVote':
-                addChannelVotes(commandObj.channelName, commandObj.amount);
-                break;
-            case 'initRaidVote':
-                init(commandObj.maxEntries, commandObj.blockedDestinations);
-                break;
-        }
-    });
+function messageReceived(message) {
+    switch (message.cmd) {
+        case 'raidVote':
+            addChannelVotes(message.channelName, message.amount);
+            break;
+        case 'initRaidVote':
+            init(message.maxEntries, message.blockedDestinations);
+            break;
+    }
+}
+
+function connectedMethod(connection) {
+    connection.subscribe('/topic/object', messageReceived);
 }
 
 $(function () {
-    Backend.connect(connectionSuccessful);
+    Backend.connect(connectedMethod);
 });

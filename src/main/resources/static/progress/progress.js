@@ -14,27 +14,30 @@ function updateProgress() {
     $('#number').html(Math.round(100 / ONE_HUNDRED_PERCENT * currentVisualProgress) + '%');
 }
 
-function connectionSuccessful(stompClient) {
-    stompClient.subscribe('/topic/object', function (object) {
-        let commandObj = JSON.parse(object.body);
-        if (commandObj.cmd === 'progress') {
-            targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
-        }
-    });
-    stompClient.subscribe('/topic/twitchRewardRedemptions', function (object) {
-        let redemptionEvent = JSON.parse(object.body);
-        if(redemptionEvent.title === 'Charge!') {
-            targetProgress+= 10;
-        }
-    });
-    stompClient.subscribe('/topic/twitchBitsReceived', function (object) {
-        let bitsEvent = JSON.parse(object.body);
-        targetProgress+= bitsEvent.bitsUsed;
-    });
+function connectedMethod(connection) {
+    connection.subscribe('/topic/object', dashBoardRequest);
+    connection.subscribe('/topic/twitchRewardRedemptions', twitchRewardRedeemed);
+    connection.subscribe('/topic/twitchBitsReceived', twitchBitsReceived);
+}
+
+function dashBoardRequest(commandObj) {
+    if (commandObj.cmd === 'progress') {
+        targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
+    }
+}
+
+function twitchRewardRedeemed(redemptionEvent) {
+    if (redemptionEvent.title === 'Charge!') {
+        targetProgress += 10;
+    }
+}
+
+function twitchBitsReceived(bitsEvent) {
+    targetProgress+= bitsEvent.bitsUsed;
 }
 
 $(function () {
-    Backend.connect(connectionSuccessful);
+    Backend.connect(connectedMethod);
     setInterval(() => {
         updateProgress();
     }, REFRESH_RATE);

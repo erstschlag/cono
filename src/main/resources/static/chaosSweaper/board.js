@@ -191,18 +191,19 @@ function voteForAction(action) {
     }
 };
 
-function connectionSuccessful(stompClient) {
-    stompClient.subscribe('/topic/object', function (object) {
-        var commandObj = JSON.parse(object.body);
-        if (commandObj.cmd === 'initChaosBoard') {
-            init(commandObj.cols, commandObj.rows, commandObj.winnerCol, commandObj.winnerRow, commandObj.priceId, commandObj.numVotesForAction, commandObj.autoMoveDelayMs);
-        }
-        if (commandObj.cmd === 'chaosBoardAction') {
-            voteForAction(commandObj.action);
-        }
-    });
+function commandReceived(commandObj) {
+    if (commandObj.cmd === 'initChaosBoard') {
+        init(commandObj.cols, commandObj.rows, commandObj.winnerCol, commandObj.winnerRow, commandObj.priceId, commandObj.numVotesForAction, commandObj.autoMoveDelayMs);
+    }
+    if (commandObj.cmd === 'chaosBoardAction') {
+        voteForAction(commandObj.action);
+    }
+}
+
+function connectedMethod(connection) {
+    connection.subscribe('/topic/object', commandReceived);
 }
 
 $(function () {
-    Backend.connect(connectionSuccessful);
+    Backend.connect(connectedMethod);
 });

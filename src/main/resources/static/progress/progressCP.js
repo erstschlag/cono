@@ -15,7 +15,7 @@ function changeProgress() {
 };
 
 function send(object) {
-    connection.getStompClient().send("/app/object", {}, JSON.stringify(object));
+    connection.sendObject("/app/object", object);
 }
 
 $(function () {

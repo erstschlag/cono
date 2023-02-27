@@ -1,4 +1,4 @@
-let stompClient;
+let connection = null;
 
 function displayUsers(users, filteredColNames, showHeader) {
     // Extract value from table header. 
@@ -43,17 +43,18 @@ function displayUsers(users, filteredColNames, showHeader) {
 }
 
 function retrieveTopTenShillingHolders() {
-    stompClient.send("/app/topShillingHolders", {}, 10);
+    connection.sendStr("/app/topShillingHolders", 10);
 }
 
-function connectionSuccessful(stompClient_) {
-    stompClient = stompClient_;
-    stompClient.subscribe('/topic/topShillingHolders', function (object) {
-        displayUsers(JSON.parse(object.body).content, ['id','restBits'], false);
-    });
+function topShillingHoldersReceived(data) {
+    displayUsers(data.content, ['id','restBits'], false);
+}
+
+function connectedMethod(connection) {
+    connection.subscribe('/topic/topShillingHolders', topShillingHoldersReceived);
     retrieveTopTenShillingHolders();
 }
 
 $(function () {
-    Backend.connect(connectionSuccessful);
+    connection = Backend.connect(connectedMethod);
 });

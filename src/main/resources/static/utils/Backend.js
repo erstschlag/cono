@@ -1,17 +1,18 @@
 class _Backend {
     connection = null;
-    connect(successMethod) {
+    connect(connectedMethod) {
         this.connection = new Connection();
-        this.connection.connect(successMethod);
+        this.connection.connect(connectedMethod);
         return this.connection;
     }
 }
 class Connection {
     reconnectInterval = null;
     stompClient = null;
+    subscriptions = new Map();
     constructor() {}
-    ;
-            connect(successMethod) {
+
+    connect(connectedMethod) {
         if (this.reconnectInterval !== null) {
             clearInterval(this.reconnectInterval);
         }
@@ -19,17 +20,29 @@ class Connection {
             this.stompClient = Stomp.over(new SockJS('/generic-ws'));
             this.stompClient.connect({}, (frame) => {
                 clearInterval(this.reconnectInterval);
-                if(successMethod !== undefined){
-                    successMethod(this.stompClient);
+                if (connectedMethod !== undefined) {
+                    connectedMethod(this);
                 }
             }, () => {
-                connect(successMethod);
+                this.connect(connectedMethod);
             });
         }, 1000);
     }
-    ;
-            getStompClient() {
-        return this.stompClient;
+
+    subscribe(topicURI, onMessageMethod) {
+        if (!this.subscriptions.has(topicURI)) {
+            this.subscriptions.set(topicURI, this.stompClient.subscribe(topicURI, function (object) {
+                onMessageMethod(JSON.parse(object.body));
+            }));
+        }
+    }
+    
+    sendObject(destination, object) {
+        this.stompClient.send(destination, {}, JSON.stringify(object));
+    }
+    
+    sendStr(destination, str) {
+        this.stompClient.send(destination, {}, str);
     }
 }
 let Backend = new _Backend();

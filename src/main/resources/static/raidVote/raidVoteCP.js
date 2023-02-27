@@ -2,22 +2,22 @@ let connection = null;
 
 function initialize() {
     send({
-        cmd: 'initRaidVote', 
-        maxEntries: parseInt($("#maxEntries").val()) ,
+        cmd: 'initRaidVote',
+        maxEntries: parseInt($("#maxEntries").val()),
         blockedDestinations: $("#blockedDestinations").val()
     });
-};
+}
 
 function addTestEntry() {
     send({
-        cmd: 'raidVote', 
+        cmd: 'raidVote',
         channelName: $("#channelName").val(),
         amount: parseInt($("#amount").val())
     });
-};
+}
 
 function send(object) {
-    connection.getStompClient().send("/app/object", {}, JSON.stringify(object));
+    connection.sendObject("/app/object", object);
 }
 
 $(function () {

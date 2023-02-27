@@ -22,14 +22,15 @@ function showWidget(show, widget) {
     }
 }
 
-function connectionSuccessful(stompClient) {
-    stompClient.subscribe('/topic/object', function (object) {
-        var commandObj = JSON.parse(object.body);
-        if (commandObj.cmd === 'wiggle')
-            changeWiggles(commandObj.change);
-    });
+function messageReceived(message) {
+    if (message.cmd === 'wiggle')
+            changeWiggles(message.change);
+}
+
+function connectedMethod(connection) {
+    connection.subscribe('/topic/object', messageReceived);
 }
 
 $(function () {
-    Backend.connect(connectionSuccessful);
+    Backend.connect(connectedMethod);
 });
