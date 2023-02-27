@@ -110,7 +110,7 @@ function init(maxEntries_, blockedDestinations_) {
     );
 }
 
-function messageReceived(message) {
+function onMessageReceived(message) {
     switch (message.cmd) {
         case 'raidVote':
             addChannelVotes(message.channelName, message.amount);
@@ -121,10 +121,10 @@ function messageReceived(message) {
     }
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/object', messageReceived);
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/object', onMessageReceived);
 }
 
 $(function () {
-    Backend.connect(connectedMethod);
+    Backend.connect(onBackendConnect);
 });

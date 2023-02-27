@@ -66,7 +66,7 @@ function revealBoard() {
     document.getElementById("t_" + guess).style.backgroundColor = 'green';
 }
 
-function messageReceived(message) {
+function onMessageReceived(message) {
     switch (message.cmd) {
         case 'initGuess':
             init(message.cols, message.rows, message.start, message.winner, message.priceId);
@@ -77,10 +77,10 @@ function messageReceived(message) {
     }
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/object', messageReceived);
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/object', onMessageReceived);
 }
 
 $(function () {
-    Backend.connect(connectedMethod);
+    Backend.connect(onBackendConnect);
 });

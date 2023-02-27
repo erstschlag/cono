@@ -1,4 +1,4 @@
-let stompClient;
+let connection;
 let clientId;
 
 function authorize() {
@@ -13,23 +13,22 @@ function authorize() {
 };
 
 function requestClientId() {
-    stompClient.send("/app/getClientId", {}, "");
+    connection.sendObject("/app/getClientId", {});
 };
+
+function onClientIdReceived(object) {
+    clientId = object.clientId;
+    authorize();
+}
+
+function onBackendConnect() {
+    connection.subscribe('/topic/auth', onClientIdReceived);
+}
 
 $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
     $( "#auth" ).click(function() { requestClientId(); });
-    connect();
+    connection = Backend.connect(onBackendConnect);
 });
-
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/auth', function (object) {
-            clientId = object.body;
-            authorize();
-        });
-    });
-}

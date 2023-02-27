@@ -1,23 +1,24 @@
+let connection = null;
+
 function init() {
     let searchParams = new URLSearchParams(window.location.search);
     $("#code").val(searchParams.get('code'));
 };
 
 function authorize() {
-    stompClient.send("/app/auth", {}, $("#code").val());
+    connection.sendStr("/app/auth", $("#code").val());
 }
 
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/auth', function (object) {
-            alert(object.body);
-        });
-    });
+function onAuthResultReceived(result) {
+    alert(result.state);
+}
+
+function onBackendConnect() {
+    connection.subscribe('/topic/auth', onAuthResultReceived);
 }
 
 $(function () {
-    connect();
+    connection = Backend.connect(onBackendConnect);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

@@ -26,13 +26,13 @@ public class OAuthController {
     public String auth(String code) throws Exception {
         TwitchOAuthDto oAuth = pubSubOAuth.authenticate(code);
         pubSubService.initialize(oAuth.getToken());
-        return "SUCCESS";
+        return "{\"state\":\"SUCCESS\"}";
     }
     
     @MessageMapping("/getClientId")
     @SendTo("/topic/auth")
     public String getClientId() throws Exception {
-        return pubSubConfiguration.getClientId();
+        return "{\"clientId\":\"" + pubSubConfiguration.getClientId() + "\"}";
     }
 
 }

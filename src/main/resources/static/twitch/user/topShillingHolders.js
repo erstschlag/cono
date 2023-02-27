@@ -46,15 +46,15 @@ function retrieveTopTenShillingHolders() {
     connection.sendStr("/app/topShillingHolders", 10);
 }
 
-function topShillingHoldersReceived(data) {
+function onTopShillingHoldersReceived(data) {
     displayUsers(data.content, ['id','restBits'], false);
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/topShillingHolders', topShillingHoldersReceived);
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/topShillingHolders', onTopShillingHoldersReceived);
     retrieveTopTenShillingHolders();
 }
 
 $(function () {
-    connection = Backend.connect(connectedMethod);
+    connection = Backend.connect(onBackendConnect);
 });

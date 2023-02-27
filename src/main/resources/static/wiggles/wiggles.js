@@ -22,15 +22,15 @@ function showWidget(show, widget) {
     }
 }
 
-function messageReceived(message) {
+function onMessageReceived(message) {
     if (message.cmd === 'wiggle')
             changeWiggles(message.change);
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/object', messageReceived);
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/object', onMessageReceived);
 }
 
 $(function () {
-    Backend.connect(connectedMethod);
+    Backend.connect(onBackendConnect);
 });

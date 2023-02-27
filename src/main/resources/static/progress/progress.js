@@ -14,30 +14,30 @@ function updateProgress() {
     $('#number').html(Math.round(100 / ONE_HUNDRED_PERCENT * currentVisualProgress) + '%');
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/object', dashBoardRequest);
-    connection.subscribe('/topic/twitchRewardRedemptions', twitchRewardRedeemed);
-    connection.subscribe('/topic/twitchBitsReceived', twitchBitsReceived);
-}
-
-function dashBoardRequest(commandObj) {
+function onDashBoardRequest(commandObj) {
     if (commandObj.cmd === 'progress') {
         targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
     }
 }
 
-function twitchRewardRedeemed(redemptionEvent) {
+function onTwitchRewardRedeemed(redemptionEvent) {
     if (redemptionEvent.title === 'Charge!') {
         targetProgress += 10;
     }
 }
 
-function twitchBitsReceived(bitsEvent) {
+function onTwitchBitsReceived(bitsEvent) {
     targetProgress+= bitsEvent.bitsUsed;
 }
 
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/object', onDashBoardRequest);
+    connection.subscribe('/topic/twitchRewardRedemptions', onTwitchRewardRedeemed);
+    connection.subscribe('/topic/twitchBitsReceived', onTwitchBitsReceived);
+}
+
 $(function () {
-    Backend.connect(connectedMethod);
+    Backend.connect(onBackendConnect);
     setInterval(() => {
         updateProgress();
     }, REFRESH_RATE);

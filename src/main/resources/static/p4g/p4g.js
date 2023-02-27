@@ -13,18 +13,18 @@ function sendStr(destination, user) {
     connection.sendStr(destination, user);
 }
 
-function dataReceived(data) {
+function onDataReceived(data) {
     if (data.user === user) {
         widget = document.getElementById('plex').innerHTML = data.plex;
         widget = document.getElementById('mIsk').innerHTML = data.mIsk;
     }
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/pg4', dataReceived);
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/pg4', onDataReceived);
     getData();
 }
 
 $(function () {
-    connection = Backend.connect(connectedMethod);
+    connection = Backend.connect(onBackendConnect);
 });

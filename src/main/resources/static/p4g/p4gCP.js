@@ -22,22 +22,22 @@ function sendStr(destination, user) {
     connection.sendStr(destination, user);
 }
 
-function dataReceived(data) {
+function onDataReceived(data) {
     if (data.user === user) {
         $("#plex").val(data.plex);
         $("#mIsk").val(data.mIsk);
     }
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/pg4', dataReceived);
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/pg4', onDataReceived);
     getData();
 }
 
 $(function () {
     var urlParams = new URLSearchParams(window.location.search);
     user = urlParams.get('user');
-    connection = Backend.connect(connectedMethod);
+    connection = Backend.connect(onBackendConnect);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

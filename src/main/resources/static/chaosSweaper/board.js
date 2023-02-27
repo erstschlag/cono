@@ -191,7 +191,7 @@ function voteForAction(action) {
     }
 };
 
-function commandReceived(commandObj) {
+function onCommandReceived(commandObj) {
     if (commandObj.cmd === 'initChaosBoard') {
         init(commandObj.cols, commandObj.rows, commandObj.winnerCol, commandObj.winnerRow, commandObj.priceId, commandObj.numVotesForAction, commandObj.autoMoveDelayMs);
     }
@@ -200,10 +200,10 @@ function commandReceived(commandObj) {
     }
 }
 
-function connectedMethod(connection) {
-    connection.subscribe('/topic/object', commandReceived);
+function onBackendConnect(connection) {
+    connection.subscribe('/topic/object', onCommandReceived);
 }
 
 $(function () {
-    Backend.connect(connectedMethod);
+    Backend.connect(onBackendConnect);
 });
