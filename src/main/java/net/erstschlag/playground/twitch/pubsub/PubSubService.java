@@ -69,9 +69,9 @@ public class PubSubService {
     }
 
     private void chatMessageReceived(ChannelMessageEvent event) {
-        if (event.getMessage() != null && event.getMessage().toLowerCase().startsWith("!shilling")) {
+        if (event.getMessage() != null && event.getMessage().toLowerCase().startsWith("!nuggets")) {
             UserDto user = userService.getUser(event.getUser().get().getId(), event.getUser().get().getName());
-            twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently own " + user.getShillings() + " shillings!", "", event.getMessageId().get());
+            twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently own " + user.getNuggets() + " nuggets!", "", event.getMessageId().get());
         }
     }
 

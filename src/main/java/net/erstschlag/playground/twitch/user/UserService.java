@@ -26,8 +26,8 @@ public class UserService {
         return userRepository.findAll(Pageable.unpaged()).map(mapstructMapper::userEntityToUserDto);
     }
 
-    public Page<UserDto> getTopShillingHolders(int limit) {
-        return userRepository.findAllByOrderByShillingsDesc(Pageable.ofSize(limit)).map(mapstructMapper::userEntityToUserDto);
+    public Page<UserDto> getTopNuggetHolders(int limit) {
+        return userRepository.findAllByOrderByNuggetsDesc(Pageable.ofSize(limit)).map(mapstructMapper::userEntityToUserDto);
     }
 
     public UserDto getUser(String userId, String userName) {
@@ -55,14 +55,14 @@ public class UserService {
         int bitsUsed = numberOfBits + uE.getRestBits();
         uE.setRestBits(bitsUsed % 100);
         bitsUsed -= uE.getRestBits();
-        uE.setShillings(uE.getShillings() + bitsUsed / 100);
+        uE.setNuggets(uE.getNuggets() + bitsUsed / 100);
         userRepository.save(uE);
     }
 
     public final void registerGiftedSub(String userId, String userName, boolean isGift, int tier) {
         if (tier > 1 || isGift) {
             UserEntity uE = retrieveOrCreateUser(userId, userName);
-            uE.setShillings(uE.getShillings() + 3 * tier);
+            uE.setNuggets(uE.getNuggets() + 3 * tier);
             userRepository.save(uE);
         }
     }

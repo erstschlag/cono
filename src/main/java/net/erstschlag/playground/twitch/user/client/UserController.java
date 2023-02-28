@@ -1,6 +1,5 @@
 package net.erstschlag.playground.twitch.user.client;
 
-import java.util.List;
 import net.erstschlag.playground.twitch.user.UserDto;
 import net.erstschlag.playground.twitch.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,10 @@ public class UserController {
         return userService.getUsers();
     }
     
-    @MessageMapping("/topShillingHolders")
-    @SendTo("/topic/topShillingHolders")
-    public Page<UserDto> getTopShillingHolders(int limit) {
-        return userService.getTopShillingHolders(limit);
+    @MessageMapping("/topNuggetHolders")
+    @SendTo("/topic/topNuggetHolders")
+    public Page<UserDto> getTopNuggetHolders(int limit) {
+        return userService.getTopNuggetHolders(limit);
     }
 
     @MessageMapping("/users/delete")

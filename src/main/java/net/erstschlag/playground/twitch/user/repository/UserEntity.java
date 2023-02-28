@@ -15,8 +15,8 @@ public class UserEntity {
     private String name;
 
     @Basic
-    @Column(name = "shillings", unique = false, nullable = false)
-    private int shillings;
+    @Column(name = "nuggets", unique = false, nullable = false)
+    private int nuggets;
 
     @Basic
     @Column(name = "restBits", unique = false, nullable = false)
@@ -26,10 +26,10 @@ public class UserEntity {
 
     }
 
-    public UserEntity(String id, String name, int shillings, int restBits) {
+    public UserEntity(String id, String name, int nuggets, int restBits) {
         this.id = id;
         this.name = name;
-        this.shillings = shillings;
+        this.nuggets = nuggets;
         this.restBits = restBits;
     }
 
@@ -49,12 +49,12 @@ public class UserEntity {
         this.name = name;
     }
 
-    public int getShillings() {
-        return shillings;
+    public int getNuggets() {
+        return nuggets;
     }
 
-    public void setShillings(int shillings) {
-        this.shillings = shillings;
+    public void setNuggets(int nuggets) {
+        this.nuggets = nuggets;
     }
 
     public int getRestBits() {

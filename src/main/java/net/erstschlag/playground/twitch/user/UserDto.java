@@ -8,8 +8,8 @@ public class UserDto {
     private String id;
     @JsonProperty("name")
     private String name;
-    @JsonProperty("shillings")
-    private int shillings;
+    @JsonProperty("nuggets")
+    private int nuggets;
     @JsonProperty("restBits")
     private int restBits;
 
@@ -29,12 +29,12 @@ public class UserDto {
         this.name = name;
     }
 
-    public int getShillings() {
-        return shillings;
+    public int getNuggets() {
+        return nuggets;
     }
 
-    public void setShillings(int shillings) {
-        this.shillings = shillings;
+    public void setNuggets(int nuggets) {
+        this.nuggets = nuggets;
     }
 
     public int getRestBits() {

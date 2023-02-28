@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<UserEntity, String> {
-    Page<UserEntity> findAllByOrderByShillingsDesc(Pageable pageable);
+    Page<UserEntity> findAllByOrderByNuggetsDesc(Pageable pageable);
     UserEntity save(UserEntity entity);
     Page<UserEntity> findAll();
     void deleteById(String id);
