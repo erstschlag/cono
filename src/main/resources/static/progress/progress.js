@@ -5,6 +5,8 @@ const STEP_SIZE = 2;
 
 let targetProgress = 0;
 let currentVisualProgress = 0;
+let redeemProgressAmount = 10;
+let bitsProgressAmount = 1;
 
 function updateProgress() {
     if (currentVisualProgress === targetProgress) return;
@@ -18,21 +20,25 @@ function onDashBoardRequest(commandObj) {
     if (commandObj.cmd === 'progress') {
         targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
     }
+    if (commandObj.cmd === 'progressConfig') {
+        redeemProgressAmount = commandObj.redeemProgressAmount;
+        bitsProgressAmount = commandObj.bitsProgressAmount;
+    }
 }
 
 function onTwitchRewardRedeemed(redemptionEvent) {
     if (redemptionEvent.title === 'Charge!') {
-        targetProgress += 10;
+        targetProgress += redeemProgressAmount;
     }
 }
 
 function onTwitchBitsReceived(bitsEvent) {
-    targetProgress+= bitsEvent.bitsUsed;
+    targetProgress+= bitsEvent.bitsUsed*bitsProgressAmount;
 }
 
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onDashBoardRequest);
-    connection.subscribe('/topic/twitchRewardRedemptions', onTwitchRewardRedeemed);
+    connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
     connection.subscribe('/topic/twitchBitsReceived', onTwitchBitsReceived);
 }
 

@@ -27,8 +27,15 @@ function onMessageReceived(message) {
             changeWiggles(message.change);
 }
 
+function onTwitchRewardRedeemed(redemptionEvent) {
+    if (redemptionEvent.title === 'Wiggle your back') {
+        changeWiggles(1);
+    }
+}
+
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onMessageReceived);
+    connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
 }
 
 $(function () {

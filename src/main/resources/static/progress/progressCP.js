@@ -14,6 +14,14 @@ function changeProgress() {
     });
 };
 
+function applyConfiguration() {
+    send({
+        cmd: 'progressConfig', 
+        redeemProgressAmount: parseInt($("#redeemProgressAmount").val()), 
+        bitsProgressAmount: parseInt($("#bitsProgressAmount").val())  
+    });
+}
+
 function send(object) {
     connection.sendObject("/app/object", object);
 }
@@ -25,4 +33,5 @@ $(function () {
     });
     $( "#setProgress" ).click(function() { setProgress(); });
     $( "#changeProgress" ).click(function() { changeProgress(); });
+    $( "#applyConfiguration" ).click(function() { applyConfiguration(); });
 });

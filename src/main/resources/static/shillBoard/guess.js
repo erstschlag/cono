@@ -77,8 +77,13 @@ function onMessageReceived(message) {
     }
 }
 
+function onTwitchBitsReceived(bitsEvent) {
+    guess(bitsEvent.bitsUsed);
+}
+
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onMessageReceived);
+    connection.subscribe('/topic/twitchBitsReceived', onTwitchBitsReceived);
 }
 
 $(function () {

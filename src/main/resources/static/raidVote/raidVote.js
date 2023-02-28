@@ -121,8 +121,19 @@ function onMessageReceived(message) {
     }
 }
 
+let validChannelNameRegEx = new RegExp('[A-Za-z0-9_]{3,25}');
+
+function onTwitchRewardRedeemed(redemptionEvent) {
+    if (redemptionEvent.title === 'RaidVote') {
+        if (validChannelNameRegEx.test(redemptionEvent.userInput)) {
+            addChannelVotes(redemptionEvent.userInput, 1);
+        }
+    }
+}
+
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onMessageReceived);
+    connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
 }
 
 $(function () {

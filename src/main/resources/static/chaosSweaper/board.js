@@ -200,8 +200,13 @@ function onCommandReceived(commandObj) {
     }
 }
 
+function onTwitchRewardRedeemed(redemptionEvent) {
+    voteForAction(redemptionEvent.title);
+}
+
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onCommandReceived);
+    connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
 }
 
 $(function () {
