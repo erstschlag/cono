@@ -10,6 +10,17 @@
     width: 835px;
     height: 830px;
     background-image: url('Loading.png');
+    z-index: 2;
+}
+
+.turbo {
+    position: absolute;
+    top: 350px;
+    left: 288px;
+    width: 160px;
+    height: 160px;
+    background-size: 160px;
+    background-image: url('Charge_1.png');
     z-index: 3;
 }
 
@@ -23,12 +34,12 @@ circle {
     position: absolute;
     width: 300px;
     text-align: center;
-    top: 300px;
+    top: 290px;
     left: 220px;
     font-weight: 600;
     font-size: 80px;
     color: #CCC;
-    z-index: 4;
+    z-index: 3;
 }
 
 svg {

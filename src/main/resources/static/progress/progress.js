@@ -21,9 +21,18 @@ function onDashBoardRequest(commandObj) {
         targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
     }
     if (commandObj.cmd === 'progressConfig') {
-        redeemProgressAmount = commandObj.redeemProgressAmount;
-        bitsProgressAmount = commandObj.bitsProgressAmount;
+        updateRedeemProgressAmount(commandObj.redeemProgressAmount);
+        updateBitsProgressAmount(commandObj.bitsProgressAmount);
     }
+}
+
+function updateRedeemProgressAmount(newRedeemProgressAmount) {
+    redeemProgressAmount = newRedeemProgressAmount;
+    $('.turbo').css('background-image','url(Charge_' + Math.round(redeemProgressAmount/10) + '.png)');
+}
+
+function updateBitsProgressAmount(newBitsProgressAmount) {
+    bitsProgressAmount = newBitsProgressAmount;
 }
 
 function onTwitchRewardRedeemed(redemptionEvent) {
