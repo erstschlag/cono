@@ -1,10 +1,12 @@
 package net.erstschlag.playground.twitch.pubsub;
 
+import net.erstschlag.playground.PlaygroundEvent;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import net.erstschlag.playground.twitch.user.UserDto;
-import net.erstschlag.playground.twitch.user.UserService;
+import java.util.StringTokenizer;
+import net.erstschlag.playground.user.UserDto;
+import net.erstschlag.playground.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -40,8 +42,8 @@ public class PubSubService {
         twitchClient.getChat().joinChannel(pubSubConfiguration.getChannelName());
         twitchClient.getChat().getEventManager().onEvent(com.github.twitch4j.chat.events.channel.ChannelMessageEvent.class, event -> chatMessageReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
     }
-    
-    private <T extends TwitchEvent> T publishApplicationEvent(T twitchEvent) {
+
+    private <T extends PlaygroundEvent> T publishApplicationEvent(T twitchEvent) {
         applicationEventPublisher.publishEvent(twitchEvent);
         return twitchEvent;
     }
@@ -69,9 +71,28 @@ public class PubSubService {
     }
 
     private void chatMessageReceived(ChannelMessageEvent event) {
-        if (event.getMessage() != null && event.getMessage().toLowerCase().startsWith("!nuggets")) {
-            UserDto user = userService.getUser(event.getUser().get().getId(), event.getUser().get().getName());
-            twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently own " + user.getNuggets() + " nuggets!", "", event.getMessageId().get());
+        String eventMessage = event.getMessage();
+        if (eventMessage != null) {
+            if (eventMessage.startsWith("!nuggets")) {
+                handleNuggetChatMessage(event);
+            }
+            if (eventMessage.startsWith("!rig")) {
+                handleRigChatMessage(event);
+            }
+        }
+    }
+
+    private void handleNuggetChatMessage(ChannelMessageEvent event) {
+        UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+        twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently own " + user.getNuggets() + " nuggets!", "", event.getMessageId().get());
+    }
+
+    private void handleRigChatMessage(ChannelMessageEvent event) {
+        StringTokenizer strTok = new StringTokenizer(event.getMessage(), " ");
+        if (strTok.countTokens() == 2) {
+            strTok.nextToken();
+            UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+            publishApplicationEvent(new RigEvent(user, strTok.nextToken()));
         }
     }
 

@@ -1,7 +1,8 @@
-package net.erstschlag.playground.twitch.user.client;
+package net.erstschlag.playground.user.client;
 
-import net.erstschlag.playground.twitch.user.UserDto;
-import net.erstschlag.playground.twitch.user.UserService;
+import net.erstschlag.playground.user.ChargeUserDto;
+import net.erstschlag.playground.user.UserDto;
+import net.erstschlag.playground.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,6 +31,11 @@ public class UserController {
         return userService.getTopNuggetHolders(limit);
     }
 
+    @MessageMapping("/chargeUser")
+    public void chargeUser(ChargeUserDto chargeUser) {
+        userService.chargeUser(chargeUser);
+    }
+    
     @MessageMapping("/users/delete")
     public void deleteUser(String userId) {
         userService.deleteUser(userId);

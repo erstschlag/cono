@@ -1,7 +1,7 @@
-package net.erstschlag.playground.twitch.user;
+package net.erstschlag.playground.user;
 
 import java.util.List;
-import net.erstschlag.playground.twitch.user.repository.UserEntity;
+import net.erstschlag.playground.user.repository.UserEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

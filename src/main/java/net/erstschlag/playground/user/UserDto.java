@@ -1,4 +1,4 @@
-package net.erstschlag.playground.twitch.user;
+package net.erstschlag.playground.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,5 +1,6 @@
 let currentWiggles = 0;
 let widgetShown = false;
+let riggingAmount = 1;
 
 let audio = new Audio('wiggle.wav');
 audio.loop = false;
@@ -27,6 +28,15 @@ function onMessageReceived(message) {
             changeWiggles(message.change);
 }
 
+function onRigRequestReceived(riggingEvent) {
+    if (riggingEvent.consumer === 'wiggle') {
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount,
+                function () {
+                    changeWiggles(1);
+                });
+    }
+}
+
 function onTwitchRewardRedeemed(redemptionEvent) {
     if (redemptionEvent.title === 'Wiggle your back') {
         changeWiggles(1);
@@ -36,6 +46,7 @@ function onTwitchRewardRedeemed(redemptionEvent) {
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onMessageReceived);
     connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
+    connection.subscribe('/topic/riggingRequested', onRigRequestReceived);
 }
 
 $(function () {

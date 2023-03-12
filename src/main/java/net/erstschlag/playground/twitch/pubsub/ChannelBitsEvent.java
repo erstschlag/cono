@@ -1,14 +1,15 @@
 package net.erstschlag.playground.twitch.pubsub;
 
+import net.erstschlag.playground.PlaygroundEvent;
 import java.util.Optional;
-import net.erstschlag.playground.twitch.user.UserDto;
+import net.erstschlag.playground.user.UserDto;
 
-public class ChannelBitsEvent extends TwitchEvent<ChannelBitsEvent> {
+public class ChannelBitsEvent extends PlaygroundEvent<ChannelBitsEvent> {
 
     private final Integer bitsUsed;
 
-    public ChannelBitsEvent(Object source, Optional<UserDto> oUser, Integer bitsUsed) {
-        super(source, oUser);
+    public ChannelBitsEvent(Optional<UserDto> oUser, Integer bitsUsed) {
+        super(oUser);
         this.bitsUsed = bitsUsed;
     }
 

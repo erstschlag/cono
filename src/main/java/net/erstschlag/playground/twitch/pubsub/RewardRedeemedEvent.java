@@ -1,16 +1,17 @@
 package net.erstschlag.playground.twitch.pubsub;
 
+import net.erstschlag.playground.PlaygroundEvent;
 import java.util.Optional;
-import net.erstschlag.playground.twitch.user.UserDto;
+import net.erstschlag.playground.user.UserDto;
 
-public class RewardRedeemedEvent extends TwitchEvent<RewardRedeemedEvent> {
+public class RewardRedeemedEvent extends PlaygroundEvent<RewardRedeemedEvent> {
 
     private final String title;
     private final String userInput;
     private final long channelPointsUsed;
 
-    public RewardRedeemedEvent(Object source, Optional<UserDto> oUser, String title, String userInput, long channelPointsUsed) {
-        super(source, oUser);
+    public RewardRedeemedEvent(Optional<UserDto> oUser, String title, String userInput, long channelPointsUsed) {
+        super(oUser);
         this.title = title;
         this.userInput = userInput;
         this.channelPointsUsed = channelPointsUsed;

@@ -1,15 +1,16 @@
 package net.erstschlag.playground.twitch.pubsub;
 
+import net.erstschlag.playground.PlaygroundEvent;
 import java.util.Optional;
-import net.erstschlag.playground.twitch.user.UserDto;
+import net.erstschlag.playground.user.UserDto;
 
-public class ChannelSubscribeEvent extends TwitchEvent<ChannelSubscribeEvent> {
+public class ChannelSubscribeEvent extends PlaygroundEvent<ChannelSubscribeEvent> {
 
     private final boolean isGift;
     private final SubTier subTier;
 
-    public ChannelSubscribeEvent(Object source, Optional<UserDto> oUser, boolean isGift, SubTier subTier) {
-        super(source, oUser);
+    public ChannelSubscribeEvent(Optional<UserDto> oUser, boolean isGift, SubTier subTier) {
+        super(oUser);
         this.isGift = isGift;
         this.subTier = subTier;
     }

@@ -1,4 +1,4 @@
-package net.erstschlag.playground.twitch.user.repository;
+package net.erstschlag.playground.user.repository;
 
 import jakarta.persistence.*;
 

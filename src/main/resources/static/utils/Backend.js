@@ -10,6 +10,8 @@ class Connection {
     reconnectInterval = null;
     stompClient = null;
     subscriptions = new Map();
+    userChargeTransactions = new Map();
+    
     constructor() {}
 
     connect(connectedMethod) {
@@ -23,16 +25,38 @@ class Connection {
                 if (connectedMethod !== undefined) {
                     connectedMethod(this);
                 }
+                this.subscribe('/topic/userCharged', this._onUserChargedReceived);
             }, () => {
                 this.connect(connectedMethod);
             });
         }, 1000);
     }
 
+    chargeUser(userId, chargingAmount, onSuccessMethod) {
+        var transactionId = crypto.randomUUID();
+        this.userChargeTransactions.set(transactionId, onSuccessMethod);
+        this.sendObject("/app/chargeUser",
+                {
+                    userId: userId,
+                    amount: chargingAmount,
+                    transactionId: transactionId
+                }
+        );
+    }
+
+    _onUserChargedReceived(userChargedEvent, connection) {
+        var onUserChargeSuccess = connection.userChargeTransactions.get(userChargedEvent.transactionId);
+        if(onUserChargeSuccess !== undefined){
+            onUserChargeSuccess();
+            connection.userChargeTransactions.delete(userChargedEvent.transactionId);
+        }
+    }
+
     subscribe(topicURI, onMessageMethod) {
+        var _connection = this;
         if (!this.subscriptions.has(topicURI)) {
             this.subscriptions.set(topicURI, this.stompClient.subscribe(topicURI, function (object) {
-                onMessageMethod(JSON.parse(object.body));
+                onMessageMethod(JSON.parse(object.body), _connection);
             }));
         }
     }
