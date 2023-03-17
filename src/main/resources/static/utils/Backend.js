@@ -44,19 +44,18 @@ class Connection {
         );
     }
 
-    _onUserChargedReceived(userChargedEvent, connection) {
-        var onUserChargeSuccess = connection.userChargeTransactions.get(userChargedEvent.transactionId);
+    _onUserChargedReceived(userChargedEvent) {
+        var onUserChargeSuccess = this.userChargeTransactions.get(userChargedEvent.transactionId);
         if(onUserChargeSuccess !== undefined){
             onUserChargeSuccess();
-            connection.userChargeTransactions.delete(userChargedEvent.transactionId);
+            this.userChargeTransactions.delete(userChargedEvent.transactionId);
         }
     }
 
     subscribe(topicURI, onMessageMethod) {
-        var _connection = this;
         if (!this.subscriptions.has(topicURI)) {
-            this.subscriptions.set(topicURI, this.stompClient.subscribe(topicURI, function (object) {
-                onMessageMethod(JSON.parse(object.body), _connection);
+            this.subscriptions.set(topicURI, this.stompClient.subscribe(topicURI, (object) => {
+                onMessageMethod(JSON.parse(object.body));
             }));
         }
     }

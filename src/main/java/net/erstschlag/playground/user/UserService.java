@@ -19,8 +19,8 @@ public class UserService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public UserService(UserRepository userRepository, 
-            MapStructMapper mapstructMapper, 
+    public UserService(UserRepository userRepository,
+            MapStructMapper mapstructMapper,
             ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
         this.mapstructMapper = mapstructMapper;
@@ -38,7 +38,7 @@ public class UserService {
     public UserDto getOrCreateUser(String userId, String userName) {
         return mapstructMapper.userEntityToUserDto(retrieveOrCreateUser(userId, userName));
     }
-    
+
     public Optional<UserDto> getUser(String userId) {
         Optional<UserEntity> oUserEntity = userRepository.findById(userId);
         if (oUserEntity.isPresent()) {
@@ -51,7 +51,7 @@ public class UserService {
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);
     }
-    
+
     public synchronized void chargeUser(ChargeUserDto chargeUser) {
         Optional<UserEntity> oUserEntity = userRepository.findById(chargeUser.getUserId());
         if (oUserEntity.isPresent()) {
@@ -61,7 +61,7 @@ public class UserService {
                 applicationEventPublisher.publishEvent(
                         new UserChargedEvent(
                                 mapstructMapper.userEntityToUserDto(oUserEntity.get()),
-                                chargeUser.getTransactionId(), 
+                                chargeUser.getTransactionId(),
                                 chargeUser.getAmount()));
             }
         }
@@ -84,16 +84,23 @@ public class UserService {
         int bitsUsed = numberOfBits + uE.getRestBits();
         uE.setRestBits(bitsUsed % 100);
         bitsUsed -= uE.getRestBits();
-        uE.setNuggets(uE.getNuggets() + bitsUsed / 100);
-        userRepository.save(uE);
+        awardUser(uE, bitsUsed / 100);
     }
 
     public final void registerGiftedSub(String userId, String userName, boolean isGift, int tier) {
         if (tier > 1 || isGift) {
             UserEntity uE = retrieveOrCreateUser(userId, userName);
-            uE.setNuggets(uE.getNuggets() + 3 * tier);
-            userRepository.save(uE);
+            awardUser(uE, 3 * tier);
         }
+    }
+
+    private void awardUser(UserEntity uE, int numberOfNuggets) {
+        uE.setNuggets(uE.getNuggets() + numberOfNuggets);
+        userRepository.save(uE);
+        applicationEventPublisher.publishEvent(
+                new UserAwardedEvent(
+                        mapstructMapper.userEntityToUserDto(uE),
+                        numberOfNuggets));
     }
 
     private synchronized UserEntity retrieveOrCreateUser(String userId, String userName) {
