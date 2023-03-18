@@ -94,8 +94,8 @@ function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveD
             letterArray[currentCol] + (currentRow + 1) + "</div>");
         }
     }
-    playerCol = 0;
-    playerRow = 0;
+    playerCol = Math.floor(Math.random() * cols);
+    playerRow = Math.floor(Math.random() * rows);
     actionsPerformed = 0;
     document.getElementById('numberOfActions').innerHTML = '' + actionsPerformed;
     run = true;
