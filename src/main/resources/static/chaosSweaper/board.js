@@ -20,6 +20,7 @@ let voteLeftIndex = 2;
 let voteRightIndex = 3;
 let voteOpenIndex = 4;
 let maxDistance = 0;
+let riggingAmount = 2;
 
 let autoMoveDelayMs = 10000;
 
@@ -54,19 +55,34 @@ audioWin.volume = 0.3;
 let audioLoss = new Audio('LOSS.wav');
 audioLoss.loop = false;
 audioLoss.volume = 0.3;
+
 function open() {
-    if(winCol === playerCol && winRow === playerRow) {
+    _open(playerCol, playerRow);
+};
+
+function _open(openCol,openRow) {
+    if(isWinner(openCol,openRow)) {
         run = false;
         audioWin.play();
-        document.getElementById("t_" + playerCol + "_" + playerRow).style.backgroundColor = 'yellow';
+        openHtmlTile(openCol, openRow, "yellow");
     }else {
         audioLoss.play();
-        distance = Math.round(Math.sqrt((Math.pow(winCol-playerCol,2) + Math.pow(winRow-playerRow,2))));
+        distance = Math.round(Math.sqrt((Math.pow(winCol-openCol,2) + Math.pow(winRow-openRow,2))));
         redValue = Math.round(255/maxDistance * distance);
         greenValue = 255 - redValue;
-        document.getElementById("t_" + playerCol + "_" + playerRow).style.backgroundColor = 'rgb(' + redValue + ',' + greenValue + ',0)';
+        openHtmlTile(openCol, openRow, "rgb(" + redValue + "," + greenValue + ",0)");
     }
-};
+}
+
+function openHtmlTile(openCol, openRow, colorStr) {
+    element = document.getElementById("t_" + openCol + "_" + openRow);
+    element.style.backgroundColor = colorStr;
+    element.dataset.opened = true;
+}
+
+function isWinner(checkCol,checkRow) {
+    return winCol === checkCol && winRow === checkRow;
+}
 
 function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveDelay) {
     boardCols = cols;
@@ -89,7 +105,7 @@ function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveD
     letterArray = "ABCDEFG".split("");
     for (currentRow = 0; currentRow < rows; currentRow++) {
         for (currentCol = 0; currentCol < cols; currentCol++) {
-            $("#board").append("<div class='tile' id='t_" + currentCol + "_" + currentRow + 
+            $("#board").append("<div data-opened='false' class='tile' id='t_" + currentCol + "_" + currentRow + 
                     "' style='top:" + currentRow * 100 + "px;left:" + currentCol * 100 + "px'>" +
             letterArray[currentCol] + (currentRow + 1) + "</div>");
         }
@@ -204,9 +220,40 @@ function onTwitchRewardRedeemed(redemptionEvent) {
     voteForAction(redemptionEvent.title);
 }
 
+function isOpened(checkCol, checkRow) {
+    return 'true' === document.getElementById("t_" + checkCol + "_" + checkRow).dataset.opened;
+}
+
+function revealRandomField() {
+    randomFieldFound = false;
+    maxFields = boardCols * boardRows;
+    while (!randomFieldFound && run) {
+        //TODO: will loop indefinitely if only the winner is unopened and this method is called. 
+        randomCol = Math.floor(Math.random() * boardCols);
+        randomRow = Math.floor(Math.random() * boardRows);
+        if(!isWinner(randomCol, randomRow) && !isOpened(randomCol, randomRow)){
+            randomFieldFound = true;
+            _open(randomCol, randomRow);
+        }
+    }
+}
+
+function onRigRequestReceived(riggingEvent) {
+    if (riggingEvent.consumer === 'sweaper') {
+        if(!run){
+            return;
+        }
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount,
+                () => {
+                    revealRandomField();
+                });
+    }
+}
+
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onCommandReceived);
     connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
+    connection.subscribe('/topic/riggingRequested', onRigRequestReceived);
 }
 
 $(function () {
