@@ -239,11 +239,11 @@ function revealRandomField() {
 }
 
 function onRigRequestReceived(riggingEvent) {
-    if (riggingEvent.consumer === 'sweaper') {
+    if (riggingEvent.consumer === 'sweeper') {
         if(!run){
             return;
         }
-        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount, 'rigging ChaosSweaper',
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount, 'rigging ChaosSweeper',
                 () => {
                     revealRandomField();
                 });
