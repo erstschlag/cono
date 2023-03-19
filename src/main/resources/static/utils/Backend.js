@@ -25,7 +25,9 @@ class Connection {
                 if (connectedMethod !== undefined) {
                     connectedMethod(this);
                 }
-                this.subscribe('/topic/userCharged', this._onUserChargedReceived);
+                this.subscribe('/topic/userCharged', (event)=> {
+                    this._onUserChargedReceived(event);
+                });
             }, () => {
                 this.connect(connectedMethod);
             });
