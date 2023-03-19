@@ -243,7 +243,7 @@ function onRigRequestReceived(riggingEvent) {
         if(!run){
             return;
         }
-        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount,
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount, 'rigging ChaosSweaper',
                 () => {
                     revealRandomField();
                 });

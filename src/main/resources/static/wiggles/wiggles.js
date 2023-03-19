@@ -30,7 +30,7 @@ function onMessageReceived(message) {
 
 function onRigRequestReceived(riggingEvent) {
     if (riggingEvent.consumer === 'wiggle') {
-        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount,
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount, 'rigging wiggles',
                 () => {
                     changeWiggles(1);
                 });

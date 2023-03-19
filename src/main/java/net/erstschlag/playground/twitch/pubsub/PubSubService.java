@@ -5,10 +5,12 @@ import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import java.util.StringTokenizer;
+import net.erstschlag.playground.user.UserChargedEvent;
 import net.erstschlag.playground.user.UserDto;
 import net.erstschlag.playground.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -89,11 +91,33 @@ public class PubSubService {
 
     private void handleRigChatMessage(ChannelMessageEvent event) {
         StringTokenizer strTok = new StringTokenizer(event.getMessage(), " ");
-        if (strTok.countTokens() == 2) {
+        if (strTok.countTokens() >= 2) {
             strTok.nextToken();
             UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-            publishApplicationEvent(new RigEvent(user, strTok.nextToken()));
+            publishApplicationEvent(new RigEvent(user, strTok.nextToken(), tokensToCommandString(strTok)));
         }
     }
+    
+    private String tokensToCommandString(StringTokenizer remainingTokens) {
+        StringBuilder commandStrBuff = new StringBuilder();
+        boolean isFirstToken = true;
+        while(remainingTokens.hasMoreTokens()) {
+            if(!isFirstToken){
+                commandStrBuff.append(" ");
+            }
+            commandStrBuff.append(remainingTokens.nextToken());
+            isFirstToken = false;
+        }
+        return commandStrBuff.toString();
+    }
 
+    @EventListener
+    public void userCharged(UserChargedEvent userChargedEvent) {
+        String message = "@?userName has been charged ?numberOfNuggets nuggets for ?reason";
+        message = message.replace("?userName", userChargedEvent.getUser().get().getName());
+        message = message.replace("?numberOfNuggets", "" + userChargedEvent.getAmount());
+        message = message.replace("?reason", userChargedEvent.getReason());
+        twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), message);
+    }
+    
 }

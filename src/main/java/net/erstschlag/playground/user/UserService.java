@@ -55,14 +55,17 @@ public class UserService {
     public synchronized void chargeUser(ChargeUserDto chargeUser) {
         Optional<UserEntity> oUserEntity = userRepository.findById(chargeUser.getUserId());
         if (oUserEntity.isPresent()) {
-            if (oUserEntity.get().getNuggets() >= chargeUser.getAmount()) {
+            //TODO: remove the erst-hack
+            if ("erstschlag".equalsIgnoreCase(oUserEntity.get().getName()) || oUserEntity.get().getNuggets() >= chargeUser.getAmount()) {
                 oUserEntity.get().setNuggets(oUserEntity.get().getNuggets() - chargeUser.getAmount());
                 userRepository.save(oUserEntity.get());
                 applicationEventPublisher.publishEvent(
                         new UserChargedEvent(
                                 mapstructMapper.userEntityToUserDto(oUserEntity.get()),
                                 chargeUser.getTransactionId(),
-                                chargeUser.getAmount()));
+                                chargeUser.getAmount(),
+                                chargeUser.getReason()
+                        ));
             }
         }
     }

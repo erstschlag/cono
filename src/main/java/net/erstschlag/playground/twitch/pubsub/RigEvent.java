@@ -6,15 +6,21 @@ import net.erstschlag.playground.user.UserDto;
 
 public class RigEvent extends PlaygroundEvent<RigEvent> {
 
-    private String consumer;
+    private final String consumer;
+    private final String command;
 
-    public RigEvent(UserDto user, String consumer) {
+    public RigEvent(UserDto user, String consumer, String command) {
         super(Optional.of(user));
         this.consumer = consumer;
+        this.command = command;
     }
 
     public String getConsumer() {
         return consumer;
+    }
+
+    public String getCommand() {
+        return command;
     }
 
 }

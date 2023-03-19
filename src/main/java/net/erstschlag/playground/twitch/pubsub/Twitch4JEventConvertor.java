@@ -48,7 +48,7 @@ public class Twitch4JEventConvertor {
                 cME.getUser().getId(),
                 cME.getUser().getName()
         ),
-                cME.getMessage(),
+                cME.getMessage(),//TODO: sanitize
                 cME.getMessageEvent().getMessageId()
         );
     }

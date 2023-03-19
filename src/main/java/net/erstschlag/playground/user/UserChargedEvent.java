@@ -7,11 +7,13 @@ public class UserChargedEvent extends PlaygroundEvent<UserChargedEvent> {
 
     private final String transactionId;
     private final Integer amount;
+    private final String reason;
 
-    public UserChargedEvent(UserDto oUser, String transactionId, Integer amount) {
+    public UserChargedEvent(UserDto oUser, String transactionId, Integer amount, String reason) {
         super(Optional.of(oUser));
         this.transactionId = transactionId;
         this.amount = amount;
+        this.reason = reason;
     }
 
     public String getTransactionId() {
@@ -20,6 +22,10 @@ public class UserChargedEvent extends PlaygroundEvent<UserChargedEvent> {
 
     public Integer getAmount() {
         return amount;
+    }
+
+    public String getReason() {
+        return reason;
     }
 
 }

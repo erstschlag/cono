@@ -10,6 +10,8 @@ public class ChargeUserDto {
     private int amount;
     @JsonProperty("transactionId")
     private String transactionId;
+    @JsonProperty("reason")
+    private String reason;
 
     public String getUserId() {
         return userId;
@@ -33,6 +35,14 @@ public class ChargeUserDto {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
 }

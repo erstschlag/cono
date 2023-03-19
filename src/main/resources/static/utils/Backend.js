@@ -34,13 +34,14 @@ class Connection {
         }, 1000);
     }
 
-    chargeUser(userId, chargingAmount, onSuccessMethod) {
+    chargeUser(userId, chargingAmount, chargingReason, onSuccessMethod) {
         var transactionId = crypto.randomUUID();
         this.userChargeTransactions.set(transactionId, onSuccessMethod);
         this.sendObject("/app/chargeUser",
                 {
                     userId: userId,
                     amount: chargingAmount,
+                    reason: chargingReason,
                     transactionId: transactionId
                 }
         );
