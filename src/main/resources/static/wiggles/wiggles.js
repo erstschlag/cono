@@ -1,10 +1,10 @@
 let currentWiggles = 0;
 let widgetShown = false;
-let riggingAmount = 1;
+let riggingCost = 1;
 
 let audio = new Audio('wiggle.wav');
 audio.loop = false;
-audio.volume = 0.7;
+audio.volume = 0.6;
 
 function changeWiggles(change) {
     currentWiggles += change;
@@ -30,7 +30,7 @@ function onMessageReceived(message) {
 
 function onRigRequestReceived(riggingEvent) {
     if (riggingEvent.consumer === 'wiggle') {
-        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount, 'rigging wiggles',
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingCost, 'rigging wiggles',
                 () => {
                     changeWiggles(1);
                 });
