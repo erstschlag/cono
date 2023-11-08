@@ -15,14 +15,17 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserConfiguration userConfiguration;
     private final MapStructMapper mapstructMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     public UserService(UserRepository userRepository,
+            UserConfiguration userConfiguration, 
             MapStructMapper mapstructMapper,
             ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
+        this.userConfiguration = userConfiguration;
         this.mapstructMapper = mapstructMapper;
         this.applicationEventPublisher = applicationEventPublisher;
     }
@@ -55,8 +58,7 @@ public class UserService {
     public synchronized void chargeUser(ChargeUserDto chargeUser) {
         Optional<UserEntity> oUserEntity = userRepository.findById(chargeUser.getUserId());
         if (oUserEntity.isPresent()) {
-            //TODO: remove the erst-hack
-            if ("erstschlag".equalsIgnoreCase(oUserEntity.get().getName()) || oUserEntity.get().getNuggets() >= chargeUser.getAmount()) {
+            if (userConfiguration.getChannelId().equalsIgnoreCase(oUserEntity.get().getId()) || oUserEntity.get().getNuggets() >= chargeUser.getAmount()) {
                 oUserEntity.get().setNuggets(oUserEntity.get().getNuggets() - chargeUser.getAmount());
                 userRepository.save(oUserEntity.get());
                 applicationEventPublisher.publishEvent(

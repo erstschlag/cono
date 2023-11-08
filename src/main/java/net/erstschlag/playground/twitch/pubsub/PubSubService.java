@@ -77,13 +77,41 @@ public class PubSubService {
         if (eventMessage != null) {
             if (eventMessage.startsWith("!nuggets")) {
                 handleNuggetChatMessage(event);
+                return;
             }
             if (eventMessage.startsWith("!rig")) {
                 handleRigChatMessage(event);
+                return;
             }
+            if (eventMessage.startsWith("!raffle")) {
+                handleRaffleChatMessage(event);
+                return;
+            }
+            if(eventMessage.startsWith("!spend")) {
+                handleSpendChatMessage(event);
+                return;
+            }
+            handleChatMessage(event, eventMessage);
         }
     }
 
+    private void handleChatMessage(ChannelMessageEvent event, String message) {
+        UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+        publishApplicationEvent(new ChatMessageEvent(user, message));
+    }
+
+    private void handleSpendChatMessage(ChannelMessageEvent event) {
+        StringTokenizer strTok = new StringTokenizer(event.getMessage(), " ");
+        if (strTok.countTokens() >= 4) {
+            strTok.nextToken();
+            UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+            String consumer = strTok.nextToken();
+            String command = strTok.nextToken();
+            Integer amount = Integer.valueOf(strTok.nextToken());
+            publishApplicationEvent(new PurchaseEvent(user, consumer, command, amount));
+        }
+    }
+    
     private void handleNuggetChatMessage(ChannelMessageEvent event) {
         UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
         twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently own " + user.getNuggets() + " nuggets!", "", event.getMessageId().get());
@@ -97,12 +125,17 @@ public class PubSubService {
             publishApplicationEvent(new RigEvent(user, strTok.nextToken(), tokensToCommandString(strTok)));
         }
     }
-    
+
+    private void handleRaffleChatMessage(ChannelMessageEvent event) {
+        UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+        publishApplicationEvent(new RaffleEvent(user));
+    }
+
     private String tokensToCommandString(StringTokenizer remainingTokens) {
         StringBuilder commandStrBuff = new StringBuilder();
         boolean isFirstToken = true;
-        while(remainingTokens.hasMoreTokens()) {
-            if(!isFirstToken){
+        while (remainingTokens.hasMoreTokens()) {
+            if (!isFirstToken) {
                 commandStrBuff.append(" ");
             }
             commandStrBuff.append(remainingTokens.nextToken());
@@ -119,5 +152,5 @@ public class PubSubService {
         message = message.replace("?reason", userChargedEvent.getReason());
         twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), message);
     }
-    
+
 }

@@ -1,6 +1,9 @@
 package net.erstschlag.playground.games.board.generic;
 
 import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
+import net.erstschlag.playground.twitch.pubsub.ChatMessageEvent;
+import net.erstschlag.playground.twitch.pubsub.PurchaseEvent;
+import net.erstschlag.playground.twitch.pubsub.RaffleEvent;
 import net.erstschlag.playground.twitch.pubsub.RewardRedeemedEvent;
 import net.erstschlag.playground.twitch.pubsub.RigEvent;
 import net.erstschlag.playground.user.UserAwardedEvent;
@@ -43,5 +46,20 @@ public class GenericBoardService {
     @EventListener
     public void userAwarded(UserAwardedEvent userAwardedEvent) {
         webSocket.convertAndSend("/topic/userAwarded", userAwardedEvent);
+    }
+
+    @EventListener
+    public void raffleEntered(RaffleEvent raffleEvent) {
+        webSocket.convertAndSend("/topic/raffleEntered", raffleEvent);
+    }
+
+    @EventListener
+    public void chatMessageReceived(ChatMessageEvent chatMessageEvent) {
+        webSocket.convertAndSend("/topic/chatMessageReceived", chatMessageEvent);
+    }
+    
+    @EventListener
+    public void purchaseEventReceived(PurchaseEvent purchaseEvent) {
+        webSocket.convertAndSend("/topic/purchaseReceived", purchaseEvent);
     }
 }
