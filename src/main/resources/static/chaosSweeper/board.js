@@ -1,53 +1,47 @@
 let boardCols = 0;
 let boardRows = 0;
-let playerCol = 0;
-let playerRow = 0;
 let playerWidth = 0;
 let playerHeight = 0;
 let boardWidth = 0;
 let boardHeight = 0;
-let winCol = 0;
-let winRow = 0;
 let numberOfVotesForAction = 1;
-let currentNumberOfVotes = 0;
-let votes = [0,0,0,0,0];
 let actionsPerformed = 0;
 let run = true;
-let actionPreviewImage = ['UP.png','DOWN.png','LEFT.png','RIGHT.png','OPEN.png'];
-let voteUpIndex = 0;
-let voteDownIndex = 1;
-let voteLeftIndex = 2;
-let voteRightIndex = 3;
-let voteOpenIndex = 4;
 let maxDistance = 0;
-let riggingAmount = 2;
+let riggingCost = 2;
 
 let autoMoveDelayMs = 10000;
 
-let moves = [
-    ()=>{reposition(0, -1);}, 
-    ()=>{reposition(0, 1);}, 
-    ()=>{reposition(-1, 0);}, 
-    ()=>{reposition(1, 0);}, 
-    ()=>{open();}];
+let movesMap = new Map();
+movesMap.set("UP", {image: 'UP.png', numberOfVotes:0, execute: () => {reposition(0, -1);}});
+movesMap.set("DOWN", {image: 'DOWN.png', numberOfVotes:0, execute: () => {reposition(0, 1);}});
+movesMap.set("LEFT", {image: 'LEFT.png', numberOfVotes:0, execute: () => {reposition(-1, 0);}});
+movesMap.set("RIGHT", {image: 'RIGHT.png', numberOfVotes:0, execute: () => {reposition(1, 0);}});
+movesMap.set("OPEN", {image: 'OPEN.png', numberOfVotes:0, execute: () => {open();}});
 
-function getNewPlayerPosition(playerCurrentPosition, playerMaxPosition, positionModification) {
-    newPosition = playerCurrentPosition + positionModification;
-    while (newPosition < 0) {
-        newPosition += playerMaxPosition;
+let player = {col: 0, row: 0};
+let winner = {col: 0, row: 0};
+
+function updatePlayerPosition(colDelta, rowDelta) {
+    player.col = calculateWrappedPosition(player.col + colDelta, boardCols);
+    player.row = calculateWrappedPosition(player.row + rowDelta, boardRows);
+}
+
+function calculateWrappedPosition(position, maxPosition) {
+    while (position < 0) {
+        position += maxPosition;
     }
-    while (newPosition >= playerMaxPosition) {
-        newPosition -= playerMaxPosition;
+    while (position >= maxPosition) {
+        position -= maxPosition;
     }
-    return newPosition;
-};
+    return position;
+}
 
 function reposition(colDelta, rowDelta) {
-    playerCol = getNewPlayerPosition(playerCol, boardCols, colDelta);
-    playerRow = getNewPlayerPosition(playerRow, boardRows, rowDelta);
-    document.getElementById('player').style.left = (boardWidth / boardCols * playerCol);
-    document.getElementById('player').style.top = (boardHeight / boardRows * playerRow);
-};
+    updatePlayerPosition(colDelta, rowDelta);
+    document.getElementById('player').style.left = (boardWidth / boardCols * player.col);
+    document.getElementById('player').style.top = (boardHeight / boardRows * player.row);
+}
 
 let audioWin = new Audio('WIN.wav');
 audioWin.loop = false;
@@ -57,18 +51,18 @@ audioLoss.loop = false;
 audioLoss.volume = 0.3;
 
 function open() {
-    _open(playerCol, playerRow);
-};
+    _open(player.col, player.row);
+}
 
-function _open(openCol,openRow) {
-    if(isWinner(openCol,openRow)) {
+function _open(openCol, openRow) {
+    if (isWinner(openCol, openRow)) {
         run = false;
         audioWin.play();
         openHtmlTile(openCol, openRow, "yellow");
-    }else {
+    } else {
         audioLoss.play();
-        distance = Math.round(Math.sqrt((Math.pow(winCol-openCol,2) + Math.pow(winRow-openRow,2))));
-        redValue = Math.round(255/maxDistance * distance);
+        distance = Math.round(Math.sqrt((Math.pow(winner.col - openCol, 2) + Math.pow(winner.row - openRow, 2))));
+        redValue = Math.round(255 / maxDistance * distance);
         greenValue = 255 - redValue;
         openHtmlTile(openCol, openRow, "rgb(" + redValue + "," + greenValue + ",0)");
     }
@@ -80,16 +74,16 @@ function openHtmlTile(openCol, openRow, colorStr) {
     element.dataset.opened = true;
 }
 
-function isWinner(checkCol,checkRow) {
-    return winCol === checkCol && winRow === checkRow;
+function isWinner(checkCol, checkRow) {
+    return winner.col === checkCol && winner.row === checkRow;
 }
 
-function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveDelay) {
+function init(cols, rows, winnerCol, winnerRow, priceId, numVotesForAction, autoMoveDelay) {
     boardCols = cols;
     boardRows = rows;
-    maxDistance = Math.round(Math.sqrt((Math.pow(boardCols-1,2) + Math.pow(boardRows-1,2))));
-    winCol = winnerCol;
-    winRow = winnerRow;
+    maxDistance = Math.round(Math.sqrt((Math.pow(boardCols - 1, 2) + Math.pow(boardRows - 1, 2))));
+    winner.col = winnerCol;
+    winner.row = winnerRow;
     numberOfVotesForAction = numVotesForAction;
     autoMoveDelayMs = autoMoveDelay;
     playerStyle = getComputedStyle(document.getElementById('player'));
@@ -99,54 +93,63 @@ function init(cols,rows,winnerCol,winnerRow,priceId,numVotesForAction, autoMoveD
     playerHeight = document.getElementById('player').offsetHeight + playerMarginHeight;
     boardWidth = document.getElementById('board').offsetWidth;
     boardHeight = document.getElementById('board').offsetHeight;
-    
+
     document.getElementById("board").style.backgroundImage = "url('https://image.eveonline.com/Type/" + priceId + "_1024.png')";
-    $( "#board" ).empty();
+    $("#board").empty();
     letterArray = "ABCDEFG".split("");
     for (currentRow = 0; currentRow < rows; currentRow++) {
         for (currentCol = 0; currentCol < cols; currentCol++) {
-            $("#board").append("<div data-opened='false' class='tile' id='t_" + currentCol + "_" + currentRow + 
+            $("#board").append("<div data-opened='false' class='tile' id='t_" + currentCol + "_" + currentRow +
                     "' style='top:" + currentRow * 100 + "px;left:" + currentCol * 100 + "px'>" +
-            letterArray[currentCol] + (currentRow + 1) + "</div>");
+                    letterArray[currentCol] + (currentRow + 1) + "</div>");
         }
     }
-    playerCol = Math.floor(Math.random() * cols);
-    playerRow = Math.floor(Math.random() * rows);
     actionsPerformed = 0;
     document.getElementById('numberOfActions').innerHTML = '' + actionsPerformed;
     run = true;
-    reposition(0,0);
-};
+    reposition(Math.floor(Math.random() * cols), Math.floor(Math.random() * rows));
+}
 
 function evaluateWinningMove() {
-    winningAction = 0;
-    numberOfVotesForMostVotedAction = 0;
-    for(i=0;i<votes.length;i++) {
-        if(votes[i] > numberOfVotesForMostVotedAction) {
-            numberOfVotesForMostVotedAction = votes[i];
-            winningAction = i;
+    winningMove = movesMap.get("OPEN");
+    movesMap.forEach((move, key) => {
+        if (move.numberOfVotes > winningMove.numberOfVotes) {
+            winningMove = move;
         }
-    }
-    return winningAction;
-};
+    });
+    return winningMove;
+}
 
 function executeMove(winningMove) {
     clearCooldown();
     document.getElementById('player').style.backgroundImage = "none";
     actionsPerformed++;
     document.getElementById('numberOfActions').innerHTML = '' + actionsPerformed;
-    moves[winningMove]();
-    currentNumberOfVotes = 0;
-    votes = [0,0,0,0,0];
-};
+    winningMove.execute();
+    clearVotes();
+}
+
+function clearVotes() {
+    movesMap.forEach((move, key) => {
+        move.numberOfVotes = 0;
+    });
+}
+
+function getCurrentNumberOfVotes() {
+    totalCurrentNumberOfVotes = 0;
+    movesMap.forEach((move, key) => {
+        totalCurrentNumberOfVotes += move.numberOfVotes;
+    });
+    return totalCurrentNumberOfVotes;
+}
 
 function evaluateAction() {
     winningMove = evaluateWinningMove();
-    document.getElementById('player').style.backgroundImage = "url('" + actionPreviewImage[winningMove] + "')";
-    if (currentNumberOfVotes >= numberOfVotesForAction) {
+    document.getElementById('player').style.backgroundImage = "url('" + winningMove.image + "')";
+    if (getCurrentNumberOfVotes() >= numberOfVotesForAction) {
         executeMove(winningMove);
     }
-};
+}
 
 const UPDATE_INTERVAL_MS = 1000 / 60; // Update 60 times per second (60 FPS)
 
@@ -159,53 +162,39 @@ function clearCooldown() {
 }
 
 function activateCooldown() {
-  playerCooldown = document.getElementById('playerCooldown');
-  playerCooldown.style = '--time-left: 100%';
-  let time = autoMoveDelayMs - UPDATE_INTERVAL_MS;
-  // Update remaining cooldown
-  intervalID = setInterval(() => {
-    // Pass remaining time in percentage to CSS
-    const passedTime = time / autoMoveDelayMs * 100;
-    playerCooldown.style = `--time-left: ${passedTime}%`;
-    time -= UPDATE_INTERVAL_MS;
-    // Stop timer when there is no time left
-    if(time < 0) {
-      executeMove(evaluateWinningMove());
-    }
-  }, UPDATE_INTERVAL_MS);
-};
+    playerCooldown = document.getElementById('playerCooldown');
+    playerCooldown.style = '--time-left: 100%';
+    let time = autoMoveDelayMs - UPDATE_INTERVAL_MS;
+    // Update remaining cooldown
+    intervalID = setInterval(() => {
+        // Pass remaining time in percentage to CSS
+        const passedTime = time / autoMoveDelayMs * 100;
+        playerCooldown.style = `--time-left: ${passedTime}%`;
+        time -= UPDATE_INTERVAL_MS;
+        // Stop timer when there is no time left
+        if (time < 0) {
+            executeMove(evaluateWinningMove());
+        }
+    }, UPDATE_INTERVAL_MS);
+}
 
-function vote(actionIndex) {
-    if(currentNumberOfVotes === 0){
+function vote(move) {
+    if (getCurrentNumberOfVotes() === 0) {
         activateCooldown();
     }
-    votes[actionIndex]++;
-    currentNumberOfVotes++;
+    move.numberOfVotes++;
     evaluateAction();
-};
+}
 
 function voteForAction(action) {
     if (!run) {
         return;
     }
-    switch (action) {
-        case "UP":
-            vote(voteUpIndex);
-            break;
-        case "DOWN":
-            vote(voteDownIndex);
-            break;
-        case "LEFT":
-            vote(voteLeftIndex);
-            break;
-        case "RIGHT":
-            vote(voteRightIndex);
-            break;
-        case "OPEN":
-            vote(voteOpenIndex);
-            break;
+    move = movesMap.get(action);
+    if (move !== undefined) {
+        vote(move);
     }
-};
+}
 
 function onCommandReceived(commandObj) {
     if (commandObj.cmd === 'initChaosBoard') {
@@ -226,12 +215,11 @@ function isOpened(checkCol, checkRow) {
 
 function revealRandomField() {
     randomFieldFound = false;
-    maxFields = boardCols * boardRows;
     while (!randomFieldFound && run) {
         //TODO: will loop indefinitely if only the winner is unopened and this method is called. 
         randomCol = Math.floor(Math.random() * boardCols);
         randomRow = Math.floor(Math.random() * boardRows);
-        if(!isWinner(randomCol, randomRow) && !isOpened(randomCol, randomRow)){
+        if (!isWinner(randomCol, randomRow) && !isOpened(randomCol, randomRow)) {
             randomFieldFound = true;
             _open(randomCol, randomRow);
         }
@@ -240,13 +228,13 @@ function revealRandomField() {
 
 function onRigRequestReceived(riggingEvent) {
     if (riggingEvent.consumer === 'sweeper') {
-        if(!run){
+        if (!run) {
             return;
         }
-        Backend.connection.chargeUser(riggingEvent.user.id, riggingAmount, 'rigging ChaosSweeper',
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingCost, 'rigging ChaosSweeper',
                 () => {
-                    revealRandomField();
-                });
+            revealRandomField();
+        });
     }
 }
 
