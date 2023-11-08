@@ -1,3 +1,4 @@
+let TOP_X = 5;
 let connection = null;
 
 function displayUsers(users, filteredColNames, showHeader) {
@@ -42,17 +43,22 @@ function displayUsers(users, filteredColNames, showHeader) {
     divShowData.appendChild(table);
 }
 
-function retrieveTopTenNuggetHolders() {
-    connection.sendStr("/app/topNuggetHolders", 5);
+function retrieveTopXNuggetHolders() {
+    connection.sendStr("/app/topNuggetHolders", TOP_X);
 }
 
 function onTopNuggetHoldersReceived(data) {
-    displayUsers(data.content, ['id','restBits'], false);
+    displayUsers(data.content, ['id', 'restBits'], false);
+}
+
+function onUserAwardedReceived(data) {
+    retrieveTopXNuggetHolders();
 }
 
 function onBackendConnect(connection) {
     connection.subscribe('/topic/topNuggetHolders', onTopNuggetHoldersReceived);
-    retrieveTopTenNuggetHolders();
+    connection.subscribe('/topic/userAwarded', onUserAwardedReceived);
+    retrieveTopXNuggetHolders();
 }
 
 $(function () {
