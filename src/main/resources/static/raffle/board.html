@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Raffle board</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="svg.js"></script>
+        <script src="../webjars/jquery/jquery.min.js"></script>
+        <script src="../webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="../webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="..\utils\Backend.js"></script>
+        <script src="board.js"></script>
+        <style>
+            *{  
+                font-family: 'Eve Sans Neue', sans-serif;
+            }
+            html,
+            body {
+                margin: 0;
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body onload="launch()">
+    </body>
+
+</html>

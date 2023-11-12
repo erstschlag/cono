@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>Channel player control panel</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="../webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../webjars/jquery/jquery.min.js"></script>
+        <script src="../webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="../webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="..\utils\Backend.js"></script>
+        <script src="boardCP.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+            .actionButton {
+                height: 50px;
+                width: 50px;
+                background-color: black;
+                background-size: 90% auto;
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
+        </style>
+    </head>
+    <body>
+        <form>
+            <button id="launch">launch</button>
+            <button id="stopRaffleEntries">stopRaffleEntries</button>
+            <button id="raffle">raffle</button>
+            <button id="revealWinner">revealWinner</button>
+            <button id="addTestParticipant">addTestParticipant</button>
+            
+            <br>
+            Ship png:<input id="shipPng" type="text" value="Retribution.png">
+            Number of winners:<input id="numberOfWinners" type="number" value="1">
+            <button id="initialize">initialize</button>
+            <br>
+            Winner Name:<input id="winnerName" type="text" value="viewer1">
+            <button id="stopWinnerThreat">stopWinnerThreat</button>
+        </form>
+    </body>
+</html>
