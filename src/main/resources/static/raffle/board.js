@@ -1,5 +1,5 @@
 let numberOfWinners = 1;
-let shipImage = 'Retribution.png';
+let shipImage = 'Avatar.png';
 let textXOffset = 90;
 let textYOffset = 30;
 let shipSize = 200;
@@ -7,7 +7,7 @@ let bombSize = 150;
 
 let state = {};
 
-var resetState = function() {
+var resetState = function () {
     if (state.draw) {
         state.draw.remove();
     }
@@ -29,7 +29,7 @@ var init = function (shipImage_, numberOfWinners_) {
 var launch = function () {
     resetState();
     state.draw = SVG().addTo('body').size(3840, 1080);
-    state.background = state.draw.image('backgrounds/' + randomNumber(1, 27) + '.png').size(3840, 1080, 3840, 1080).move(-1920, 0);
+    state.background = state.draw.image('backgrounds/' + randomNumber(1, 31) + '.png').size(3840, 1080, 3840, 1080).move(-1920, 0);
     state.numberOfParticipantsText = state.draw.text(state.numberOfParticipants).font({
         size: 50
         , anchor: 'middle'
@@ -42,17 +42,21 @@ var addParticipant = function (name) {
         state.numberOfParticipants++;
         randomX = randomNumber(0, 1620);
         randomY = randomNumber(0, 780);
-        participant = {
-            name: name,
-            ship: state.draw.image('ships/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, randomY),
-            text: state.draw.text(name).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.9))'}).move(1920 + textXOffset, randomY + textYOffset),
-            bomb: state.draw.image('nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(randomX + bombSize), randomY + (shipSize - bombSize) / 2)
-        };
+        participant = createParticipant(name, randomX, randomY);
         state.participants.set(name, participant);
         participant.ship.animate(6000, 0, 'now').ease('>').move(randomX, randomY);
         participant.text.animate(6000, 0, 'now').ease('>').move(randomX + textXOffset, randomY + textYOffset);
         state.numberOfParticipantsText.plain(state.numberOfParticipants);
     }
+};
+
+var createParticipant = function (name, x, y) {
+    return {
+        name: name,
+        ship: state.draw.image('ships/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, randomY),
+        text: state.draw.text(name).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.9))'}).move(1920 + textXOffset, randomY + textYOffset),
+        bomb: state.draw.image('nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(randomX + bombSize), randomY + (shipSize - bombSize) / 2)
+    };
 };
 
 var play = function () {
@@ -64,9 +68,7 @@ var play = function () {
         });
 
         for (i = 0; i < numberOfWinners; i++) {
-            currentRandomWinner = Array.from(state.participants.entries())[Math.floor(Math.random() * state.participants.size)][1];
-            state.winners.set(currentRandomWinner.name, currentRandomWinner);
-            state.participants.delete(currentRandomWinner.name);
+            selectWinner();
         }
 
         let delay = 0;
@@ -80,6 +82,12 @@ var play = function () {
             delay += randomNumber(50, 150);
         });
     }
+};
+
+var selectWinner = function () {
+    currentRandomWinner = Array.from(state.participants.entries())[Math.floor(Math.random() * state.participants.size)][1];
+    state.winners.set(currentRandomWinner.name, currentRandomWinner);
+    state.participants.delete(currentRandomWinner.name);
 };
 
 var revealWinner = function () {
@@ -109,6 +117,17 @@ var revealWinner = function () {
     }
 };
 
+var redraw = function () {
+    state.winners.clear();
+    state.numberOfParticipants++;
+    state.numberOfParticipantsText.plain(state.numberOfParticipants);
+    selectWinner();
+    state.winners.forEach((winner) => {
+        state.winners.set(winner.name, createParticipant(winner.name, 0, 0));
+    });
+    revealWinner();
+};
+
 var stopWinnerThreat = function (winner) {
     let laser = state.draw.image('laser.png').css({filter: 'drop-shadow(12px 0px 7px rgba(200, 100, 50, 0.5))'}).size(150, 150).move(winner.ship.x(), winner.ship.y() + (shipSize - bombSize) / 2);
     let audioLaser = new Audio('laser.mp3');
@@ -127,13 +146,13 @@ var stopWinnerThreat = function (winner) {
     });
 };
 
-function uuidv4() { 
+function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-    .replace(/[xy]/g, function (c) { 
-        const r = Math.random() * 16 | 0,  
-            v = c === 'x' ? r : (r & 0x3 | 0x8); 
-        return v.toString(16); 
-    }); 
+            .replace(/[xy]/g, function (c) {
+                const r = Math.random() * 16 | 0,
+                        v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
 }
 
 var explode = function (participant) {
@@ -172,8 +191,11 @@ function onCommandReceived(commandObj) {
     if (commandObj.cmd === 'revealWinner') {
         revealWinner();
     }
+    if (commandObj.cmd === 'redraw') {
+        redraw();
+    }
     if (commandObj.cmd === 'stopWinnerThreat') {
-        if(state.winners.has(commandObj.winnerName)) {
+        if (state.winners.has(commandObj.winnerName)) {
             stopWinnerThreat(state.winners.get(commandObj.winnerName));
         }
     }

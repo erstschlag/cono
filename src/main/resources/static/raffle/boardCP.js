@@ -32,6 +32,12 @@ function revealWinner() {
     });
 };
 
+function redraw() {
+    send({
+        cmd: 'redraw'
+    });
+};
+
 function addTestParticipant() {
     send({
         cmd: 'addTestParticipant',
@@ -62,5 +68,6 @@ $(function () {
     $( "#revealWinner" ).click(function() { revealWinner(); });
     $( "#addTestParticipant" ).click(function() { addTestParticipant(); });
     $( "#stopWinnerThreat" ).click(function() { stopWinnerThreat(); });
+    $( "#redraw" ).click(function() { redraw(); });
     
 });
