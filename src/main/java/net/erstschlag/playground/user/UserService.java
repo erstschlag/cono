@@ -111,6 +111,10 @@ public class UserService {
     private synchronized UserEntity retrieveOrCreateUser(String userId, String userName) {
         Optional<UserEntity> oUserEntity = userRepository.findById(userId);
         if (oUserEntity.isPresent()) {
+            if (!userName.equals(oUserEntity.get().getName())) {
+                oUserEntity.get().setName(userName);
+                userRepository.save(oUserEntity.get());
+            }
             return oUserEntity.get();
         } else {
             return userRepository.save(new UserEntity(userId, userName, 0, 0));
