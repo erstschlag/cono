@@ -1,5 +1,7 @@
 package net.erstschlag.playground.games.board.generic;
 
+import java.util.HashMap;
+import net.erstschlag.playground.PlaygroundEvent;
 import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
 import net.erstschlag.playground.twitch.pubsub.ChatMessageEvent;
 import net.erstschlag.playground.twitch.pubsub.PurchaseEvent;
@@ -17,49 +19,26 @@ import org.springframework.stereotype.Service;
 public class GenericBoardService {
 
     private final SimpMessagingTemplate webSocket;
+    private final HashMap<Class, String> classTopicLookup = new HashMap<>();
 
     @Autowired
     public GenericBoardService(SimpMessagingTemplate webSocket) {
         this.webSocket = webSocket;
+        classTopicLookup.put(RewardRedeemedEvent.class, "/topic/twitchRewardRedeemed");
+        classTopicLookup.put(ChannelBitsEvent.class,"/topic/twitchBitsReceived");
+        classTopicLookup.put(RigEvent.class,"/topic/riggingRequested");
+        classTopicLookup.put(UserChargedEvent.class,"/topic/userCharged");
+        classTopicLookup.put(UserAwardedEvent.class,"/topic/userAwarded");
+        classTopicLookup.put(RaffleEvent.class,"/topic/raffleEntered");
+        classTopicLookup.put(ChatMessageEvent.class,"/topic/chatMessageReceived");
+        classTopicLookup.put(PurchaseEvent.class,"/topic/purchaseReceived");
     }
 
     @EventListener
-    public void rewardRedeemed(RewardRedeemedEvent twitchEvent) {
-        webSocket.convertAndSend("/topic/twitchRewardRedeemed", twitchEvent);
-    }
-
-    @EventListener
-    public void bitsReceived(ChannelBitsEvent twitchEvent) {
-        webSocket.convertAndSend("/topic/twitchBitsReceived", twitchEvent);
-    }
-
-    @EventListener
-    public void riggingRequested(RigEvent rigEvent) {
-        webSocket.convertAndSend("/topic/riggingRequested", rigEvent);
-    }
-
-    @EventListener
-    public void userCharged(UserChargedEvent userChargedEvent) {
-        webSocket.convertAndSend("/topic/userCharged", userChargedEvent);
-    }
-
-    @EventListener
-    public void userAwarded(UserAwardedEvent userAwardedEvent) {
-        webSocket.convertAndSend("/topic/userAwarded", userAwardedEvent);
-    }
-
-    @EventListener
-    public void raffleEntered(RaffleEvent raffleEvent) {
-        webSocket.convertAndSend("/topic/raffleEntered", raffleEvent);
-    }
-
-    @EventListener
-    public void chatMessageReceived(ChatMessageEvent chatMessageEvent) {
-        webSocket.convertAndSend("/topic/chatMessageReceived", chatMessageEvent);
-    }
-    
-    @EventListener
-    public void purchaseEventReceived(PurchaseEvent purchaseEvent) {
-        webSocket.convertAndSend("/topic/purchaseReceived", purchaseEvent);
+    public void eventReceived(PlaygroundEvent<?> event) {
+        String topic = classTopicLookup.get(event.getClass());
+        if (topic != null) {
+            webSocket.convertAndSend(topic, event);
+        }
     }
 }
