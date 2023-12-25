@@ -40,14 +40,4 @@ public class UserController {
     public void deleteUser(String userId) {
         userService.deleteUser(userId);
     }
-
-    @MessageMapping("/users/registerBits")
-    public void registerBits(UserDto user) {
-        userService.registerBits(user.getId(), user.getName(), user.getRestBits());
-    }
-
-    @MessageMapping("/users/registerGiftedSub")
-    public void registerGiftedSub(UserDto user) {
-        userService.registerGiftedSub(user.getId(), user.getName(), true, 1);
-    }
 }
