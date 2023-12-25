@@ -1,5 +1,6 @@
 package net.erstschlag.playground.user.client;
 
+import java.util.stream.Stream;
 import net.erstschlag.playground.user.ChargeUserDto;
 import net.erstschlag.playground.user.UserDto;
 import net.erstschlag.playground.user.UserService;
@@ -21,7 +22,7 @@ public class UserController {
 
     @MessageMapping("/users")
     @SendTo("/topic/users")
-    public Page<UserDto> getUsers(String filter) {
+    public Stream<UserDto> getUsers(String filter) {
         return userService.getUsers();
     }
     

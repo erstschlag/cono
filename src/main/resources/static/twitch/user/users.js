@@ -48,7 +48,7 @@ function connect() {
     stompClient = Stomp.over(new SockJS('/generic-ws'));
     stompClient.connect({}, function (frame) {
         stompClient.subscribe('/topic/users', function (object) {
-            displayUsers(JSON.parse(object.body).content);
+            displayUsers(JSON.parse(object.body));
         });
     });
 }

@@ -1,6 +1,6 @@
 package net.erstschlag.playground.user;
 
-import java.util.List;
+import java.util.stream.Stream;
 import net.erstschlag.playground.user.repository.UserEntity;
 import org.mapstruct.Mapper;
 
@@ -9,5 +9,5 @@ public interface MapStructMapper {
 
     UserDto userEntityToUserDto(UserEntity userEntity);
 
-    List<UserDto> userEntitiesToUserDtos(List<UserEntity> userEntities);
+    Stream<UserDto> userEntitiesToUserDtos(Stream<UserEntity> userEntities);
 }

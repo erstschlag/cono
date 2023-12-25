@@ -1,5 +1,6 @@
 package net.erstschlag.playground.user.repository;
 
+import java.util.Collection;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends PagingAndSortingRepository<UserEntity, String> {
     Page<UserEntity> findAllByOrderByNuggetsDesc(Pageable pageable);
     UserEntity save(UserEntity entity);
-    Page<UserEntity> findAll();
+    Collection<UserEntity> findAll();
     void deleteById(String id);
     Optional<UserEntity> findById(String id);
 }

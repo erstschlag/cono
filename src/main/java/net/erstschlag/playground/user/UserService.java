@@ -1,6 +1,7 @@
 package net.erstschlag.playground.user;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
 import net.erstschlag.playground.twitch.pubsub.ChannelSubscribeEvent;
 import net.erstschlag.playground.user.repository.UserEntity;
@@ -28,8 +29,8 @@ public class UserService {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public Page<UserDto> getUsers() {
-        return userRepository.findAll(Pageable.unpaged()).map(mapstructMapper::userEntityToUserDto);
+    public Stream<UserDto> getUsers() {
+        return userRepository.findAll().stream().map(mapstructMapper::userEntityToUserDto);
     }
 
     public Page<UserDto> getTopNuggetHolders(int limit) {
