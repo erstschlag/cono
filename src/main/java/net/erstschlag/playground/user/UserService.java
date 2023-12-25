@@ -5,7 +5,6 @@ import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
 import net.erstschlag.playground.twitch.pubsub.ChannelSubscribeEvent;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +18,8 @@ public class UserService {
     private final MapStructMapper mapstructMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    @Autowired
     public UserService(UserRepository userRepository,
-            UserConfiguration userConfiguration, 
+            UserConfiguration userConfiguration,
             MapStructMapper mapstructMapper,
             ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
@@ -46,9 +44,8 @@ public class UserService {
         Optional<UserEntity> oUserEntity = userRepository.findById(userId);
         if (oUserEntity.isPresent()) {
             return Optional.of(mapstructMapper.userEntityToUserDto(oUserEntity.get()));
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     public void deleteUser(String userId) {
@@ -57,45 +54,37 @@ public class UserService {
 
     public synchronized void chargeUser(ChargeUserDto chargeUser) {
         Optional<UserEntity> oUserEntity = userRepository.findById(chargeUser.getUserId());
-        if (oUserEntity.isPresent()) {
-            if (userConfiguration.getChannelId().equalsIgnoreCase(oUserEntity.get().getId()) || oUserEntity.get().getNuggets() >= chargeUser.getAmount()) {
-                oUserEntity.get().setNuggets(oUserEntity.get().getNuggets() - chargeUser.getAmount());
-                userRepository.save(oUserEntity.get());
-                applicationEventPublisher.publishEvent(
-                        new UserChargedEvent(
-                                mapstructMapper.userEntityToUserDto(oUserEntity.get()),
-                                chargeUser.getTransactionId(),
-                                chargeUser.getAmount(),
-                                chargeUser.getReason()
-                        ));
-            }
+        if (!oUserEntity.isPresent() || !hasEnoughNuggets(oUserEntity.get(), chargeUser)) {
+            return;
         }
+        oUserEntity.get().setNuggets(oUserEntity.get().getNuggets() - chargeUser.getAmount());
+        userRepository.save(oUserEntity.get());
+        applicationEventPublisher.publishEvent(
+                new UserChargedEvent(
+                        mapstructMapper.userEntityToUserDto(oUserEntity.get()),
+                        chargeUser.getTransactionId(),
+                        chargeUser.getAmount(),
+                        chargeUser.getReason()
+                ));
+    }
+
+    private boolean hasEnoughNuggets(UserEntity user, ChargeUserDto chargeUser) {
+        return userConfiguration.getChannelId().equalsIgnoreCase(user.getId())
+                || user.getNuggets() >= chargeUser.getAmount();
     }
 
     public void handleBitsEvent(ChannelBitsEvent event) {
-        registerBits(event.getUser().get().getId(), event.getUser().get().getName(), event.getBitsUsed());
-    }
-
-    public void handleSubEvent(ChannelSubscribeEvent event) {
-        registerGiftedSub(
-                event.getUser().get().getId(),
-                event.getUser().get().getName(),
-                event.isGift(),
-                event.getSubTier().getTier());
-    }
-
-    public final void registerBits(String userId, String userName, int numberOfBits) {
-        UserEntity uE = retrieveOrCreateUser(userId, userName);
-        int bitsUsed = numberOfBits + uE.getRestBits();
-        uE.setRestBits(bitsUsed % 100);
+        UserEntity uE = retrieveOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+        int bitsUsed = event.getBitsUsed() + uE.getRestBits();
+        uE.setRestBits(bitsUsed % 100);//[TODO: this is dumb]
         bitsUsed -= uE.getRestBits();
         awardUser(uE, bitsUsed / 100);
     }
 
-    public final void registerGiftedSub(String userId, String userName, boolean isGift, int tier) {
-        if (tier > 1 || isGift) {
-            UserEntity uE = retrieveOrCreateUser(userId, userName);
-            awardUser(uE, 3 * tier);
+    public void handleSubEvent(ChannelSubscribeEvent event) {
+        if (event.getSubTier().getTier() > 1 || event.isGift()) {
+            UserEntity uE = retrieveOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+            awardUser(uE, 3 * event.getSubTier().getTier());
         }
     }
 
