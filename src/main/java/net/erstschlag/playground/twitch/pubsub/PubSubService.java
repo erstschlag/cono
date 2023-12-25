@@ -8,7 +8,6 @@ import java.util.StringTokenizer;
 import net.erstschlag.playground.user.UserChargedEvent;
 import net.erstschlag.playground.user.UserDto;
 import net.erstschlag.playground.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ public class PubSubService {
     private final Twitch4JEventConvertor twitch4JEventConvertor;
     private TwitchClient twitchClient;
 
-    @Autowired
     public PubSubService(ApplicationEventPublisher applicationEventPublisher, PubSubConfiguration pubSubConfiguration, UserService userService, Twitch4JEventConvertor twitch4JEventConvertor) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.pubSubConfiguration = pubSubConfiguration;
