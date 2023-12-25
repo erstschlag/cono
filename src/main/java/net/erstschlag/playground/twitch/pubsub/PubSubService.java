@@ -6,6 +6,7 @@ import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import java.util.StringTokenizer;
 import net.erstschlag.playground.user.UserChargedEvent;
+import net.erstschlag.playground.user.UserCreditsService;
 import net.erstschlag.playground.user.UserDto;
 import net.erstschlag.playground.user.UserService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,13 +19,19 @@ public class PubSubService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final PubSubConfiguration pubSubConfiguration;
     private final UserService userService;
+    private final UserCreditsService userCreditsService;
     private final Twitch4JEventConvertor twitch4JEventConvertor;
     private TwitchClient twitchClient;
 
-    public PubSubService(ApplicationEventPublisher applicationEventPublisher, PubSubConfiguration pubSubConfiguration, UserService userService, Twitch4JEventConvertor twitch4JEventConvertor) {
+    public PubSubService(ApplicationEventPublisher applicationEventPublisher,
+            PubSubConfiguration pubSubConfiguration,
+            UserService userService,
+            UserCreditsService userCreditsService,
+            Twitch4JEventConvertor twitch4JEventConvertor) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.pubSubConfiguration = pubSubConfiguration;
         this.userService = userService;
+        this.userCreditsService = userCreditsService;
         this.twitch4JEventConvertor = twitch4JEventConvertor;
     }
 
@@ -62,12 +69,12 @@ public class PubSubService {
 
     private void subscriptionReceived(ChannelSubscribeEvent event) {
         if (event.getUser().isPresent()) {
-            userService.handleSubEvent(event);
+            userCreditsService.handleSubEvent(event);
         }
     }
 
     private void bitsReceived(ChannelBitsEvent event) {
-        userService.handleBitsEvent(event);
+        userCreditsService.handleBitsEvent(event);
     }
 
     private void chatMessageReceived(ChannelMessageEvent event) {
@@ -85,7 +92,7 @@ public class PubSubService {
                 handleRaffleChatMessage(event);
                 return;
             }
-            if(eventMessage.startsWith("!spend")) {
+            if (eventMessage.startsWith("!spend")) {
                 handleSpendChatMessage(event);
                 return;
             }
@@ -109,7 +116,7 @@ public class PubSubService {
             publishApplicationEvent(new PurchaseEvent(user, consumer, command, amount));
         }
     }
-    
+
     private void handleNuggetChatMessage(ChannelMessageEvent event) {
         UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
         twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently own " + user.getNuggets() + " nuggets!", "", event.getMessageId().get());
