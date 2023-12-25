@@ -16,21 +16,16 @@ public class UserEntity {
 
     @Basic
     @Column(name = "nuggets", unique = false, nullable = false)
-    private int nuggets;
-
-    @Basic
-    @Column(name = "restBits", unique = false, nullable = false)
-    private int restBits;
+    private float nuggets;
 
     public UserEntity() {
 
     }
 
-    public UserEntity(String id, String name, int nuggets, int restBits) {
+    public UserEntity(String id, String name, float nuggets) {
         this.id = id;
         this.name = name;
         this.nuggets = nuggets;
-        this.restBits = restBits;
     }
 
     public String getId() {
@@ -49,20 +44,12 @@ public class UserEntity {
         this.name = name;
     }
 
-    public int getNuggets() {
+    public float getNuggets() {
         return nuggets;
     }
 
-    public void setNuggets(int nuggets) {
+    public void setNuggets(float nuggets) {
         this.nuggets = nuggets;
-    }
-
-    public int getRestBits() {
-        return restBits;
-    }
-
-    public void setRestBits(int restBits) {
-        this.restBits = restBits;
     }
 
 }
