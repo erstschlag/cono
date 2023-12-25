@@ -3,15 +3,13 @@ package net.erstschlag.playground.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserDto {
-    
+
     @JsonProperty("id")
     private String id;
     @JsonProperty("name")
     private String name;
     @JsonProperty("nuggets")
-    private int nuggets;
-    @JsonProperty("restBits")
-    private int restBits;
+    private float nuggets;
 
     public String getId() {
         return id;
@@ -29,20 +27,12 @@ public class UserDto {
         this.name = name;
     }
 
-    public int getNuggets() {
+    public float getNuggets() {
         return nuggets;
     }
 
-    public void setNuggets(int nuggets) {
+    public void setNuggets(float nuggets) {
         this.nuggets = nuggets;
-    }
-
-    public int getRestBits() {
-        return restBits;
-    }
-
-    public void setRestBits(int restBits) {
-        this.restBits = restBits;
     }
 
 }

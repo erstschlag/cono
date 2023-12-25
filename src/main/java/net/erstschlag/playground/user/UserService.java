@@ -75,10 +75,7 @@ public class UserService {
 
     public void handleBitsEvent(ChannelBitsEvent event) {
         UserEntity uE = retrieveOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-        int bitsUsed = event.getBitsUsed() + uE.getRestBits();
-        uE.setRestBits(bitsUsed % 100);//[TODO: this is dumb]
-        bitsUsed -= uE.getRestBits();
-        awardUser(uE, bitsUsed / 100);
+        awardUser(uE, event.getBitsUsed() / 100);
     }
 
     public void handleSubEvent(ChannelSubscribeEvent event) {
@@ -106,7 +103,7 @@ public class UserService {
             }
             return oUserEntity.get();
         } else {
-            return userRepository.save(new UserEntity(userId, userName, 0, 0));
+            return userRepository.save(new UserEntity(userId, userName, 0));
         }
     }
 }
