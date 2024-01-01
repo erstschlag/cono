@@ -1,5 +1,5 @@
 let numberOfWinners = 1;
-let shipImage = 'Avatar.png';
+let globalShipImage = 'Widow.png';
 let textXOffset = 90;
 let textYOffset = 30;
 let shipSize = 200;
@@ -22,7 +22,7 @@ var resetState = function () {
 };
 
 var init = function (shipImage_, numberOfWinners_) {
-    shipImage = shipImage_;
+    globalShipImage = shipImage_;
     numberOfWinners = numberOfWinners_;
 };
 
@@ -37,20 +37,40 @@ var launch = function () {
     }).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.5))'}).move(1850, 20);
 };
 
-var addParticipant = function (name) {
+var requestAddParticipant = function(name, userId, availableNuggets, requestedShipName) {
     if (state.isRunning && !state.participants.has(name)) {
-        state.numberOfParticipants++;
-        randomX = randomNumber(0, 1620);
-        randomY = randomNumber(0, 780);
-        participant = createParticipant(name, randomX, randomY);
-        state.participants.set(name, participant);
-        participant.ship.animate(6000, 0, 'now').ease('>').move(randomX, randomY);
-        participant.text.animate(6000, 0, 'now').ease('>').move(randomX + textXOffset, randomY + textYOffset);
-        state.numberOfParticipantsText.plain(state.numberOfParticipants);
+        if(availableNuggets >=1 && requestedShipName !== null && fileExists('ships/' + requestedShipName + '.png')) {
+            Backend.connection.chargeUser(userId, 1, 'customizing raffle ship',
+                () => {
+                    addParticipant(name, requestedShipName + '.png');
+                });
+        } else {
+            addParticipant(name, globalShipImage);
+        }
     }
 };
 
-var createParticipant = function (name, x, y) {
+var fileExists = function (fileURI) {
+    var http = new XMLHttpRequest();
+
+    http.open('HEAD', fileURI, false);
+    http.send();
+
+    return http.status !== 404;
+};
+
+var addParticipant = function (name, shipImage) {
+    state.numberOfParticipants++;
+    randomX = randomNumber(0, 1620);
+    randomY = randomNumber(0, 780);
+    participant = createParticipant(name, randomX, randomY, shipImage);
+    state.participants.set(name, participant);
+    participant.ship.animate(6000, 0, 'now').ease('>').move(randomX, randomY);
+    participant.text.animate(6000, 0, 'now').ease('>').move(randomX + textXOffset, randomY + textYOffset);
+    state.numberOfParticipantsText.plain(state.numberOfParticipants);
+};
+
+var createParticipant = function (name, x, y, shipImage) {
     return {
         name: name,
         ship: state.draw.image('ships/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, randomY),
@@ -106,7 +126,7 @@ var revealWinner = function () {
             state.background.animate(2000, 0, 'now').ease('>').move(-1920, 0);
             winner.ship.animate(2000, 0, 'now').ease('>').move(winner.ship.x() - 1920, winner.ship.y());
             winner.text.animate(2000, 0, 'now').ease('>').move(winner.text.x() - 1920, winner.text.y()).after(() => {
-                winnerRevealed = true;
+                state.winnerRevealed = true;
                 winner.bomb.move(-bombSize, winner.ship.y() + (shipSize - bombSize) / 2);
                 winner.bomb.animate(60000, 3000, 'now').ease('-').move(winner.ship.x(), winner.bomb.y()).after(() => ((winner) => {
                         explode(winner);
@@ -201,17 +221,17 @@ function onCommandReceived(commandObj) {
     }
     if (commandObj.cmd === 'addTestParticipant') {
         for (i = 0; i < commandObj.amount; i++) {
-            addParticipant('Viewer' + randomNumber(1, 5000));
+            requestAddParticipant('Viewer' + randomNumber(1, 5000), null, 0, null);
         }
     }
 }
 
 function onRaffleEntered(raffleEvent) {
-    addParticipant(raffleEvent.user.name);
+    requestAddParticipant(raffleEvent.user.name, raffleEvent.user.id, raffleEvent.user.nuggets, raffleEvent.raffleArg1);
 }
 
 function onChatMessageReceived(chatMessageEvent) {
-    if (!winnerRevealed) {
+    if (!state.winnerRevealed) {
         return;
     }
     state.winners.forEach((winner) => {
