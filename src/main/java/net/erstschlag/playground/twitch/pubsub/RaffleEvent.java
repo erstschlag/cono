@@ -6,8 +6,15 @@ import net.erstschlag.playground.user.UserDto;
 
 public class RaffleEvent extends PlaygroundEvent<RaffleEvent> {
 
-    public RaffleEvent(UserDto user) {
+    private final Optional<String> raffleArg1;
+
+    public RaffleEvent(UserDto user, Optional<String> raffleArg1) {
         super(Optional.of(user));
+        this.raffleArg1 = raffleArg1;
+    }
+
+    public Optional<String> getRaffleArg1() {
+        return raffleArg1;
     }
 
 }

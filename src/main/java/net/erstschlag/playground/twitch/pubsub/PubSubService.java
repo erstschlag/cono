@@ -4,6 +4,7 @@ import net.erstschlag.playground.PlaygroundEvent;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import java.util.Optional;
 import java.util.StringTokenizer;
 import net.erstschlag.playground.user.UserChargedEvent;
 import net.erstschlag.playground.user.UserCreditsService;
@@ -133,7 +134,13 @@ public class PubSubService {
 
     private void handleRaffleChatMessage(ChannelMessageEvent event) {
         UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-        publishApplicationEvent(new RaffleEvent(user));
+        Optional<String> raffleArg1 = Optional.empty();
+        StringTokenizer strTok = new StringTokenizer(event.getMessage(), " ");
+        if(strTok.countTokens() >= 2) {
+            strTok.nextToken();
+            raffleArg1 = Optional.of(strTok.nextToken());
+        }
+        publishApplicationEvent(new RaffleEvent(user, raffleArg1));
     }
 
     private String tokensToCommandString(StringTokenizer remainingTokens) {
