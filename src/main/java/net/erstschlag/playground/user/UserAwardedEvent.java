@@ -5,14 +5,14 @@ import net.erstschlag.playground.PlaygroundEvent;
 
 public class UserAwardedEvent extends PlaygroundEvent<UserAwardedEvent> {
 
-    private final Integer amount;
+    private final Float amount;
 
-    public UserAwardedEvent(UserDto oUser, Integer amount) {
+    public UserAwardedEvent(UserDto oUser, Float amount) {
         super(Optional.of(oUser));
         this.amount = amount;
     }
 
-    public Integer getAmount() {
+    public Float getAmount() {
         return amount;
     }
 

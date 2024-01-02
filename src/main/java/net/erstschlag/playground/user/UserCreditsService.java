@@ -68,7 +68,7 @@ public class UserCreditsService {
         }
     }
 
-    private void awardUser(UserEntity uE, int numberOfNuggets) {
+    private void awardUser(UserEntity uE, float numberOfNuggets) {
         uE.setNuggets(uE.getNuggets() + numberOfNuggets);
         userRepository.save(uE);
         applicationEventPublisher.publishEvent(
