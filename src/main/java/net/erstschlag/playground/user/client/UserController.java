@@ -1,11 +1,12 @@
 package net.erstschlag.playground.user.client;
 
-import java.util.stream.Stream;
 import net.erstschlag.playground.user.ChargeUserDto;
 import net.erstschlag.playground.user.UserCreditsService;
 import net.erstschlag.playground.user.UserDto;
 import net.erstschlag.playground.user.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -24,8 +25,11 @@ public class UserController {
 
     @MessageMapping("/users")
     @SendTo("/topic/users")
-    public Stream<UserDto> getUsers(String filter) {
-        return userService.getUsers();
+    public Page<UserDto> getUsers(PageableRequest pageableRequest) {
+        return userService.getUsers(PageRequest.of(pageableRequest.getPage(), 
+                pageableRequest.getSize(), 
+                Sort.Direction.fromString(pageableRequest.getSortDirection()),
+                pageableRequest.getSortFields()));
     }
 
     @MessageMapping("/topNuggetHolders")
@@ -37,6 +41,11 @@ public class UserController {
     @MessageMapping("/chargeUser")
     public void chargeUser(ChargeUserDto chargeUser) {
         userCreditsService.chargeUser(chargeUser);
+    }
+
+    @MessageMapping("/awardUser")
+    public void awardUser(ChargeUserDto chargeUser) {
+        userCreditsService.awardUser(chargeUser);
     }
 
     @MessageMapping("/users/delete")

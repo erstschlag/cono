@@ -50,6 +50,22 @@ public class UserCreditsService {
                         chargeUser.getReason()
                 ));
     }
+    
+    public synchronized void awardUser(ChargeUserDto chargeUser) {
+        Optional<UserEntity> oUserEntity = userRepository.findById(chargeUser.getUserId());
+        if (!oUserEntity.isPresent()) {
+            return;
+        }
+        oUserEntity.get().setNuggets(oUserEntity.get().getNuggets() + chargeUser.getAmount());
+        userRepository.save(oUserEntity.get());
+        applicationEventPublisher.publishEvent(
+                new UserAwardedEvent(
+                        mapstructMapper.userEntityToUserDto(oUserEntity.get()),
+                        chargeUser.getTransactionId(),
+                        chargeUser.getAmount(),
+                        chargeUser.getReason()
+                ));
+    }
 
     private boolean hasEnoughNuggets(UserEntity user, ChargeUserDto chargeUser) {
         return userConfiguration.getChannelId().equalsIgnoreCase(user.getId())
@@ -58,22 +74,27 @@ public class UserCreditsService {
 
     public void handleBitsEvent(ChannelBitsEvent event) {
         UserEntity uE = userService.retrieveOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-        awardUser(uE, event.getBitsUsed() / 100);
+        awardUser(uE, event.getBitsUsed() / 100, "spending " + event.getBitsUsed() + " bits!");
     }
 
     public void handleSubEvent(ChannelSubscribeEvent event) {
         if (event.getSubTier().getTier() > 1 || event.isGift()) {
             UserEntity uE = userService.retrieveOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-            awardUser(uE, 3 * event.getSubTier().getTier());
+            awardUser(uE, 3 * event.getSubTier().getTier(),
+                    event.isGift()
+                    ? "gifting a tier " + event.getSubTier().getTier() + " sub!"
+                    : "subscribing with tier " + event.getSubTier().getTier());
         }
     }
 
-    private void awardUser(UserEntity uE, float numberOfNuggets) {
+    private void awardUser(UserEntity uE, float numberOfNuggets, String reason) {
         uE.setNuggets(uE.getNuggets() + numberOfNuggets);
         userRepository.save(uE);
         applicationEventPublisher.publishEvent(
                 new UserAwardedEvent(
                         mapstructMapper.userEntityToUserDto(uE),
-                        numberOfNuggets));
+                        "",
+                        numberOfNuggets,
+                        reason));
     }
 }

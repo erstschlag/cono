@@ -40,15 +40,37 @@ function displayUsers(users) {
     divShowData.appendChild(table);
 }
 
+function displayNavigation(parsed) {
+    const divShowData = document.getElementById('showNavigation');
+    divShowData.innerHTML = "" + parsed.totalElements;
+}
+
 function retrieveUsers() {
-    stompClient.send("/app/users", {}, "filter");
+    stompClient.send("/app/users", {}, JSON.stringify(pagination));
+}
+
+var pagination = {
+    page:0,
+    size:20,
+    sortDirection:"DESC",
+    sortFields:"weeklyLP"
+};
+
+function switchPage(relativeOffset) {
+    pagination.page+=relativeOffset;
+    if(pagination.page <= 0){
+        pagination.page = 0;
+    }
+    retrieveUsers();
 }
 
 function connect() {
     stompClient = Stomp.over(new SockJS('/generic-ws'));
     stompClient.connect({}, function (frame) {
         stompClient.subscribe('/topic/users', function (object) {
-            displayUsers(JSON.parse(object.body));
+            var parsed = JSON.parse(object.body);
+            displayUsers(parsed.content);
+            displayNavigation(parsed);
         });
     });
 }
@@ -59,4 +81,6 @@ $(function () {
         e.preventDefault();
     });
     $( "#retrieveUsers" ).click(function() { retrieveUsers(); });
+    $( "#previousPage" ).click(function() { switchPage(-1); });
+    $( "#nextPage" ).click(function() { switchPage(1); });
 });

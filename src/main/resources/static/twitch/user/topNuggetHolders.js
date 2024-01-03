@@ -48,7 +48,7 @@ function retrieveTopXNuggetHolders() {
 }
 
 function onTopNuggetHoldersReceived(data) {
-    displayUsers(data.content, ['id', 'restBits'], false);
+    displayUsers(data.content, ['id', 'weeklyLP', 'totalLP'], false);
 }
 
 function onUserAwardedReceived(data) {

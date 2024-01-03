@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,8 +20,8 @@ public class UserService {
         this.mapstructMapper = mapstructMapper;
     }
 
-    public Stream<UserDto> getUsers() {
-        return userRepository.findAll().stream().map(mapstructMapper::userEntityToUserDto);
+    public Page<UserDto> getUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(mapstructMapper::userEntityToUserDto);
     }
 
     public UserDto getOrCreateUser(String userId, String userName) {

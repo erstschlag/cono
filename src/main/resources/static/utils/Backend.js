@@ -11,6 +11,7 @@ class Connection {
     stompClient = null;
     subscriptions = new Map();
     userChargeTransactions = new Map();
+    userAwardTransactions = new Map();
     
     constructor() {}
 
@@ -27,6 +28,9 @@ class Connection {
                 }
                 this.subscribe('/topic/userCharged', (event)=> {
                     this._onUserChargedReceived(event);
+                });
+                this.subscribe('/topic/userAwarded', (event)=> {
+                    this._onUserAwardedReceived(event);
                 });
             }, () => {
                 this.connect(connectedMethod);
@@ -46,12 +50,33 @@ class Connection {
                 }
         );
     }
+    
+    awardUser(userId, awardAmount, awardReason, onSuccessMethod) {
+        var transactionId = crypto.randomUUID();
+        this.userAwardTransactions.set(transactionId, onSuccessMethod);
+        this.sendObject("/app/awardUser",
+                {
+                    userId: userId,
+                    amount: awardAmount,
+                    reason: awardReason,
+                    transactionId: transactionId
+                }
+        );
+    }
 
     _onUserChargedReceived(userChargedEvent) {
         var onUserChargeSuccess = this.userChargeTransactions.get(userChargedEvent.transactionId);
         if(onUserChargeSuccess !== undefined){
             onUserChargeSuccess();
             this.userChargeTransactions.delete(userChargedEvent.transactionId);
+        }
+    }
+
+    _onUserAwardedReceived(userAwardedEvent) {
+        var onUserAwardSuccess = this.userAwardTransactions.get(userAwardedEvent.transactionId);
+        if(onUserAwardSuccess !== undefined){
+            onUserAwardSuccess();
+            this.userAwardTransactions.delete(userAwardedEvent.transactionId);
         }
     }
 
