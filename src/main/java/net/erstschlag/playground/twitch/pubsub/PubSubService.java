@@ -4,6 +4,9 @@ import net.erstschlag.playground.PlaygroundEvent;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.helix.domain.ChattersList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import net.erstschlag.playground.user.UserChargedEvent;
@@ -22,7 +25,8 @@ public class PubSubService {
     private final UserService userService;
     private final UserCreditsService userCreditsService;
     private final Twitch4JEventConvertor twitch4JEventConvertor;
-    private TwitchClient twitchClient;
+    private TwitchClient twitchClient = null;
+    private String oAuthToken = null;
 
     public PubSubService(ApplicationEventPublisher applicationEventPublisher,
             PubSubConfiguration pubSubConfiguration,
@@ -37,10 +41,11 @@ public class PubSubService {
     }
 
     public final synchronized void initialize(String oAuthToken) {
+        this.oAuthToken = oAuthToken;
         shutdownTwitchClient();
         OAuth2Credential oAuth = new OAuth2Credential("twitch", oAuthToken);
         OAuth2Credential oAuthChat = new OAuth2Credential("twitch", pubSubConfiguration.getChatBotOAuthToken());
-        twitchClient = TwitchClientBuilder.builder().withEnableChat(true).withChatAccount(oAuthChat).withEnablePubSub(true).build();
+        twitchClient = TwitchClientBuilder.builder().withEnableChat(true).withChatAccount(oAuthChat).withEnablePubSub(true).withEnableHelix(true).build();
         twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(oAuth, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().listenForCheerEvents(oAuth, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().listenForSubscriptionEvents(oAuth, pubSubConfiguration.getChannelId());
@@ -49,6 +54,24 @@ public class PubSubService {
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelSubscribeEvent.class, event -> subscriptionReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
         twitchClient.getChat().joinChannel(pubSubConfiguration.getChannelName());
         twitchClient.getChat().getEventManager().onEvent(com.github.twitch4j.chat.events.channel.ChannelMessageEvent.class, event -> chatMessageReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
+    }
+
+    public List<String> getChatters() {
+        List<String> result = new ArrayList<>();
+        if (this.twitchClient != null) {
+            ChattersList chattersList;
+            String cursor = null;
+            do {
+                chattersList = twitchClient.getHelix()
+                        .getChatters(oAuthToken, pubSubConfiguration.getChannelId(), pubSubConfiguration.getChannelId(), 500, cursor)
+                        .execute();
+                chattersList.getChatters().forEach(chatter -> {
+                    result.add(chatter.getUserLogin());
+                });
+                cursor = chattersList.getPagination().getCursor();
+            } while (cursor != null);
+        }
+        return result;
     }
 
     private <T extends PlaygroundEvent> T publishApplicationEvent(T twitchEvent) {
@@ -136,7 +159,7 @@ public class PubSubService {
         UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
         Optional<String> raffleArg1 = Optional.empty();
         StringTokenizer strTok = new StringTokenizer(event.getMessage(), " ");
-        if(strTok.countTokens() >= 2) {
+        if (strTok.countTokens() >= 2) {
             strTok.nextToken();
             raffleArg1 = Optional.of(strTok.nextToken());
         }
