@@ -18,6 +18,14 @@ public class UserEntity {
     @Column(name = "nuggets", unique = false, nullable = false)
     private float nuggets;
 
+    @Basic
+    @Column(name = "weekly_lp", unique = false, nullable = false, columnDefinition = "int default 0")
+    private int weeklyLP;
+
+    @Basic
+    @Column(name = "total_lp", unique = false, nullable = false, columnDefinition = "int default 0")
+    private int totalLP;
+
     public UserEntity() {
 
     }
@@ -50,6 +58,22 @@ public class UserEntity {
 
     public void setNuggets(float nuggets) {
         this.nuggets = nuggets;
+    }
+
+    public int getWeeklyLP() {
+        return weeklyLP;
+    }
+
+    public void setWeeklyLP(int weeklyLP) {
+        this.weeklyLP = weeklyLP;
+    }
+
+    public int getTotalLP() {
+        return totalLP;
+    }
+
+    public void setTotalLP(int totalLP) {
+        this.totalLP = totalLP;
     }
 
 }

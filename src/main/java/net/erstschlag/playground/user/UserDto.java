@@ -10,6 +10,10 @@ public class UserDto {
     private String name;
     @JsonProperty("nuggets")
     private float nuggets;
+    @JsonProperty("weeklyLP")
+    private int weeklyLP;
+    @JsonProperty("totalLP")
+    private int totalLP;
 
     public String getId() {
         return id;
@@ -33,6 +37,22 @@ public class UserDto {
 
     public void setNuggets(float nuggets) {
         this.nuggets = nuggets;
+    }
+
+    public int getWeeklyLP() {
+        return weeklyLP;
+    }
+
+    public void setWeeklyLP(int weeklyLP) {
+        this.weeklyLP = weeklyLP;
+    }
+
+    public int getTotalLP() {
+        return totalLP;
+    }
+
+    public void setTotalLP(int totalLP) {
+        this.totalLP = totalLP;
     }
 
 }
