@@ -1,5 +1,5 @@
 let numberOfWinners = 1;
-let globalShipImage = 'Widow.png';
+let globalShipImage = 'Wolf.png';
 let textXOffset = 90;
 let textYOffset = 30;
 let shipSize = 200;
