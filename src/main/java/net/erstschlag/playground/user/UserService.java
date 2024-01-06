@@ -1,7 +1,7 @@
 package net.erstschlag.playground.user;
 
+import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.stream.Stream;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -49,7 +49,7 @@ public class UserService {
             }
             return oUserEntity.get();
         } else {
-            return userRepository.save(new UserEntity(userId, userName, 0));
+            return userRepository.save(new UserEntity(userId, userName, BigDecimal.ZERO));
         }
     }
 }

@@ -1,4 +1,13 @@
-let stompClient;
+let connection = null;
+
+var pagination = {
+    page:0,
+    size:20,
+    sortDirection:"DESC",
+    sortFields:"weeklyLP"
+};
+
+var isLPCollectionEnabled;
 
 function displayUsers(users) {
     // Extract value from table header. 
@@ -46,15 +55,16 @@ function displayNavigation(parsed) {
 }
 
 function retrieveUsers() {
-    stompClient.send("/app/users", {}, JSON.stringify(pagination));
+    this.connection.sendObject("/app/users", pagination);
 }
 
-var pagination = {
-    page:0,
-    size:20,
-    sortDirection:"DESC",
-    sortFields:"weeklyLP"
-};
+function retrieveLPCollectionStatus() {
+    this.connection.sendObject("/app/users/isLPCollectionEnabled", "");
+}
+
+function enableLPCollection(enable) {
+    this.connection.sendObject("/app/users/enableLPCollection", enable);
+}
 
 function switchPage(relativeOffset) {
     pagination.page+=relativeOffset;
@@ -64,23 +74,48 @@ function switchPage(relativeOffset) {
     retrieveUsers();
 }
 
-function connect() {
-    stompClient = Stomp.over(new SockJS('/generic-ws'));
-    stompClient.connect({}, function (frame) {
-        stompClient.subscribe('/topic/users', function (object) {
-            var parsed = JSON.parse(object.body);
-            displayUsers(parsed.content);
-            displayNavigation(parsed);
+function modifyUserCredits(userId, amount) {
+    if(amount === 0){
+        return;
+    }
+    if(amount > 0) {
+        Backend.connection.awardUser(userId, amount, 'Erst wants it!',
+                () => {});
+    } else {
+        Backend.connection.chargeUser(userId, -amount, 'Erst wants it!',
+                () => {});
+    }
+    retrieveUsers();
+}
+
+
+function onBackendConnect(connection) {
+    this.connection = connection;
+    connection.subscribe('/topic/users', function (object) {
+            displayUsers(object.content);
+            displayNavigation(object);
         });
-    });
+    connection.subscribe('/topic/isLPCollectionEnabled', function (object) {
+            isLPCollectionEnabled = object;
+            var enableButton = document.getElementById('enableLPCollection');
+            if(isLPCollectionEnabled) {
+                enableButton.textContent = 'disable';
+            }else{
+                enableButton.textContent = 'enable';
+            }
+        });
+    retrieveUsers();
+    retrieveLPCollectionStatus();
 }
 
 $(function () {
-    connect();
+    Backend.connect(onBackendConnect);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
     $( "#retrieveUsers" ).click(function() { retrieveUsers(); });
     $( "#previousPage" ).click(function() { switchPage(-1); });
     $( "#nextPage" ).click(function() { switchPage(1); });
+    $( "#enableLPCollection" ).click(function() { enableLPCollection(!isLPCollectionEnabled); });
+    $( "#modifyUserCredits" ).click(function() { modifyUserCredits($("#modifyUserCreditsUserId").val(), parseFloat($("#modifyUserCreditsAmount").val())); });
 });

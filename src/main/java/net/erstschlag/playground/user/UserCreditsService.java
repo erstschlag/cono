@@ -1,7 +1,8 @@
 package net.erstschlag.playground.user;
 
-import java.util.Optional;
+import java.math.BigDecimal;
 import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
+import net.erstschlag.playground.twitch.pubsub.ChannelGiftedSubscriptionsEvent;
 import net.erstschlag.playground.twitch.pubsub.ChannelSubscribeEvent;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class UserCreditsService {
 
     private final UserRepository userRepository;
-    private final UserService userService;
     private final UserConfiguration userConfiguration;
     private final MapStructMapper mapstructMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -25,7 +25,6 @@ public class UserCreditsService {
             MapStructMapper mapstructMapper,
             ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
-        this.userService = userService;
         this.userConfiguration = userConfiguration;
         this.mapstructMapper = mapstructMapper;
         this.applicationEventPublisher = applicationEventPublisher;
@@ -35,66 +34,64 @@ public class UserCreditsService {
         return userRepository.findAllByOrderByNuggetsDesc(Pageable.ofSize(limit)).map(mapstructMapper::userEntityToUserDto);
     }
 
-    public synchronized void chargeUser(ChargeUserDto chargeUser) {
-        Optional<UserEntity> oUserEntity = userRepository.findById(chargeUser.getUserId());
-        if (!oUserEntity.isPresent() || !hasEnoughNuggets(oUserEntity.get(), chargeUser)) {
-            return;
-        }
-        oUserEntity.get().setNuggets(oUserEntity.get().getNuggets() - chargeUser.getAmount());
-        userRepository.save(oUserEntity.get());
-        applicationEventPublisher.publishEvent(
-                new UserChargedEvent(
-                        mapstructMapper.userEntityToUserDto(oUserEntity.get()),
-                        chargeUser.getTransactionId(),
-                        chargeUser.getAmount(),
-                        chargeUser.getReason()
-                ));
+    public void chargeUser(ChargeUserDto chargeUser) {
+        modifyUserCredits(chargeUser.getUserId(), chargeUser.getAmount().negate(), chargeUser.getReason(), chargeUser.getTransactionId());
     }
     
-    public synchronized void awardUser(ChargeUserDto chargeUser) {
-        Optional<UserEntity> oUserEntity = userRepository.findById(chargeUser.getUserId());
-        if (!oUserEntity.isPresent()) {
-            return;
-        }
-        oUserEntity.get().setNuggets(oUserEntity.get().getNuggets() + chargeUser.getAmount());
-        userRepository.save(oUserEntity.get());
-        applicationEventPublisher.publishEvent(
-                new UserAwardedEvent(
-                        mapstructMapper.userEntityToUserDto(oUserEntity.get()),
-                        chargeUser.getTransactionId(),
-                        chargeUser.getAmount(),
-                        chargeUser.getReason()
-                ));
-    }
-
-    private boolean hasEnoughNuggets(UserEntity user, ChargeUserDto chargeUser) {
-        return userConfiguration.getChannelId().equalsIgnoreCase(user.getId())
-                || user.getNuggets() >= chargeUser.getAmount();
+    public void awardUser(ChargeUserDto chargeUser) {
+        modifyUserCredits(chargeUser.getUserId(), chargeUser.getAmount(), chargeUser.getReason(), chargeUser.getTransactionId());
     }
 
     public void handleBitsEvent(ChannelBitsEvent event) {
-        UserEntity uE = userService.retrieveOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-        awardUser(uE, event.getBitsUsed() / 100, "spending " + event.getBitsUsed() + " bits!");
+        modifyUserCredits(event.getUser().get().getId(), BigDecimal.valueOf(event.getBitsUsed()).divide(BigDecimal.valueOf(100)), "spending " + event.getBitsUsed() + " bits!", "");
     }
 
     public void handleSubEvent(ChannelSubscribeEvent event) {
-        if (event.getSubTier().getTier() > 1 || event.isGift()) {
-            UserEntity uE = userService.retrieveOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-            awardUser(uE, 3 * event.getSubTier().getTier(),
-                    event.isGift()
-                    ? "gifting a tier " + event.getSubTier().getTier() + " sub!"
-                    : "subscribing with tier " + event.getSubTier().getTier());
+        if (!event.isGift() && event.getSubTier().getTier() > 1) {
+            modifyUserCredits(event.getUser().get().getId(), BigDecimal.valueOf(3 * event.getSubTier().getTier()),
+                    "subscribing with tier " + event.getSubTier().getTier(), "");
+        }
+    }
+    
+    public void handleGiftedSubsEvent(ChannelGiftedSubscriptionsEvent event) {
+        modifyUserCredits(event.getUser().get().getId(), BigDecimal.valueOf(3 * event.getSubTier().getTier() * event.getCount()),
+                "gifting " + event.getCount() + " tier " + event.getSubTier().getTier()
+                + (event.getCount() > 1 ? " subs!" : "sub!"), ""
+        );
+    }
+
+    private synchronized void modifyUserCredits(String userId, BigDecimal nuggetsChange, String reason, String transactionId) {
+        if (nuggetsChange == BigDecimal.ZERO) {
+            return;
+        }
+        UserEntity uE = userRepository.findById(userId).orElse(null);
+        if (uE == null) {
+            return;
+        }
+        if (nuggetsChange.compareTo(BigDecimal.ZERO) >= 0) {
+            uE.setNuggets(uE.getNuggets().add(nuggetsChange));
+            userRepository.save(uE);
+            applicationEventPublisher.publishEvent(
+                    new UserAwardedEvent(
+                            mapstructMapper.userEntityToUserDto(uE),
+                            transactionId,
+                            nuggetsChange,
+                            reason));
+        } else if (hasEnoughNuggets(uE, nuggetsChange.negate())) {
+            uE.setNuggets(uE.getNuggets().add(nuggetsChange));
+            userRepository.save(uE);
+            applicationEventPublisher.publishEvent(
+                    new UserChargedEvent(
+                            mapstructMapper.userEntityToUserDto(uE),
+                            transactionId,
+                            nuggetsChange.negate(),
+                            reason
+                    ));
         }
     }
 
-    private void awardUser(UserEntity uE, float numberOfNuggets, String reason) {
-        uE.setNuggets(uE.getNuggets() + numberOfNuggets);
-        userRepository.save(uE);
-        applicationEventPublisher.publishEvent(
-                new UserAwardedEvent(
-                        mapstructMapper.userEntityToUserDto(uE),
-                        "",
-                        numberOfNuggets,
-                        reason));
+    private boolean hasEnoughNuggets(UserEntity user, BigDecimal nuggetsCost) {
+        return userConfiguration.getChannelId().equalsIgnoreCase(user.getId())
+                || user.getNuggets().compareTo(nuggetsCost) >= 0;
     }
 }

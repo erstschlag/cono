@@ -20,6 +20,7 @@ public class UserLPRecorder {
     private final UserRepository userRepository;
     private final PubSubConfiguration pubSubConfiguration;
     private final HashMap<String, UserDto> eligibleUsersMap = new HashMap<>();
+    private boolean lpCollectionEnabled = false;
 
     public UserLPRecorder(PubSubService pubSubService, UserRepository userRepository, PubSubConfiguration pubSubConfiguration) {
         this.twitchService = pubSubService;
@@ -27,8 +28,20 @@ public class UserLPRecorder {
         this.pubSubConfiguration = pubSubConfiguration;
     }
 
+    public boolean enableLPCollection(boolean enable) {
+        lpCollectionEnabled = enable;
+        return lpCollectionEnabled;
+    }
+
+    public boolean isLPCollectionEnabled() {
+        return lpCollectionEnabled;
+    }
+
     @Scheduled(initialDelay = 300000, fixedRate = 300000)
     public void scheduleLPTick() {
+        if (!lpCollectionEnabled) {
+            return;
+        }
         List<String> chatters = twitchService.getChatters();
         for (Map.Entry<String, UserDto> userTalkedEntry : eligibleUsersMap.entrySet()) {
             if (chatters.contains(userTalkedEntry.getKey())) {

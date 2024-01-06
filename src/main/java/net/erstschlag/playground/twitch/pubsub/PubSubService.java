@@ -64,6 +64,7 @@ public class PubSubService {
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.RewardRedeemedEvent.class, event -> publishApplicationEvent(twitch4JEventConvertor.convert(event)));
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelBitsEvent.class, event -> bitsReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelSubscribeEvent.class, event -> subscriptionReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
+        twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelSubGiftEvent.class, event -> giftedSubscriptionsReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
         twitchClient.getChat().joinChannel(pubSubConfiguration.getChannelName());
         twitchClient.getChat().getEventManager().onEvent(com.github.twitch4j.chat.events.channel.ChannelMessageEvent.class, event -> chatMessageReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
     }
@@ -114,6 +115,12 @@ public class PubSubService {
     private void subscriptionReceived(ChannelSubscribeEvent event) {
         if (event.getUser().isPresent()) {
             userCreditsService.handleSubEvent(event);
+        }
+    }
+    
+    private void giftedSubscriptionsReceived(ChannelGiftedSubscriptionsEvent event) {
+        if (event.getUser().isPresent()) {
+            userCreditsService.handleGiftedSubsEvent(event);
         }
     }
 
@@ -201,6 +208,9 @@ public class PubSubService {
 
     @EventListener
     public void userCharged(UserChargedEvent userChargedEvent) {
+        if(twitchClient == null) {
+            return;
+        }
         String message = "@?userName has been charged ?numberOfNuggets nuggets for ?reason";
         message = message.replace("?userName", userChargedEvent.getUser().get().getName());
         message = message.replace("?numberOfNuggets", "" + userChargedEvent.getAmount());
@@ -210,6 +220,9 @@ public class PubSubService {
     
     @EventListener
     public void userAwarded(UserAwardedEvent userAwardedEvent) {
+        if(twitchClient == null) {
+            return;
+        }
         String message = "@?userName has been awarded ?numberOfNuggets nuggets for ?reason";
         message = message.replace("?userName", userAwardedEvent.getUser().get().getName());
         message = message.replace("?numberOfNuggets", "" + userAwardedEvent.getAmount());

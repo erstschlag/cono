@@ -1,13 +1,20 @@
 package net.erstschlag.playground.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.math.BigDecimal;
+import net.erstschlag.playground.generic.BigDecimalAsStringDeserializer;
+import net.erstschlag.playground.generic.BigDecimalAsStringSerializer;
 
 public class ChargeUserDto {
 
     @JsonProperty("userId")
     private String userId;
     @JsonProperty("amount")
-    private int amount;
+    @JsonSerialize(using = BigDecimalAsStringSerializer.class)
+    @JsonDeserialize(using = BigDecimalAsStringDeserializer.class)
+    private BigDecimal amount;
     @JsonProperty("transactionId")
     private String transactionId;
     @JsonProperty("reason")
@@ -21,11 +28,11 @@ public class ChargeUserDto {
         this.userId = userId;
     }
 
-    public int getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

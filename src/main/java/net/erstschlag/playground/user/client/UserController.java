@@ -3,6 +3,7 @@ package net.erstschlag.playground.user.client;
 import net.erstschlag.playground.user.ChargeUserDto;
 import net.erstschlag.playground.user.UserCreditsService;
 import net.erstschlag.playground.user.UserDto;
+import net.erstschlag.playground.user.UserLPRecorder;
 import net.erstschlag.playground.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,11 +17,14 @@ public class UserController {
 
     private final UserService userService;
     private final UserCreditsService userCreditsService;
+    private final UserLPRecorder userLPRecorder;
 
     public UserController(UserService userService,
-            UserCreditsService userCreditsService) {
+            UserCreditsService userCreditsService, 
+            UserLPRecorder userLPRecorder) {
         this.userService = userService;
         this.userCreditsService = userCreditsService;
+        this.userLPRecorder = userLPRecorder;
     }
 
     @MessageMapping("/users")
@@ -51,5 +55,17 @@ public class UserController {
     @MessageMapping("/users/delete")
     public void deleteUser(String userId) {
         userService.deleteUser(userId);
+    }
+    
+    @MessageMapping("/users/enableLPCollection")
+    @SendTo("/topic/isLPCollectionEnabled")
+    public boolean enableUserLPCollection(boolean enable) {
+        return userLPRecorder.enableLPCollection(enable);
+    }
+    
+    @MessageMapping("/users/isLPCollectionEnabled")
+    @SendTo("/topic/isLPCollectionEnabled")
+    public boolean isUserLPCollectionEnabled() {
+        return userLPRecorder.isLPCollectionEnabled();
     }
 }

@@ -6,7 +6,14 @@
         <script src="/webjars/sockjs-client/sockjs.min.js"></script>
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
         <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="..\..\utils\Backend.js"></script>
         <script src="/twitch/user/users.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+        </style>
     </head>
     <body>
         <button id="previousPage">prev</button>
@@ -14,7 +21,11 @@
         <p id="showNavigation"></p>
         <p id="showData"></p>
         <form>
-            <button id="retrieveUsers">retrieve users</button>
+            <button id="retrieveUsers">retrieve users</button><br>
+            <button id="enableLPCollection">loading LP collection state</button><br>
+            UserId<input id="modifyUserCreditsUserId" type="text" value="">
+            Amount<input id="modifyUserCreditsAmount" type="number" value="1.0">
+            <button id="modifyUserCredits">modifyUserCredits</button><br>
         </form>
     </body>
 </html>

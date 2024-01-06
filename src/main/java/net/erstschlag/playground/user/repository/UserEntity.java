@@ -1,6 +1,7 @@
 package net.erstschlag.playground.user.repository;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "twitch_user")
@@ -15,8 +16,8 @@ public class UserEntity {
     private String name;
 
     @Basic
-    @Column(name = "nuggets", unique = false, nullable = false)
-    private float nuggets;
+    @Column(name = "nuggets", unique = false, nullable = false, columnDefinition = "numeric(10,2)")
+    private BigDecimal nuggets;
 
     @Basic
     @Column(name = "weekly_lp", unique = false, nullable = false, columnDefinition = "int default 0")
@@ -30,7 +31,7 @@ public class UserEntity {
 
     }
 
-    public UserEntity(String id, String name, float nuggets) {
+    public UserEntity(String id, String name, BigDecimal nuggets) {
         this.id = id;
         this.name = name;
         this.nuggets = nuggets;
@@ -52,11 +53,11 @@ public class UserEntity {
         this.name = name;
     }
 
-    public float getNuggets() {
+    public BigDecimal getNuggets() {
         return nuggets;
     }
 
-    public void setNuggets(float nuggets) {
+    public void setNuggets(BigDecimal nuggets) {
         this.nuggets = nuggets;
     }
 

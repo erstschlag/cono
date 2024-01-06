@@ -1,6 +1,11 @@
 package net.erstschlag.playground.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.math.BigDecimal;
+import net.erstschlag.playground.generic.BigDecimalAsStringDeserializer;
+import net.erstschlag.playground.generic.BigDecimalAsStringSerializer;
 
 public class UserDto {
 
@@ -9,7 +14,9 @@ public class UserDto {
     @JsonProperty("name")
     private String name;
     @JsonProperty("nuggets")
-    private float nuggets;
+    @JsonSerialize(using = BigDecimalAsStringSerializer.class)
+    @JsonDeserialize(using = BigDecimalAsStringDeserializer.class)
+    private BigDecimal nuggets;
     @JsonProperty("weeklyLP")
     private int weeklyLP;
     @JsonProperty("totalLP")
@@ -31,11 +38,11 @@ public class UserDto {
         this.name = name;
     }
 
-    public float getNuggets() {
+    public BigDecimal getNuggets() {
         return nuggets;
     }
 
-    public void setNuggets(float nuggets) {
+    public void setNuggets(BigDecimal nuggets) {
         this.nuggets = nuggets;
     }
 
