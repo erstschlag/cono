@@ -143,7 +143,7 @@ var redraw = function () {
     state.numberOfParticipantsText.plain(state.numberOfParticipants);
     selectWinner();
     state.winners.forEach((winner) => {
-        state.winners.set(winner.name, createParticipant(winner.name, 0, 0));
+        state.winners.set(winner.name, createParticipant(winner.name, 0, 0, globalShipImage));
     });
     revealWinner();
 };
