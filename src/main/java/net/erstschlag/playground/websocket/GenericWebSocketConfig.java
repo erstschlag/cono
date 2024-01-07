@@ -1,4 +1,4 @@
-package net.erstschlag.playground;
+package net.erstschlag.playground.websocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
