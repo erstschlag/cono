@@ -1,6 +1,5 @@
-package net.erstschlag.playground.twitch.oauth;
+package net.erstschlag.playground.twitch.pubsub;
 
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,7 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import net.erstschlag.playground.twitch.pubsub.PubSubConfiguration;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
 @Component

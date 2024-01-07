@@ -1,4 +1,4 @@
-package net.erstschlag.playground.twitch.oauth;
+package net.erstschlag.playground.twitch.pubsub;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

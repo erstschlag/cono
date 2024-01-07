@@ -1,5 +1,6 @@
 package net.erstschlag.playground.twitch.pubsub;
 
+import net.erstschlag.playground.twitch.pubsub.events.*;
 import java.util.Optional;
 import net.erstschlag.playground.user.UserDto;
 import net.erstschlag.playground.user.UserService;

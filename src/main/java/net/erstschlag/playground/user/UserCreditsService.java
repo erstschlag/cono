@@ -1,9 +1,9 @@
 package net.erstschlag.playground.user;
 
 import java.math.BigDecimal;
-import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
-import net.erstschlag.playground.twitch.pubsub.ChannelGiftedSubscriptionsEvent;
-import net.erstschlag.playground.twitch.pubsub.ChannelSubscribeEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChannelBitsEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChannelGiftedSubscriptionsEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChannelSubscribeEvent;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
 import org.springframework.context.ApplicationEventPublisher;

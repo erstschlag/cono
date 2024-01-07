@@ -1,18 +1,20 @@
-package net.erstschlag.playground.twitch.pubsub;
+package net.erstschlag.playground.twitch.pubsub.events;
 
 import java.util.Optional;
 import net.erstschlag.playground.PlaygroundEvent;
 import net.erstschlag.playground.user.UserDto;
 
-public class RigEvent extends PlaygroundEvent<RigEvent> {
+public class PurchaseEvent extends PlaygroundEvent<PurchaseEvent> {
 
     private final String consumer;
     private final String command;
+    private final Integer amount;
 
-    public RigEvent(UserDto user, String consumer, String command) {
+    public PurchaseEvent(UserDto user, String consumer, String command, int amount) {
         super(Optional.of(user));
         this.consumer = consumer;
         this.command = command;
+        this.amount = amount;
     }
 
     public String getConsumer() {
@@ -21,6 +23,10 @@ public class RigEvent extends PlaygroundEvent<RigEvent> {
 
     public String getCommand() {
         return command;
+    }
+
+    public int getAmount() {
+        return amount;
     }
 
 }

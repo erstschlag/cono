@@ -1,7 +1,8 @@
-package net.erstschlag.playground.twitch.pubsub;
+package net.erstschlag.playground.twitch.pubsub.events;
 
 import net.erstschlag.playground.PlaygroundEvent;
 import java.util.Optional;
+import net.erstschlag.playground.twitch.pubsub.SubTier;
 import net.erstschlag.playground.user.UserDto;
 
 public class ChannelSubscribeEvent extends PlaygroundEvent<ChannelSubscribeEvent> {

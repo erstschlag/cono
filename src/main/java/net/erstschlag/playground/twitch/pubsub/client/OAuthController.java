@@ -1,4 +1,4 @@
-package net.erstschlag.playground.twitch.oauth.client;
+package net.erstschlag.playground.twitch.pubsub.client;
 
 import java.io.IOException;
 import net.erstschlag.playground.twitch.pubsub.PubSubService;

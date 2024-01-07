@@ -1,5 +1,6 @@
 package net.erstschlag.playground.twitch.pubsub;
 
+import net.erstschlag.playground.twitch.pubsub.events.*;
 import net.erstschlag.playground.PlaygroundEvent;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
@@ -10,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
-import net.erstschlag.playground.twitch.oauth.PubSubOAuth;
-import net.erstschlag.playground.twitch.oauth.TwitchOAuthDto;
 import net.erstschlag.playground.user.UserAwardedEvent;
 import net.erstschlag.playground.user.UserChargedEvent;
 import net.erstschlag.playground.user.UserCreditsService;

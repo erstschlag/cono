@@ -2,12 +2,12 @@ package net.erstschlag.playground.games.board.generic;
 
 import java.util.HashMap;
 import net.erstschlag.playground.PlaygroundEvent;
-import net.erstschlag.playground.twitch.pubsub.ChannelBitsEvent;
-import net.erstschlag.playground.twitch.pubsub.ChatMessageEvent;
-import net.erstschlag.playground.twitch.pubsub.PurchaseEvent;
-import net.erstschlag.playground.twitch.pubsub.RaffleEvent;
-import net.erstschlag.playground.twitch.pubsub.RewardRedeemedEvent;
-import net.erstschlag.playground.twitch.pubsub.RigEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChannelBitsEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChatMessageEvent;
+import net.erstschlag.playground.twitch.pubsub.events.PurchaseEvent;
+import net.erstschlag.playground.twitch.pubsub.events.RaffleEvent;
+import net.erstschlag.playground.twitch.pubsub.events.RewardRedeemedEvent;
+import net.erstschlag.playground.twitch.pubsub.events.RigEvent;
 import net.erstschlag.playground.user.UserAwardedEvent;
 import net.erstschlag.playground.user.UserChargedEvent;
 import org.springframework.beans.factory.annotation.Autowired;

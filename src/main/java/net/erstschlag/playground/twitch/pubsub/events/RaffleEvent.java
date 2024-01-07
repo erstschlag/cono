@@ -1,4 +1,4 @@
-package net.erstschlag.playground.twitch.pubsub;
+package net.erstschlag.playground.twitch.pubsub.events;
 
 import java.util.Optional;
 import net.erstschlag.playground.PlaygroundEvent;

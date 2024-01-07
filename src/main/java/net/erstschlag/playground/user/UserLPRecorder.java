@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import net.erstschlag.playground.twitch.pubsub.ChatMessageEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChatMessageEvent;
 import net.erstschlag.playground.twitch.pubsub.PubSubConfiguration;
 import net.erstschlag.playground.twitch.pubsub.PubSubService;
 import net.erstschlag.playground.user.repository.UserEntity;
