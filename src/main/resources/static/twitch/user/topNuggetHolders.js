@@ -48,7 +48,14 @@ function retrieveTopXNuggetHolders() {
 }
 
 function onTopNuggetHoldersReceived(data) {
+    fixNuggetColData(data.content);
     displayUsers(data.content, ['id', 'weeklyLP', 'totalLP'], false);
+}
+
+function fixNuggetColData(content) {
+    for (let user of content) {
+        user.nuggets = user.nuggets.split(".")[0];
+    }
 }
 
 function onUserAwardedReceived(data) {
