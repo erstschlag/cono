@@ -1,11 +1,11 @@
-package net.erstschlag.playground.games.board.generic.client;
+package net.erstschlag.playground.websocket.client;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class GenericBoardController {
+public class ObjectRelayController {
     
     @MessageMapping("/object")
     @SendTo("/topic/object")

@@ -1,4 +1,4 @@
-package net.erstschlag.playground.games.board.generic;
+package net.erstschlag.playground.websocket;
 
 import java.util.HashMap;
 import net.erstschlag.playground.PlaygroundEvent;
@@ -16,13 +16,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GenericBoardService {
+public class EventRelay {
 
     private final SimpMessagingTemplate webSocket;
     private final HashMap<Class, String> classTopicLookup = new HashMap<>();
 
     @Autowired
-    public GenericBoardService(SimpMessagingTemplate webSocket) {
+    public EventRelay(SimpMessagingTemplate webSocket) {
         this.webSocket = webSocket;
         classTopicLookup.put(RewardRedeemedEvent.class, "/topic/twitchRewardRedeemed");
         classTopicLookup.put(ChannelBitsEvent.class,"/topic/twitchBitsReceived");
