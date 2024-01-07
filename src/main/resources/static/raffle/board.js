@@ -73,6 +73,7 @@ var addParticipant = function (name, shipImage) {
 var createParticipant = function (name, x, y, shipImage) {
     return {
         name: name,
+        shipImage: shipImage,
         ship: state.draw.image('ships/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, randomY),
         text: state.draw.text(name).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.9))'}).move(1920 + textXOffset, randomY + textYOffset),
         bomb: state.draw.image('nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(randomX + bombSize), randomY + (shipSize - bombSize) / 2)
@@ -143,7 +144,7 @@ var redraw = function () {
     state.numberOfParticipantsText.plain(state.numberOfParticipants);
     selectWinner();
     state.winners.forEach((winner) => {
-        state.winners.set(winner.name, createParticipant(winner.name, 0, 0, globalShipImage));
+        state.winners.set(winner.name, createParticipant(winner.name, 0, 0, winner.shipImage));
     });
     revealWinner();
 };
