@@ -14,4 +14,5 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, S
     Collection<UserEntity> findAll();
     void deleteById(String id);
     Optional<UserEntity> findById(String id);
+    Page<UserEntity> findByNameLike(String name, Pageable pageable);
 }

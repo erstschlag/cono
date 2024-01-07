@@ -35,6 +35,15 @@ public class UserController {
                 Sort.Direction.fromString(pageableRequest.getSortDirection()),
                 pageableRequest.getSortFields()));
     }
+    
+    @MessageMapping("/usersWithNameLike")
+    @SendTo("/topic/users")
+    public Page<UserDto> getUsersWithNameLike(SearchByNameRequest searchByNameRequest) {
+        return userService.getUsersWithNameLike(searchByNameRequest.getSearch(), PageRequest.of(searchByNameRequest.getPageableRequest().getPage(), 
+                searchByNameRequest.getPageableRequest().getSize(), 
+                Sort.Direction.fromString(searchByNameRequest.getPageableRequest().getSortDirection()),
+                searchByNameRequest.getPageableRequest().getSortFields()));
+    }
 
     @MessageMapping("/topNuggetHolders")
     @SendTo("/topic/topNuggetHolders")

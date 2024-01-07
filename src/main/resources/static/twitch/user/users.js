@@ -58,6 +58,11 @@ function retrieveUsers() {
     this.connection.sendObject("/app/users", pagination);
 }
 
+function retrieveUsersByNameLike(search) {
+    this.connection.sendObject("/app/usersWithNameLike", {search: search,
+        pageableRequest: pagination});
+}
+
 function retrieveLPCollectionStatus() {
     this.connection.sendObject("/app/users/isLPCollectionEnabled", "");
 }
@@ -118,4 +123,5 @@ $(function () {
     $( "#nextPage" ).click(function() { switchPage(1); });
     $( "#enableLPCollection" ).click(function() { enableLPCollection(!isLPCollectionEnabled); });
     $( "#modifyUserCredits" ).click(function() { modifyUserCredits($("#modifyUserCreditsUserId").val(), parseFloat($("#modifyUserCreditsAmount").val())); });
+    $( "#searchUserByName" ).click(function() { retrieveUsersByNameLike($("#userNameSearch").val()); });
 });
