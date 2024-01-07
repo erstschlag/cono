@@ -1,4 +1,4 @@
-package net.erstschlag.playground.twitch.p4g;
+package net.erstschlag.playground.misc.p4g;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

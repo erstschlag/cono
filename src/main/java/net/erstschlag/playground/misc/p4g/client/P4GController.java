@@ -1,7 +1,7 @@
-package net.erstschlag.playground.twitch.p4g.client;
+package net.erstschlag.playground.misc.p4g.client;
 
-import net.erstschlag.playground.twitch.p4g.P4GDataDto;
-import net.erstschlag.playground.twitch.p4g.P4GService;
+import net.erstschlag.playground.misc.p4g.P4GDataDto;
+import net.erstschlag.playground.misc.p4g.P4GService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
