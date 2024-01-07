@@ -1,4 +1,4 @@
-package net.erstschlag.playground.generic;
+package net.erstschlag.playground.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

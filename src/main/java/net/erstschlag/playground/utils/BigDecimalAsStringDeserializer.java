@@ -1,4 +1,4 @@
-package net.erstschlag.playground.generic;
+package net.erstschlag.playground.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

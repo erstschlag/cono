@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
-import net.erstschlag.playground.generic.BigDecimalAsStringDeserializer;
-import net.erstschlag.playground.generic.BigDecimalAsStringSerializer;
+import net.erstschlag.playground.utils.BigDecimalAsStringDeserializer;
+import net.erstschlag.playground.utils.BigDecimalAsStringSerializer;
 
 public class ChargeUserDto {
 

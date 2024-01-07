@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.util.Optional;
 import net.erstschlag.playground.PlaygroundEvent;
-import net.erstschlag.playground.generic.BigDecimalAsStringDeserializer;
-import net.erstschlag.playground.generic.BigDecimalAsStringSerializer;
+import net.erstschlag.playground.utils.BigDecimalAsStringDeserializer;
+import net.erstschlag.playground.utils.BigDecimalAsStringSerializer;
 
 abstract class UserCreditsChangedEvent<T extends PlaygroundEvent> extends PlaygroundEvent<T> {
 
