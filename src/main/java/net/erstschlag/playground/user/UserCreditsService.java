@@ -1,5 +1,7 @@
 package net.erstschlag.playground.user;
 
+import net.erstschlag.playground.user.events.UserChargedEvent;
+import net.erstschlag.playground.user.events.UserAwardedEvent;
 import java.math.BigDecimal;
 import net.erstschlag.playground.twitch.pubsub.events.ChannelBitsEvent;
 import net.erstschlag.playground.twitch.pubsub.events.ChannelGiftedSubscriptionsEvent;

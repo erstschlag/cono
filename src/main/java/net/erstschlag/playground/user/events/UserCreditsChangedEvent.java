@@ -1,10 +1,11 @@
-package net.erstschlag.playground.user;
+package net.erstschlag.playground.user.events;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.util.Optional;
 import net.erstschlag.playground.PlaygroundEvent;
+import net.erstschlag.playground.user.UserDto;
 import net.erstschlag.playground.utils.BigDecimalAsStringDeserializer;
 import net.erstschlag.playground.utils.BigDecimalAsStringSerializer;
 

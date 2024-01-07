@@ -1,6 +1,7 @@
-package net.erstschlag.playground.user;
+package net.erstschlag.playground.user.events;
 
 import java.math.BigDecimal;
+import net.erstschlag.playground.user.UserDto;
 
 public class UserAwardedEvent extends UserCreditsChangedEvent<UserAwardedEvent> {
 
