@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>FlipClock</title>
+        <link rel="stylesheet" href="flipclock.css">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="flipclock.min.js"></script>
+        <style>
+            .message {
+                position: absolute;
+                top: 30px;
+                left: 350px;
+                font-size: 50px;
+            }
+            .flip-clock-label{
+                display: none;
+            }
+        </style>
+        <script>
+            let clock;
+            function initClock() {
+                var seconds = new URLSearchParams(window.location.search).get('seconds');
+                if (seconds === null) {
+                    seconds = 300;
+                }
+                clock = $('#your-clock').FlipClock(seconds, {
+                    countdown: true,
+                    clockFace: 'HourCounter'
+                });
+            }
+            function addSeconds(amount){
+                clock.setTime(clock.getTime().time + amount);
+            }
+        </script>
+    </head>
+    <body onload="initClock()">
+        <div id="your-clock"></div>
+        <button onclick="addSeconds(600);">Wait a minute!</button>
+    </body>
+</html>
