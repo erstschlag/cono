@@ -12,6 +12,16 @@
             }
         </style>
         <script>
+            /*
+                Countdown timer can be changed as follows
+                HTML GET Parameters:
+                seconds: 
+                    to set the seconds the counter schould start at
+                faceStyle: 
+                    defaults to an hourly face style (hh:mm:ss) can be set to 
+                    MinuteCounter to get a minute style counter (mm:ss)
+            */
+
             let clock;
             function initClock() {
                 var seconds = new URLSearchParams(window.location.search).get('seconds');
