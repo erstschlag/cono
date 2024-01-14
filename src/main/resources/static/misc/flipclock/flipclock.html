@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>FlipClock</title>
-        <link rel="stylesheet" href="flipclock.css">
-        <script src="/webjars/jquery/jquery.min.js"></script>
+        <link rel="stylesheet" href="flipclock.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="flipclock.min.js"></script>
         <style>
@@ -41,13 +40,13 @@
                     });
                 }
             }
-            function addSeconds(amount){
+            function addSeconds(amount) {
                 clock.setTime(clock.getTime().time + amount);
             }
         </script>
     </head>
     <body onload="initClock()">
         <div id="your-clock"></div>
-        <button onclick="addSeconds(600);">Wait a minute!</button>
+        <!--<button onclick="addSeconds(600);">Wait a minute!</button>-->
     </body>
 </html>
