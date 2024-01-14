@@ -2,12 +2,26 @@ let connection = null;
 
 var pagination = {
     page:0,
-    size:20,
+    size:25,
     sortDirection:"DESC",
     sortFields:"weeklyLP"
 };
 
 var isLPCollectionEnabled;
+
+function toggleSort(colName) {
+    if(pagination.sortFields === colName){
+        if (pagination.sortDirection === "DESC") {
+            pagination.sortDirection = "ASC";
+        } else{
+            pagination.sortDirection = "DESC";
+        }
+    }else{
+        pagination.sortFields = colName;
+        pagination.sortDirection = "DESC";
+    }
+    retrieveUsers();
+};
 
 function displayUsers(users) {
     // Extract value from table header. 
@@ -22,13 +36,21 @@ function displayUsers(users) {
 
     // Create table.
     const table = document.createElement("table");
-
+    table.className = "table table-sm table-bordered table-hover table-dark";
     // Create table header row using the extracted headers above.
     let tr = table.insertRow(-1);                   // table row.
 
     for (let i = 0; i < col.length; i++) {
         let th = document.createElement("th");      // table header.
-        th.innerHTML = col[i];
+        th.className = "thead-dark";
+        th.onclick = function() {
+           toggleSort(col[i]);
+        };
+        if(col[i] === pagination.sortFields) {
+            th.innerHTML = col[i] + (pagination.sortDirection === "DESC"? " v" : " ^");
+        }else{
+            th.innerHTML = col[i];
+        }
         tr.appendChild(th);
     }
 
@@ -36,6 +58,9 @@ function displayUsers(users) {
     for (let i = 0; i < users.length; i++) {
 
         tr = table.insertRow(-1);
+        tr.onclick = function() {
+            showModifyUserDialog(users[i][col[0]]);
+        };
 
         for (let j = 0; j < col.length; j++) {
             let tabCell = tr.insertCell(-1);
@@ -49,13 +74,17 @@ function displayUsers(users) {
     divShowData.appendChild(table);
 }
 
-function displayNavigation(parsed) {
-    const divShowData = document.getElementById('showNavigation');
-    divShowData.innerHTML = "" + parsed.totalElements;
+function showModifyUserDialog(userId) {
+    $("#modifyUserCreditsUserId").val(userId);
+    document.getElementById("modifyUserDialog").showModal();
 }
 
 function retrieveUsers() {
-    this.connection.sendObject("/app/users", pagination);
+    if($("#userNameSearch").val() === ""){
+        this.connection.sendObject("/app/users", pagination);
+    }else{
+        retrieveUsersByNameLike($("#userNameSearch").val());
+    }
 }
 
 function retrieveUsersByNameLike(search) {
@@ -85,12 +114,12 @@ function modifyUserCredits(userId, amount) {
     }
     if(amount > 0) {
         Backend.connection.awardUser(userId, amount, 'Erst wants it!',
-                () => {});
+                () => {retrieveUsers();});
     } else {
         Backend.connection.chargeUser(userId, -amount, 'Erst wants it!',
-                () => {});
+                () => {retrieveUsers();});
     }
-    retrieveUsers();
+    document.getElementById("modifyUserDialog").close();
 }
 
 
@@ -98,14 +127,15 @@ function onBackendConnect(connection) {
     this.connection = connection;
     connection.subscribe('/topic/users', function (object) {
             displayUsers(object.content);
-            displayNavigation(object);
         });
     connection.subscribe('/topic/isLPCollectionEnabled', function (object) {
             isLPCollectionEnabled = object;
             var enableButton = document.getElementById('enableLPCollection');
             if(isLPCollectionEnabled) {
+                enableButton.className = "btn btn-success";
                 enableButton.textContent = 'disable';
             }else{
+                enableButton.className = "btn btn-danger";
                 enableButton.textContent = 'enable';
             }
         });
@@ -115,13 +145,10 @@ function onBackendConnect(connection) {
 
 $(function () {
     Backend.connect(onBackendConnect);
-    $("form").on('submit', function (e) {
-        e.preventDefault();
-    });
-    $( "#retrieveUsers" ).click(function() { retrieveUsers(); });
     $( "#previousPage" ).click(function() { switchPage(-1); });
     $( "#nextPage" ).click(function() { switchPage(1); });
     $( "#enableLPCollection" ).click(function() { enableLPCollection(!isLPCollectionEnabled); });
     $( "#modifyUserCredits" ).click(function() { modifyUserCredits($("#modifyUserCreditsUserId").val(), parseFloat($("#modifyUserCreditsAmount").val())); });
-    $( "#searchUserByName" ).click(function() { retrieveUsersByNameLike($("#userNameSearch").val()); });
+    $( "#cancelModifyUserDialog" ).click(function() { document.getElementById("modifyUserDialog").close(); });
+    $( "#searchUserByName" ).click(function() { retrieveUsers(); });
 });

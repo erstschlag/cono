@@ -16,18 +16,28 @@
         </style>
     </head>
     <body>
-        <button id="previousPage">prev</button>
-        <button id="nextPage">next</button>
-        <p id="showNavigation"></p>
-        <p id="showData"></p>
-        <form>
-            <button id="retrieveUsers">retrieve users</button><br>
-            <button id="enableLPCollection">loading LP collection state</button><br>
-            UserId<input id="modifyUserCreditsUserId" type="text" value="">
-            Amount<input id="modifyUserCreditsAmount" type="number" value="1.0">
-            <button id="modifyUserCredits">modifyUserCredits</button><br>
-            <input id="userNameSearch" type="text" value="">
-            <button id="searchUserByName">search users by name</button><br>
-        </form>
+        <div class="container mt-5">
+            <button id="previousPage" class="btn btn-dark">prev</button>
+            <button id="nextPage" class="btn btn-dark">next</button>
+            Search by name: <input id="userNameSearch" type="text" value="">
+            <button id="searchUserByName" class="btn btn-dark">search</button>
+            <div class="float-end">LP collection: <button style="width: 5em;" id="enableLPCollection">loading LP collection state</button></div>
+            <div id="showData"></div>
+        </div>
+        <dialog id="modifyUserDialog" class="bg-dark text-white">
+           
+                <div class="form-group">
+                    <label for="modifyUserCreditsUserId">UserId</label>
+                    <input style="width: 10em;" type="text" class="form-control" id="modifyUserCreditsUserId" aria-describedby="userIdHelp" placeholder="Enter UserId">
+                    <small id="userIdHelp" class="form-text text-muted">Select a user id from the table above.</small>
+                </div>
+                <div class="form-group">
+                    <label for="modifyUserCreditsAmount">Amount</label>
+                    <input style="width: 10em;" type="number" class="form-control" id="modifyUserCreditsAmount" aria-describedby="amountHelp" placeholder="Enter amount">
+                    <small id="amountHelp" class="form-text text-muted">Enter an amount, precision is up to 2 decimals</small>
+                </div>
+                <button id="cancelModifyUserDialog" class="btn btn-secondary">cancel</button>
+                <button id="modifyUserCredits" class="btn btn-secondary">submit</button>
+        </dialog>
     </body>
 </html>
