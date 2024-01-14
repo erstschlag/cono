@@ -24,14 +24,21 @@
 
             let clock;
             function initClock() {
-                var seconds = new URLSearchParams(window.location.search).get('seconds');
+                let seconds = new URLSearchParams(window.location.search).get("seconds");
+                let faceStyle = new URLSearchParams(window.location.search).get("faceStyle");
                 if (seconds === null) {
                     seconds = 300;
                 }
-                clock = $('#your-clock').FlipClock(seconds, {
-                    countdown: true,
-                    clockFace: 'HourCounter'
-                });
+                if (faceStyle === null) {
+                    clock = $("#your-clock").FlipClock(seconds, {
+                        countdown: true,
+                    });
+                } else {
+                    clock = $("#your-clock").FlipClock(seconds, {
+                        countdown: true,
+                        clockFace: faceStyle,
+                    });
+                }
             }
             function addSeconds(amount){
                 clock.setTime(clock.getTime().time + amount);
