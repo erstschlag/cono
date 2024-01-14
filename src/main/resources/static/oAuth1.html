@@ -8,63 +8,71 @@
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
         <script src="..\utils\Backend.js"></script>
         <script src="/oAuth1.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+        </style>
     </head>
     <body>
-        <table>
-            <tr>
-                <td>client_id</td>
-                <td><input id="client_id" type="password" value="the client id"></td>
-                <td>
-                    Your app’s registered client ID.
-                </td>
-            </tr>
-            <tr>
-                <td>force_verify</td>
-                <td>
-                    <select id="force_verify">
-                        <option value="false" selected>
-                            No
-                        </option>
-                        <option value="true">
-                            Yes
-                        </option>
-                    </select>
-                </td>
-                <td>
-                    Set to true to force the user to re-authorize your app’s access to their resources. The default is false.
-                </td>
-            </tr>
-            <tr>
-                <td>redirect_uri</td>
-                <td><input id="redirect_uri" type="text" value="http://localhost:8081/oAuth2.html"></td>
-                <td>
-                    Your app’s registered redirect URI. The authorization code is sent to this URI.
-                </td>
-            </tr>
-            <tr>
-                <td>response_type</td>
-                <td><input id="response_type" type="text" value="code" readonly></td>
-                <td>
-                    Must be set to code.
-                </td>
-            </tr>
-            <tr>
-                <td>scope</td>
-                <td><input id="scope" type="text" value="channel:read:redemptions bits:read channel:read:subscriptions moderator:read:chatters"></td>
-                <td>
-                    A space-delimited list of scopes. The APIs that you’re calling will identify the scopes you must list. You must URL encode the list.
-                </td>
-            </tr>
-            <tr>
-                <td>state</td>
-                <td><input id="state" type="password" value="191679354645"></td>
-                <td>
-                    Although optional, you are strongly encouraged to pass a state string to help prevent Cross-Site Request Forgery (CSRF) attacks. The server returns this string to you in your redirect URI (see the state parameter in the fragment portion of the URI). If this string doesn’t match the state string that you passed, ignore the response. The state string should be randomly generated and unique for each OAuth request.
-                </td>
-            </tr>
-        </table>
-        <form>
-            <button id="auth">step 2</button>
-        </form>
+        <div class="container mt-5">
+            <table class="table table-bordered table-hover table-dark">
+                <tr>
+                    <th>client_id</th>
+                    <td><input id="client_id" type="password" value="the client id"></td>
+                    <td>
+                        Your app's registered client ID.
+                    </td>
+                </tr>
+                <tr>
+                    <th>force_verify</th>
+                    <td>
+                        <select id="force_verify">
+                            <option value="false" selected>
+                                No
+                            </option>
+                            <option value="true">
+                                Yes
+                            </option>
+                        </select>
+                    </td>
+                    <td>
+                        Set to true to force the user to re-authorize your app's access to their resources. The default is false.
+                    </td>
+                </tr>
+                <tr>
+                    <th>redirect_uri</th>
+                    <td><input id="redirect_uri" type="text" value="http://localhost:8081/oAuth2.html"></td>
+                    <td>
+                        Your app's registered redirect URI. The authorization code is sent to this URI.
+                    </td>
+                </tr>
+                <tr>
+                    <th>response_type</th>
+                    <td><input id="response_type" type="text" value="code" readonly></td>
+                    <td>
+                        Must be set to code.
+                    </td>
+                </tr>
+                <tr>
+                    <th>scope</th>
+                    <td><textarea id="scope" rows="5" cols="30">channel:read:redemptions bits:read channel:read:subscriptions moderator:read:chatters</textarea></td>
+                    <td>
+                        A space-delimited list of scopes. The APIs that you're calling will identify the scopes you must list. You must URL encode the list.
+                    </td>
+                </tr>
+                <tr>
+                    <th>state</th>
+                    <td><input id="state" type="password" value="191679354645"></td>
+                    <td>
+                        Although optional, you are strongly encouraged to pass a state string to help prevent Cross-Site Request Forgery (CSRF) attacks. The server returns this string to you in your redirect URI (see the state parameter in the fragment portion of the URI). If this string doesn't match the state string that you passed, ignore the response. The state string should be randomly generated and unique for each OAuth request.
+                    </td>
+                </tr>
+            </table>
+            <form>
+                <button id="auth" class="btn btn-dark">step 2</button>
+            </form>
+        </div>
     </body>
 </html>

@@ -9,19 +9,27 @@
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
         <script src="..\utils\Backend.js"></script>
         <script src="/oAuth2.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+        </style>
     </head>
     <body onload="init();">
-        <form>
-            <table>
-                <tr>
-                    <td>code</td>
-                    <td><input name="code" id="code" type="password" value="code" readonly></td>
-                    <td>
-                        The code that the /authorize response returned in the code query parameter.
-                    </td>
-                </tr>
-            </table>
-            <button type="submit" id="initialize">Initialize</button>
-        </form>
+        <div class="container mt-5">
+            <form>
+                <table class="table table-bordered table-hover table-dark">
+                    <tr>
+                        <th>code</th>
+                        <td><input name="code" id="code" type="password" value="code" readonly></td>
+                        <td>
+                            The code that the /authorize response returned in the code query parameter.
+                        </td>
+                    </tr>
+                </table>
+                <button type="submit" id="initialize" class="btn btn-dark">Initialize</button>
+            </form>
+        </div>
     </body>
 </html>
