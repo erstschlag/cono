@@ -3,6 +3,8 @@ package net.erstschlag.playground.websocket;
 import java.util.HashMap;
 import net.erstschlag.playground.PlaygroundEvent;
 import net.erstschlag.playground.twitch.pubsub.events.ChannelBitsEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChannelGiftedSubscriptionsEvent;
+import net.erstschlag.playground.twitch.pubsub.events.ChannelSubscribeEvent;
 import net.erstschlag.playground.twitch.pubsub.events.ChatMessageEvent;
 import net.erstschlag.playground.twitch.pubsub.events.PurchaseEvent;
 import net.erstschlag.playground.twitch.pubsub.events.RaffleEvent;
@@ -32,6 +34,8 @@ public class EventRelay {
         classTopicLookup.put(RaffleEvent.class,"/topic/raffleEntered");
         classTopicLookup.put(ChatMessageEvent.class,"/topic/chatMessageReceived");
         classTopicLookup.put(PurchaseEvent.class,"/topic/purchaseReceived");
+        classTopicLookup.put(ChannelSubscribeEvent.class, "/topic/twitchSubReceived");
+        classTopicLookup.put(ChannelGiftedSubscriptionsEvent.class, "/topic/twitchSubGiftsReceived");
     }
 
     @EventListener
