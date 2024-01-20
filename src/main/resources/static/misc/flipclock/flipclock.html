@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -21,24 +21,21 @@
                     defaults to an hourly face style (hh:mm:ss) can be set to 
                     MinuteCounter to get a minute style counter (mm:ss)
             */
-
             let clock;
             function initClock() {
-                let seconds = new URLSearchParams(window.location.search).get("seconds");
-                let faceStyle = new URLSearchParams(window.location.search).get("faceStyle");
+                let params = new URLSearchParams(window.location.search);
+                let seconds = params.get("seconds");
+                let faceStyle = params.get("faceStyle");
                 if (seconds === null) {
                     seconds = 300;
                 }
-                if (faceStyle === null) {
-                    clock = $("#your-clock").FlipClock(seconds, {
-                        countdown: true,
-                    });
-                } else {
-                    clock = $("#your-clock").FlipClock(seconds, {
-                        countdown: true,
-                        clockFace: faceStyle,
-                    });
+                let options = {
+                    countdown: true
+                };
+                if (faceStyle !== null) {
+                    options.clockFace = faceStyle;
                 }
+                clock = $("#your-clock").FlipClock(seconds, options);
             }
             function addSeconds(amount) {
                 clock.setTime(clock.getTime().time + amount);
