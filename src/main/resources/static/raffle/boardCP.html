@@ -14,32 +14,21 @@
                 background-color: black;
                 color: #CCC;
             }
-            .actionButton {
-                height: 50px;
-                width: 50px;
-                background-color: black;
-                background-size: 90% auto;
-                background-repeat: no-repeat;
-                background-position: center center;
-            }
         </style>
     </head>
     <body>
-        <form>
-            <button id="launch">launch</button>
-            <button id="stopRaffleEntries">stopRaffleEntries</button>
-            <button id="raffle">raffle</button>
-            <button id="revealWinner">revealWinner</button>
-            <button id="addTestParticipant">addTestParticipant</button>
-            
-            <br>
-            Ship png:<input id="shipPng" type="text" value="Retribution.png">
-            Number of winners:<input id="numberOfWinners" type="number" value="1">
-            <button id="initialize">initialize</button>
-            <br>
-            Winner Name:<input id="winnerName" type="text" value="viewer1">
-            <button id="stopWinnerThreat">stopWinnerThreat</button>
-            <button id="redraw">redraw</button>
-        </form>
+        <button id="stopRaffleEntries" class="btn btn-secondary">close</button>
+        <button id="raffle" class="btn btn-secondary">raffle</button>
+        <button id="revealWinner" class="btn btn-secondary">reveal</button>
+        <button id="redraw" class="btn btn-secondary">redraw</button>
+
+        <br>
+        Ship png:<input id="shipPng" type="text" value="Retribution.png">
+        Number of winners:<input id="numberOfWinners" type="number" value="1" style="width: 3em;">
+        <button id="initialize" class="btn btn-secondary">initialize</button>
+        <br>
+        <button id="addTestParticipant" class="btn btn-secondary">addTestParticipant</button>
+        Winner Name:<input id="winnerName" type="text" value="viewer1" style="width: 7em;">
+        <button id="stopWinnerThreat" class="btn btn-secondary">stopWinnerThreat</button>
     </body>
 </html>

@@ -8,12 +8,6 @@ function initialize() {
     });
 };
 
-function launch() {
-    send({
-        cmd: 'launchRaffle'
-    });
-};
-
 function stopRaffleEntries() {
     send({
         cmd: 'stopRaffleEntries'
@@ -62,7 +56,6 @@ $(function () {
         e.preventDefault();
     });
     $( "#initialize" ).click(function() { initialize(); });
-    $( "#launch" ).click(function() { launch(); });
     $( "#stopRaffleEntries" ).click(function() { stopRaffleEntries(); });
     $( "#raffle" ).click(function() { raffle(); });
     $( "#revealWinner" ).click(function() { revealWinner(); });

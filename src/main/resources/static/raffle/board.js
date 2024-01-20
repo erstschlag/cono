@@ -200,9 +200,6 @@ function onCommandReceived(commandObj) {
     if (commandObj.cmd === 'initRaffleBoard') {
         init(commandObj.shipPng, commandObj.numberOfWinners);
     }
-    if (commandObj.cmd === 'launchRaffle') {
-        launch();
-    }
     if (commandObj.cmd === 'stopRaffleEntries') {
         state.isRunning = false;
     }
