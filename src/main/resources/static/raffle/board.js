@@ -4,6 +4,7 @@ let textXOffset = 90;
 let textYOffset = 30;
 let shipSize = 200;
 let bombSize = 150;
+let winnerHorizontalPosition = 3500;
 
 let state = {};
 
@@ -74,9 +75,9 @@ var createParticipant = function (name, x, y, shipImage) {
     return {
         name: name,
         shipImage: shipImage,
-        ship: state.draw.image('ships/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, randomY),
-        text: state.draw.text(name).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.9))'}).move(1920 + textXOffset, randomY + textYOffset),
-        bomb: state.draw.image('nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(randomX + bombSize), randomY + (shipSize - bombSize) / 2)
+        ship: state.draw.image('ships/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, y),
+        text: state.draw.text(name).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.9))'}).move(1920 + textXOffset, y + textYOffset),
+        bomb: state.draw.image('nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(x + bombSize), y + (shipSize - bombSize) / 2)
     };
 };
 
@@ -121,8 +122,8 @@ var revealWinner = function () {
         let verticalSpaceBetweenShips = 1080 / (state.winners.size + 1);
         let winnerIndex = 1;
         state.winners.forEach((winner) => {
-            winner.ship.move(3500, verticalSpaceBetweenShips * winnerIndex - shipSize / 2);
-            winner.text.move(3500 + textXOffset, verticalSpaceBetweenShips * winnerIndex - shipSize / 2 + textYOffset);
+            winner.ship.move(winnerHorizontalPosition, verticalSpaceBetweenShips * winnerIndex - shipSize / 2);
+            winner.text.move(winnerHorizontalPosition + textXOffset, verticalSpaceBetweenShips * winnerIndex - shipSize / 2 + textYOffset);
 
             state.background.animate(2000, 0, 'now').ease('>').move(-1920, 0);
             winner.ship.animate(2000, 0, 'now').ease('>').move(winner.ship.x() - 1920, winner.ship.y());
@@ -143,8 +144,9 @@ var redraw = function () {
     state.numberOfParticipants++;
     state.numberOfParticipantsText.plain(state.numberOfParticipants);
     selectWinner();
+    winnerHorizontalPosition -= shipSize;
     state.winners.forEach((winner) => {
-        state.winners.set(winner.name, createParticipant(winner.name, 0, 0, winner.shipImage));
+        state.winners.set(winner.name, createParticipant(winner.name, 0, 0, 'Capsule.png'));
     });
     revealWinner();
 };
