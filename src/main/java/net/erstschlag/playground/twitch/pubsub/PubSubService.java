@@ -60,6 +60,7 @@ public class PubSubService {
         twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(oAuthCredential, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().listenForCheerEvents(oAuthCredential, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().listenForSubscriptionEvents(oAuthCredential, pubSubConfiguration.getChannelId());
+        twitchClient.getPubSub().listenForChannelSubGiftsEvents(oAuthCredential, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.RewardRedeemedEvent.class, event -> publishApplicationEvent(twitch4JEventConvertor.convert(event)));
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelBitsEvent.class, event -> bitsReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelSubscribeEvent.class, event -> subscriptionReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
@@ -134,6 +135,10 @@ public class PubSubService {
                 handleNuggetChatMessage(event);
                 return;
             }
+            if (eventMessage.startsWith("!lp")) {
+                handleLPChatMessage(event);
+                return;
+            }
             if (eventMessage.startsWith("!rig")) {
                 handleRigChatMessage(event);
                 return;
@@ -170,6 +175,11 @@ public class PubSubService {
     private void handleNuggetChatMessage(ChannelMessageEvent event) {
         UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
         twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently own " + user.getNuggets() + " nuggets!", "", event.getMessageId().get());
+    }
+    
+    private void handleLPChatMessage(ChannelMessageEvent event) {
+        UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
+        twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently got " + user.getWeeklyLP() + " weekly lp!", "", event.getMessageId().get());
     }
 
     private void handleRigChatMessage(ChannelMessageEvent event) {
