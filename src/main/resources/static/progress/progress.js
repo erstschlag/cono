@@ -7,6 +7,8 @@ let targetProgress = 0;
 let currentVisualProgress = 0;
 let redeemProgressAmount = 10;
 let bitsProgressAmount = 1;
+let riggingCost = 1;
+let rigProgressAmount = 10;
 
 function updateProgress() {
     if (currentVisualProgress === targetProgress) return;
@@ -45,10 +47,24 @@ function onTwitchBitsReceived(bitsEvent) {
     targetProgress+= bitsEvent.bitsUsed*bitsProgressAmount;
 }
 
+function onRigRequestReceived(riggingEvent) {
+    if (riggingEvent.consumer === 'charge') {
+        amount = 1;
+        if (riggingEvent.command !== "") {
+            amount = parseInt(riggingEvent.command, 10);
+        }
+        Backend.connection.chargeUser(riggingEvent.user.id, riggingCost * amount, 'rigging charge',
+                () => {
+            targetProgress+= amount*rigProgressAmount;
+        });
+    }
+}
+
 function onBackendConnect(connection) {
     connection.subscribe('/topic/object', onDashBoardRequest);
     connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
     connection.subscribe('/topic/twitchBitsReceived', onTwitchBitsReceived);
+    connection.subscribe('/topic/riggingRequested', onRigRequestReceived);
 }
 
 $(function () {
