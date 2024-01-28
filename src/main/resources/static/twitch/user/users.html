@@ -21,9 +21,15 @@
             <button id="nextPage" class="btn btn-dark">next</button>
             Search by name: <input id="userNameSearch" type="text" value="">
             <button id="searchUserByName" class="btn btn-dark">search</button>
+            End of week giveaway: <span id="totalWeeklyLP" style="font-weight: bold">?</span>
+            <button id="requestResetWeeklyLP" class="btn btn-dark">reset</button>
             <div class="float-end">LP collection: <button style="width: 5em;" id="enableLPCollection">loading LP collection state</button></div>
             <div id="showData"></div>
         </div>
+        <dialog id="resetWeeklyLPConfirmationDialog">
+            Are you sure? <button id="resetWeeklyLP" class="btn btn-dark">Yes</button>
+            <button id="closeResetWeeklyLPButton" class="btn btn-dark">No</button>
+        </dialog>
         <dialog id="modifyUserDialog" class="bg-dark text-white">
            
                 <div class="form-group">

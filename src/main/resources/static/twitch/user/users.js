@@ -96,6 +96,19 @@ function retrieveLPCollectionStatus() {
     this.connection.sendObject("/app/users/isLPCollectionEnabled", "");
 }
 
+function retrieveWeeklyLPSum() {
+    this.connection.sendObject("/app/users/weeklyLPSum", "");
+}
+
+function resetWeeklyLP() {
+    document.getElementById("resetWeeklyLPConfirmationDialog").close();
+    this.connection.sendObject("/app/users/resetWeeklyLP", "");
+}
+
+function showResetWeeklyConfirmationDialog() {
+    document.getElementById("resetWeeklyLPConfirmationDialog").showModal();
+}
+
 function enableLPCollection(enable) {
     this.connection.sendObject("/app/users/enableLPCollection", enable);
 }
@@ -139,8 +152,12 @@ function onBackendConnect(connection) {
                 enableButton.textContent = 'enable';
             }
         });
+    connection.subscribe('/topic/weeklyLPSum', function (object) {
+        $("#totalWeeklyLP").html(Math.round(parseInt(object) / 20) + 'm ISK');
+    });    
     retrieveUsers();
     retrieveLPCollectionStatus();
+    retrieveWeeklyLPSum();
 }
 
 $(function () {
@@ -148,6 +165,9 @@ $(function () {
     $( "#previousPage" ).click(function() { switchPage(-1); });
     $( "#nextPage" ).click(function() { switchPage(1); });
     $( "#enableLPCollection" ).click(function() { enableLPCollection(!isLPCollectionEnabled); });
+    $( "#requestResetWeeklyLP" ).click(function() { showResetWeeklyConfirmationDialog(); });
+    $( "#resetWeeklyLP" ).click(function() { resetWeeklyLP(); });
+    $( "#closeResetWeeklyLPButton" ).click(function() { document.getElementById("resetWeeklyLPConfirmationDialog").close(); });
     $( "#modifyUserCredits" ).click(function() { modifyUserCredits($("#modifyUserCreditsUserId").val(), parseFloat($("#modifyUserCreditsAmount").val())); });
     $( "#cancelModifyUserDialog" ).click(function() { document.getElementById("modifyUserDialog").close(); });
     $( "#searchUserByName" ).click(function() { retrieveUsers(); });
