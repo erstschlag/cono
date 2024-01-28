@@ -1,8 +1,8 @@
 class _Backend {
     connection = null;
-    connect(connectedMethod) {
+    connect(connectedMethod, storageEventReceivedMethod) {
         this.connection = new Connection();
-        this.connection.connect(connectedMethod);
+        this.connection.connect(connectedMethod, storageEventReceivedMethod);
         return this.connection;
     }
 }
@@ -12,10 +12,13 @@ class Connection {
     subscriptions = new Map();
     userChargeTransactions = new Map();
     userAwardTransactions = new Map();
+    storageRequests = new Map();
+    storageEventReceivedMethod = undefined;
     
     constructor() {}
 
-    connect(connectedMethod) {
+    connect(connectedMethod, storageEventReceivedMethod) {
+        this.storageEventReceivedMethod = storageEventReceivedMethod;
         if (this.reconnectInterval !== null) {
             clearInterval(this.reconnectInterval);
         }
@@ -23,15 +26,18 @@ class Connection {
             this.stompClient = Stomp.over(new SockJS('/generic-ws'));
             this.stompClient.connect({}, (frame) => {
                 clearInterval(this.reconnectInterval);
-                if (connectedMethod !== undefined) {
-                    connectedMethod(this);
-                }
                 this.subscribe('/topic/userCharged', (event)=> {
                     this._onUserChargedReceived(event);
                 });
                 this.subscribe('/topic/userAwarded', (event)=> {
                     this._onUserAwardedReceived(event);
                 });
+                this.subscribe('/topic/store', (event)=> {
+                    this._onStorageEventReceived(event);
+                });
+                if (connectedMethod !== undefined) {
+                    connectedMethod(this);
+                }
             }, () => {
                 this.connect(connectedMethod);
             });
@@ -62,6 +68,34 @@ class Connection {
                     transactionId: transactionId
                 }
         );
+    }
+    
+    loadFromStorage(uuid, onSuccessMethod) {
+        if(onSuccessMethod !== undefined) {
+            this.storageRequests.set(uuid, onSuccessMethod);
+        }
+        this.sendStr("/app/loadFromStorage", uuid);
+    }
+    
+    store(uuid, data, onSuccessMethod) {
+        if(onSuccessMethod !== undefined) {
+            this.storageRequests.set(uuid, onSuccessMethod);
+        }
+        this.sendObject("/app/store", {
+            uuid: uuid,
+            data: data
+        });
+    }
+
+    _onStorageEventReceived(storageEvent) {
+        var onStorageSuccess = this.storageRequests.get(storageEvent.uuid);
+        if (onStorageSuccess !== undefined) {
+            onStorageSuccess(storageEvent);
+            this.storageRequests.delete(storageEvent.uuid);
+        }
+        if (this.storageEventReceivedMethod !== undefined) {
+            this.storageEventReceivedMethod(storageEvent);
+        }
     }
 
     _onUserChargedReceived(userChargedEvent) {
