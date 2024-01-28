@@ -1,11 +1,12 @@
 package net.erstschlag.playground.user;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.erstschlag.playground.twitch.pubsub.events.ChatMessageEvent;
-import net.erstschlag.playground.twitch.pubsub.PubSubConfiguration;
 import net.erstschlag.playground.twitch.pubsub.PubSubService;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
@@ -18,14 +19,15 @@ public class UserLPRecorder {
 
     private final PubSubService twitchService;
     private final UserRepository userRepository;
-    private final PubSubConfiguration pubSubConfiguration;
     private final HashMap<String, UserDto> eligibleUsersMap = new HashMap<>();
+    private final List<String> userBlacklist = new ArrayList<>();
     private boolean lpCollectionEnabled = false;
 
-    public UserLPRecorder(PubSubService pubSubService, UserRepository userRepository, PubSubConfiguration pubSubConfiguration) {
+    public UserLPRecorder(PubSubService pubSubService, UserRepository userRepository, LPConfiguration lpConfiguration) {
         this.twitchService = pubSubService;
         this.userRepository = userRepository;
-        this.pubSubConfiguration = pubSubConfiguration;
+        userBlacklist.addAll(Arrays.asList(
+                lpConfiguration.getBlacklist().split(",")));
     }
 
     public boolean enableLPCollection(boolean enable) {
@@ -64,7 +66,7 @@ public class UserLPRecorder {
     }
 
     private boolean canCollectLP(String userName) {
-        return !pubSubConfiguration.getChannelName().equals(userName);
+        return !userBlacklist.contains(userName);
     }
 
 }

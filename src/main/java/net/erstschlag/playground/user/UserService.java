@@ -23,7 +23,7 @@ public class UserService {
     public Page<UserDto> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(mapstructMapper::userEntityToUserDto);
     }
-    
+
     public Page<UserDto> getUsersWithNameLike(String search, Pageable pageable) {
         return userRepository.findByNameLike(search, pageable).map(mapstructMapper::userEntityToUserDto);
     }
@@ -42,6 +42,18 @@ public class UserService {
 
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);
+    }
+
+    public Long getWeeklyLPSum() {
+        return userRepository.sumWeeklyLP();
+    }
+
+    public Integer getUserWeeklyLPRank(String userId) {
+        return userRepository.userWeeklyLPRank(userId);
+    }
+
+    public void resetWeeklyLP() {
+        userRepository.resetWeeklyLP();
     }
 
     synchronized UserEntity retrieveOrCreateUser(String userId, String userName) {

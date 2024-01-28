@@ -36,7 +36,7 @@ public class Twitch4JEventConvertor {
     }
 
     public ChannelSubscribeEvent convert(com.github.twitch4j.pubsub.events.ChannelSubscribeEvent cSE) {
-        Optional<UserDto> oUser = null;
+        Optional<UserDto> oUser;
         if (cSE.getData().getIsGift()) {
             oUser = extractUser(cSE.getData().getRecipientId(),
                     cSE.getData().getRecipientUserName());
@@ -49,13 +49,13 @@ public class Twitch4JEventConvertor {
                 SubTier.fromSubPlan(cSE.getData().getSubPlan()));
     }
     
-    public ChannelGiftedSubscriptionsEvent convert(com.github.twitch4j.pubsub.events.ChannelSubGiftEvent cSGE) {
+    public ChannelGiftedSubscriptionsEvent convert(com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent cSGE) {
         return new ChannelGiftedSubscriptionsEvent(extractUser(
-                cSGE.getData().getUserId(),
-                cSGE.getData().getUserName()
+                cSGE.getUser().getId(),
+                cSGE.getUser().getName()
         ),
-                SubTier.fromSubPlan(cSGE.getData().getTier()),
-                cSGE.getData().getCount());
+                SubTier.fromSubPlanString(cSGE.getSubscriptionPlan()),
+                cSGE.getCount());
     }
 
     public ChannelMessageEvent convert(com.github.twitch4j.chat.events.channel.ChannelMessageEvent cME) {

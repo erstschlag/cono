@@ -36,6 +36,26 @@ public enum SubTier {
 
         }
     }
+    
+    public static SubTier fromSubPlanString(String subPlan) {
+        switch (subPlan) {
+            case "Prime" -> {
+                return PRIME;
+            }
+            case "1000" -> {
+                return T1;
+            }
+            case "2000" -> {
+                return T2;
+            }
+            case "3000" -> {
+                return T3;
+            }
+            default ->
+                throw new AssertionError(subPlan);
+
+        }
+    }
 
     public int getTier() {
         return tier;

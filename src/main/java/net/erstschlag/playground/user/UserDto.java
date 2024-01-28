@@ -62,4 +62,9 @@ public class UserDto {
         this.totalLP = totalLP;
     }
 
+    @Override
+    public String toString() {
+        return "UserDto{" + "id=" + id + ", name=" + name + ", nuggets=" + nuggets + ", weeklyLP=" + weeklyLP + ", totalLP=" + totalLP + '}';
+    }
+
 }

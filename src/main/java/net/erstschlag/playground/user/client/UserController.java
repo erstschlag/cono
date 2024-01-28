@@ -20,7 +20,7 @@ public class UserController {
     private final UserLPRecorder userLPRecorder;
 
     public UserController(UserService userService,
-            UserCreditsService userCreditsService, 
+            UserCreditsService userCreditsService,
             UserLPRecorder userLPRecorder) {
         this.userService = userService;
         this.userCreditsService = userCreditsService;
@@ -30,17 +30,17 @@ public class UserController {
     @MessageMapping("/users")
     @SendTo("/topic/users")
     public Page<UserDto> getUsers(PageableRequest pageableRequest) {
-        return userService.getUsers(PageRequest.of(pageableRequest.getPage(), 
-                pageableRequest.getSize(), 
+        return userService.getUsers(PageRequest.of(pageableRequest.getPage(),
+                pageableRequest.getSize(),
                 Sort.Direction.fromString(pageableRequest.getSortDirection()),
                 pageableRequest.getSortFields()));
     }
-    
+
     @MessageMapping("/usersWithNameLike")
     @SendTo("/topic/users")
     public Page<UserDto> getUsersWithNameLike(SearchByNameRequest searchByNameRequest) {
-        return userService.getUsersWithNameLike(searchByNameRequest.getSearch(), PageRequest.of(searchByNameRequest.getPageableRequest().getPage(), 
-                searchByNameRequest.getPageableRequest().getSize(), 
+        return userService.getUsersWithNameLike(searchByNameRequest.getSearch(), PageRequest.of(searchByNameRequest.getPageableRequest().getPage(),
+                searchByNameRequest.getPageableRequest().getSize(),
                 Sort.Direction.fromString(searchByNameRequest.getPageableRequest().getSortDirection()),
                 searchByNameRequest.getPageableRequest().getSortFields()));
     }
@@ -65,16 +65,27 @@ public class UserController {
     public void deleteUser(String userId) {
         userService.deleteUser(userId);
     }
-    
+
     @MessageMapping("/users/enableLPCollection")
     @SendTo("/topic/isLPCollectionEnabled")
     public boolean enableUserLPCollection(boolean enable) {
         return userLPRecorder.enableLPCollection(enable);
     }
-    
+
     @MessageMapping("/users/isLPCollectionEnabled")
     @SendTo("/topic/isLPCollectionEnabled")
     public boolean isUserLPCollectionEnabled() {
         return userLPRecorder.isLPCollectionEnabled();
+    }
+
+    @MessageMapping("/users/weeklyLPSum")
+    @SendTo("/topic/weeklyLPSum")
+    public Long getWeeklyLPSum() {
+        return userService.getWeeklyLPSum();
+    }
+
+    @MessageMapping("/users/resetWeeklyLP")
+    public void resetWeeklyLP() {
+        userService.resetWeeklyLP();
     }
 }

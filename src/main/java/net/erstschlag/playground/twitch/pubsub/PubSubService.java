@@ -60,13 +60,12 @@ public class PubSubService {
         twitchClient.getPubSub().listenForChannelPointsRedemptionEvents(oAuthCredential, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().listenForCheerEvents(oAuthCredential, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().listenForSubscriptionEvents(oAuthCredential, pubSubConfiguration.getChannelId());
-        twitchClient.getPubSub().listenForChannelSubGiftsEvents(oAuthCredential, pubSubConfiguration.getChannelId());
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.RewardRedeemedEvent.class, event -> publishApplicationEvent(twitch4JEventConvertor.convert(event)));
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelBitsEvent.class, event -> bitsReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
         twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelSubscribeEvent.class, event -> subscriptionReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
-        twitchClient.getPubSub().getEventManager().onEvent(com.github.twitch4j.pubsub.events.ChannelSubGiftEvent.class, event -> giftedSubscriptionsReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
         twitchClient.getChat().joinChannel(pubSubConfiguration.getChannelName());
         twitchClient.getChat().getEventManager().onEvent(com.github.twitch4j.chat.events.channel.ChannelMessageEvent.class, event -> chatMessageReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
+        twitchClient.getChat().getEventManager().onEvent(com.github.twitch4j.chat.events.channel.GiftSubscriptionsEvent.class, event -> giftedSubscriptionsReceived(publishApplicationEvent(twitch4JEventConvertor.convert(event))));
     }
     
     @Scheduled(initialDelay = 7200000, fixedRate = 7200000)
@@ -97,6 +96,7 @@ public class PubSubService {
 
     private <T extends PlaygroundEvent> T publishApplicationEvent(T twitchEvent) {
         applicationEventPublisher.publishEvent(twitchEvent);
+        System.out.println(twitchEvent.toString());
         return twitchEvent;
     }
 
@@ -179,7 +179,8 @@ public class PubSubService {
     
     private void handleLPChatMessage(ChannelMessageEvent event) {
         UserDto user = userService.getOrCreateUser(event.getUser().get().getId(), event.getUser().get().getName());
-        twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently got " + user.getWeeklyLP() + " weekly lp!", "", event.getMessageId().get());
+        Integer rank = userService.getUserWeeklyLPRank(event.getUser().get().getId());
+        twitchClient.getChat().sendMessage(pubSubConfiguration.getChannelName(), "You currently have " + user.getWeeklyLP() + " weekly LP, which puts you at rank " + rank + "!", "", event.getMessageId().get());
     }
 
     private void handleRigChatMessage(ChannelMessageEvent event) {
