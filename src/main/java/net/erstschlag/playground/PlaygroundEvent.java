@@ -14,4 +14,9 @@ public abstract class PlaygroundEvent<T extends PlaygroundEvent> {
     public Optional<UserDto> getUser() {
         return oUser;
     }
+
+    @Override
+    public String toString() {
+        return "PlaygroundEvent{" + "oUser=" + oUser + '}';
+    }
 }

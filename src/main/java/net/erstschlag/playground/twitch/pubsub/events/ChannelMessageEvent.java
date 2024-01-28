@@ -23,4 +23,9 @@ public class ChannelMessageEvent extends PlaygroundEvent<ChannelMessageEvent> {
         return messageId;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => ChannelMessageEvent{" + "messageId=" + messageId + ", message=" + message + '}';
+    }
+
 }

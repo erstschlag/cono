@@ -24,4 +24,9 @@ public class ChannelSubscribeEvent extends PlaygroundEvent<ChannelSubscribeEvent
         return subTier;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => ChannelSubscribeEvent{" + "isGift=" + isGift + ", subTier=" + subTier + '}';
+    }
+
 }

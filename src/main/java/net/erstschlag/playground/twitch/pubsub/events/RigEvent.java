@@ -23,4 +23,9 @@ public class RigEvent extends PlaygroundEvent<RigEvent> {
         return command;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => RigEvent{" + "consumer=" + consumer + ", command=" + command + '}';
+    }
+
 }

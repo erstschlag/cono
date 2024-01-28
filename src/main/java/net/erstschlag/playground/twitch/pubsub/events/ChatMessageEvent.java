@@ -17,4 +17,9 @@ public class ChatMessageEvent extends PlaygroundEvent<ChatMessageEvent> {
         return message;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => ChatMessageEvent{" + "message=" + message + '}';
+    }
+
 }

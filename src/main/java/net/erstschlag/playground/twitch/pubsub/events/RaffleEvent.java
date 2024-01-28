@@ -17,4 +17,9 @@ public class RaffleEvent extends PlaygroundEvent<RaffleEvent> {
         return raffleArg1;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => RaffleEvent{" + "raffleArg1=" + raffleArg1 + '}';
+    }
+
 }

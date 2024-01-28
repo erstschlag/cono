@@ -29,4 +29,9 @@ public class PurchaseEvent extends PlaygroundEvent<PurchaseEvent> {
         return amount;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => PurchaseEvent{" + "consumer=" + consumer + ", command=" + command + ", amount=" + amount + '}';
+    }
+
 }

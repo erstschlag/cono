@@ -29,4 +29,9 @@ public class RewardRedeemedEvent extends PlaygroundEvent<RewardRedeemedEvent> {
         return channelPointsUsed;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => RewardRedeemedEvent{" + "title=" + title + ", userInput=" + userInput + ", channelPointsUsed=" + channelPointsUsed + '}';
+    }
+
 }

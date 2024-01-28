@@ -24,4 +24,9 @@ public class ChannelGiftedSubscriptionsEvent extends PlaygroundEvent<ChannelGift
         return count;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => ChannelGiftedSubscriptionsEvent{" + "subTier=" + subTier + ", count=" + count + '}';
+    }
+
 }

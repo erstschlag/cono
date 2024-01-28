@@ -17,4 +17,9 @@ public class ChannelBitsEvent extends PlaygroundEvent<ChannelBitsEvent> {
         return bitsUsed;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " => ChannelBitsEvent{" + "bitsUsed=" + bitsUsed + '}';
+    }
+
 }
