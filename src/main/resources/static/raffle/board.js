@@ -1,5 +1,5 @@
 let numberOfWinners = 1;
-let globalShipImage = 'Wolf.png';
+let globalShipImage = 'Retribution.png';
 let textXOffset = 90;
 let textYOffset = 30;
 let shipSize = 200;
@@ -82,7 +82,7 @@ var createParticipant = function (name, x, y, shipImage) {
 };
 
 var play = function () {
-    if (!state.isRunning) {
+    if (!state.isRunning && state.winners.size === 0) {
         state.background.animate(2000, 0, 'now').ease('>').move(0, 0);
         state.participants.forEach((participant) => {
             participant.ship.animate(2000, 0, 'now').ease('>').move(participant.ship.x() + 1920, participant.ship.y());
