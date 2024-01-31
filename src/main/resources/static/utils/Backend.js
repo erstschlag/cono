@@ -83,12 +83,13 @@ class Connection {
         }
         this.sendObject("/app/store", {
             uuid: uuid,
-            data: data
+            data: JSON.stringify(data)
         });
     }
 
     _onStorageEventReceived(storageEvent) {
         var onStorageSuccess = this.storageRequests.get(storageEvent.uuid);
+        storageEvent.data = JSON.parse(storageEvent.data);
         if (onStorageSuccess !== undefined) {
             onStorageSuccess(storageEvent);
             this.storageRequests.delete(storageEvent.uuid);
