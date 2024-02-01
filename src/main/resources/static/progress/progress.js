@@ -3,19 +3,25 @@ const MAX_STROKE_OFFSET = 1194;
 const ONE_HUNDRED_PERCENT = 1000;
 const STEP_SIZE = 2;
 
-let targetProgress = 0;
+const PROGRESS_STORAGE_UUID = "7875924a-7b6d-4e24-a09b-993b70d85b87";
+
+let state = {
+    config: {
+        bitsProgressAmount:1,
+        redeemProgressAmount: 10,
+        riggingValue: 30,
+        maxInactiveVisibleTime:20000
+    },
+    targetProgress: 0
+};
+
 let currentVisualProgress = 0;
-let redeemProgressAmount = 10;
-let bitsProgressAmount = 1;
-let riggingCost = 1;
-let rigProgressAmount = 30;
 let lastChangeTimestamp = 0;
-let maxInactiveVisibleTime = 20000;
 
 function updateProgress() {
-    if (currentVisualProgress === targetProgress) return;
-    currentVisualProgress += targetProgress < currentVisualProgress ? -STEP_SIZE : STEP_SIZE;
-    if (Math.abs(targetProgress - currentVisualProgress) < STEP_SIZE) currentVisualProgress = targetProgress;
+    if (currentVisualProgress === state.targetProgress) return;
+    currentVisualProgress += state.targetProgress < currentVisualProgress ? -STEP_SIZE : STEP_SIZE;
+    if (Math.abs(state.targetProgress - currentVisualProgress) < STEP_SIZE) currentVisualProgress = state.targetProgress;
     $('circle').attr('stroke-dashoffset', Math.round(MAX_STROKE_OFFSET - MAX_STROKE_OFFSET / ONE_HUNDRED_PERCENT * currentVisualProgress));
     $('#number').html(Math.round(100 / ONE_HUNDRED_PERCENT * currentVisualProgress) + '%');
 }
@@ -24,7 +30,7 @@ function onDashBoardRequest(commandObj) {
     if (commandObj.cmd === 'progress') {
         if(commandObj.progress !== undefined) {
             showWidget(true);
-            targetProgress = commandObj.progress;
+            state.targetProgress = commandObj.progress;
         }else{
             changeProgress(commandObj.progressChange);
         }
@@ -37,22 +43,22 @@ function onDashBoardRequest(commandObj) {
 }
 
 function updateRedeemProgressAmount(newRedeemProgressAmount) {
-    redeemProgressAmount = newRedeemProgressAmount;
-    $('.turbo').css('background-image','url(Charge_' + Math.round(redeemProgressAmount/10) + '.png)');
+    state.config.redeemProgressAmount = newRedeemProgressAmount;
+    $('.turbo').css('background-image','url(Charge_' + Math.round(state.config.redeemProgressAmount/10) + '.png)');
 }
 
 function updateBitsProgressAmount(newBitsProgressAmount) {
-    bitsProgressAmount = newBitsProgressAmount;
+    state.config.bitsProgressAmount = newBitsProgressAmount;
 }
 
 function onTwitchRewardRedeemed(redemptionEvent) {
     if (redemptionEvent.title === 'Charge!') {
-        changeProgress(redeemProgressAmount);
+        changeProgress(state.config.redeemProgressAmount);
     }
 }
 
 function onTwitchBitsReceived(bitsEvent) {
-    changeProgress(bitsEvent.bitsUsed*bitsProgressAmount);
+    changeProgress(bitsEvent.bitsUsed*state.config.bitsProgressAmount);
 }
 
 function onRigRequestReceived(riggingEvent) {
@@ -61,16 +67,16 @@ function onRigRequestReceived(riggingEvent) {
         if (riggingEvent.command !== "") {
             amount = parseInt(riggingEvent.command, 10);
         }
-        Backend.connection.chargeUser(riggingEvent.user.id, riggingCost * amount, 'rigging charge',
+        Backend.connection.chargeUser(riggingEvent.user.id, amount, 'rigging charge',
                 () => {
-            changeProgress(amount*rigProgressAmount);
+            changeProgress(amount*state.config.riggingValue);
         });
     }
 }
 
 function changeProgress(change) {
     showWidget(true);
-    targetProgress += change;
+    state.targetProgress += change;
 }
 
 function showWidget(show) {
@@ -84,7 +90,7 @@ function showWidget(show) {
 }
 
 function applyVisibility() {
-    if (new Date().getTime() - maxInactiveVisibleTime > lastChangeTimestamp) {
+    if (new Date().getTime() - state.config.maxInactiveVisibleTime > lastChangeTimestamp) {
         showWidget(false);
     }
 }
