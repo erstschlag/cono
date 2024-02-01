@@ -5,6 +5,19 @@
     font-family: 'Eve Sans Neue', sans-serif;
 }
 
+body {
+    background-color: #1a1a1a;
+}
+
+#widget {
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+#widget.show {
+    opacity: 1;
+}
+
 .back {
     position: absolute;
     width: 835px;

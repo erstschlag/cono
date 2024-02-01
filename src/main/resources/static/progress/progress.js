@@ -8,7 +8,9 @@ let currentVisualProgress = 0;
 let redeemProgressAmount = 10;
 let bitsProgressAmount = 1;
 let riggingCost = 1;
-let rigProgressAmount = 10;
+let rigProgressAmount = 30;
+let lastChangeTimestamp = 0;
+let maxInactiveVisibleTime = 20000;
 
 function updateProgress() {
     if (currentVisualProgress === targetProgress) return;
@@ -20,9 +22,15 @@ function updateProgress() {
 
 function onDashBoardRequest(commandObj) {
     if (commandObj.cmd === 'progress') {
-        targetProgress = commandObj.progress !== undefined ? commandObj.progress : targetProgress + commandObj.progressChange;
+        if(commandObj.progress !== undefined) {
+            showWidget(true);
+            targetProgress = commandObj.progress;
+        }else{
+            changeProgress(commandObj.progressChange);
+        }
     }
     if (commandObj.cmd === 'progressConfig') {
+        showWidget(true);
         updateRedeemProgressAmount(commandObj.redeemProgressAmount);
         updateBitsProgressAmount(commandObj.bitsProgressAmount);
     }
@@ -39,12 +47,12 @@ function updateBitsProgressAmount(newBitsProgressAmount) {
 
 function onTwitchRewardRedeemed(redemptionEvent) {
     if (redemptionEvent.title === 'Charge!') {
-        targetProgress += redeemProgressAmount;
+        changeProgress(redeemProgressAmount);
     }
 }
 
 function onTwitchBitsReceived(bitsEvent) {
-    targetProgress+= bitsEvent.bitsUsed*bitsProgressAmount;
+    changeProgress(bitsEvent.bitsUsed*bitsProgressAmount);
 }
 
 function onRigRequestReceived(riggingEvent) {
@@ -55,8 +63,29 @@ function onRigRequestReceived(riggingEvent) {
         }
         Backend.connection.chargeUser(riggingEvent.user.id, riggingCost * amount, 'rigging charge',
                 () => {
-            targetProgress+= amount*rigProgressAmount;
+            changeProgress(amount*rigProgressAmount);
         });
+    }
+}
+
+function changeProgress(change) {
+    showWidget(true);
+    targetProgress += change;
+}
+
+function showWidget(show) {
+    if(show) {
+        lastChangeTimestamp = new Date().getTime();
+    }
+    if (show && !widget.classList.contains('show')
+            || !show && widget.classList.contains('show')) {
+        widget.classList.toggle('show');
+    }
+}
+
+function applyVisibility() {
+    if (new Date().getTime() - maxInactiveVisibleTime > lastChangeTimestamp) {
+        showWidget(false);
     }
 }
 
@@ -68,8 +97,13 @@ function onBackendConnect(connection) {
 }
 
 $(function () {
+    widget = document.getElementById('widget');
+    showWidget(true);
     Backend.connect(onBackendConnect);
     setInterval(() => {
         updateProgress();
     }, REFRESH_RATE);
+    setInterval(() => {
+        applyVisibility();
+    }, 1000);
 });

@@ -13,20 +13,22 @@
         <script src="progress.js"></script>
     </head>
     <body>
-        <svg id="circle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="835px" height="835px" style="z-index: 1">
+        <div id="widget">
+            <svg id="circle" xmlns="http://www.w3.org/2000/svg" version="1.1" width="835px" height="835px" style="z-index: 1">
             <defs>
-                <linearGradient id="GradientColor">
-                    <stop offset="0%" stop-color="#f7f5bc" />
-                    <stop offset="100%" stop-color="#e6b400" />
-                </linearGradient>
+            <linearGradient id="GradientColor">
+            <stop offset="0%" stop-color="#f7f5bc" />
+            <stop offset="100%" stop-color="#e6b400" />
+            </linearGradient>
             </defs>
             <circle cx="369" cy="369" r="190" stroke-linecap="round" stroke-dasharray="1194" stroke-dashoffset="1194"/>
-        </svg>
-        <div class="back">
+            </svg>
+            <div class="back">
+            </div>
+            <div id="number">
+                0%
+            </div>
+            <div class="turbo"></div>
         </div>
-        <div id="number">
-            0%
-        </div>
-        <div class="turbo"></div>
     </body>
 </html>
