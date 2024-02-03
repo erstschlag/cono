@@ -37,6 +37,9 @@ public class UserCreditsService {
     }
 
     public void chargeUser(ChargeUserDto chargeUser) {
+        if(chargeUser.getAmount().intValue() < 0){
+            return;
+        }
         modifyUserCredits(chargeUser.getUserId(), chargeUser.getAmount().negate(), chargeUser.getReason(), chargeUser.getTransactionId());
     }
     
