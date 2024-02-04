@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Configure Nugget Goal</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="..\utils\Backend.js"></script>
+        <script src="goalStore.js"></script>
+        <script src="goalCP.js"></script>
+        <style>
+            body{
+                background-color: black;
+                color: #CCC;
+            }
+        </style>
+    </head>
+    <body>
+        <button id="addToGoal" class="btn btn-secondary">addToGoal</button>
+        <button id="removeFromGoal" class="btn btn-secondary">removeFromGoal</button>
+        <button style="width: 5em;" id="enableGoal"></button>
+        <br>
+        Rigging value: <input style="width: 4em;" id="riggingValue" type="number" value="">
+        <br>
+        Current value: <input style="width: 4em;" id="currentAmount" type="number" value="">
+    </body>
+</html>

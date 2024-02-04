@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nugget Goal</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="goal.css" rel="stylesheet">
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="..\utils\Backend.js"></script>
+        <script src="goalStore.js"></script>
+        <script src="goal.js"></script>
+    </head>
+    <body>
+        <!--
+        (c) 2015 June Hanabi - https://opensource.org/licenses/MIT
+        Inspired by Code Pen User
+        Jamie Dixon, with this pen
+        https://codepen.io/JamieDixon/pen/Pqrjvv
+
+        June Hanabi cleaned up a lot of errors and redundant stuff
+        then made it more awesome and customizeable
+        -->
+        <div class="wrapper" id="widget">
+            <div class="color">
+                <div class="progress">
+                    <div class="inner">
+                        <div class="liquid"></div>
+                        <div class="glare"></div>
+                        <div class="percent"><span>0</span>%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
