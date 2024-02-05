@@ -1,4 +1,4 @@
-let connection;
+let backend;
 let clientId;
 
 function authorize() {
@@ -13,7 +13,7 @@ function authorize() {
 };
 
 function requestClientId() {
-    connection.sendObject("/app/getClientId", {});
+    backend.sendObject("/app/getClientId", {});
 };
 
 function onClientIdReceived(object) {
@@ -22,7 +22,7 @@ function onClientIdReceived(object) {
 }
 
 function onBackendConnect() {
-    connection.subscribe('/topic/auth', onClientIdReceived);
+    backend.subscribe('/topic/auth', onClientIdReceived);
 }
 
 $(function () {
@@ -30,5 +30,5 @@ $(function () {
         e.preventDefault();
     });
     $( "#auth" ).click(function() { requestClientId(); });
-    connection = Backend.connect(onBackendConnect);
+    backend = new Backend(onBackendConnect);
 });

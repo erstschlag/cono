@@ -1,4 +1,4 @@
-let connection = null;
+let backend = null;
 
 function init() {
     let searchParams = new URLSearchParams(window.location.search);
@@ -6,7 +6,7 @@ function init() {
 };
 
 function authorize() {
-    connection.sendStr("/app/auth", $("#code").val());
+    backend.sendStr("/app/auth", $("#code").val());
 }
 
 function onAuthResultReceived(result) {
@@ -14,11 +14,11 @@ function onAuthResultReceived(result) {
 }
 
 function onBackendConnect() {
-    connection.subscribe('/topic/auth', onAuthResultReceived);
+    backend.subscribe('/topic/auth', onAuthResultReceived);
 }
 
 $(function () {
-    connection = Backend.connect(onBackendConnect);
+    backend = new Backend(onBackendConnect);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
