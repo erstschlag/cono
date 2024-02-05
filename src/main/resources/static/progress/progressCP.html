@@ -7,7 +7,8 @@
         <script src="/webjars/jquery/jquery.min.js"></script>
         <script src="/webjars/sockjs-client/sockjs.min.js"></script>
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-        <script src="..\utils\Backend.js"></script>
+        <script src="/utils/Backend.js"></script>
+        <script src="progressStorage.js"></script>
         <script src="progressCP.js"></script>
         <style>
             body{
@@ -20,19 +21,25 @@
         <form>
             <table>
                 <tr>
-                    <td>Redeem Progress</td>
-                    <td><input type="text" id="redeemProgressAmount" value="10" style="width: 70px;"></td>
-                    </tr><tr>
-                    <td>Bits Progress</td>
-                    <td><input type="text" id="bitsProgressAmount" value="1" style="width: 70px;"></td>
-                    </tr><tr>
-                    <td>Progress</td>
-                    <td><input type="text" id="progressValue" value="50" style="width: 70px;"></td>
+                    <td>Bits progress amount:</td>
+                    <td><input style="width: 4em;" id="bitsProgressAmount" type="number" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Redeem progress amount:</td>
+                    <td><input style="width: 4em;" id="redeemProgressAmount" type="number" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Rigging value:</td>
+                    <td><input style="width: 4em;" id="riggingValue" type="number" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Max inactive visible time (ms):</td>
+                    <td><input style="width: 4em;" id="maxInactiveVisibleTime" type="number" value="0"></td>
                 </tr>
             </table>
-            <button id="setProgress">set progress</button>
-            <button id="changeProgress">change progress</button><br>
-            <button id="applyConfiguration">apply configuration</button>
+            Current value: <input style="width: 4em;" id="targetProgress" type="number" value=""><br>
+            Change value: <input style="width: 4em;" id="changeValue" type="number" value="">
+            <button style="width: 5em;" id="minus1kButton" class="btn btn-secondary">-1000</button>
         </form>
     </body>
 </html>

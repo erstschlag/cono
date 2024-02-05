@@ -1,4 +1,4 @@
-let connection = null;
+let backend = null;
 
 function initialize() {
     send({
@@ -17,11 +17,11 @@ function addTestEntry() {
 }
 
 function send(object) {
-    connection.sendObject("/app/object", object);
+    backend.sendObject("/app/object", object);
 }
 
-$(function () {
-    connection = Backend.connect();
+$(() => {
+    backend = new Backend();
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

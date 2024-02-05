@@ -1,3 +1,4 @@
+let backend;
 let boardCols = 0;
 let boardRows = 0;
 let playerWidth = 0;
@@ -231,19 +232,19 @@ function onRigRequestReceived(riggingEvent) {
         if (!run) {
             return;
         }
-        Backend.connection.chargeUser(riggingEvent.user.id, riggingCost, 'rigging ChaosSweeper',
+        backend.chargeUser(riggingEvent.user.id, riggingCost, 'rigging ChaosSweeper',
                 () => {
             revealRandomField();
         });
     }
 }
 
-function onBackendConnect(connection) {
-    connection.subscribe('/topic/object', onCommandReceived);
-    connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
-    connection.subscribe('/topic/riggingRequested', onRigRequestReceived);
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/object', onCommandReceived);
+    backend.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
+    backend.subscribe('/topic/riggingRequested', onRigRequestReceived);
 }
 
 $(function () {
-    Backend.connect(onBackendConnect);
+    backend = new Backend(onBackendConnect);
 });

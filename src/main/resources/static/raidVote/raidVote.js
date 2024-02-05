@@ -131,11 +131,11 @@ function onTwitchRewardRedeemed(redemptionEvent) {
     }
 }
 
-function onBackendConnect(connection) {
-    connection.subscribe('/topic/object', onMessageReceived);
-    connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/object', onMessageReceived);
+    backend.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
 }
 
-$(function () {
-    Backend.connect(onBackendConnect);
+$(() => {
+    new Backend(onBackendConnect);
 });

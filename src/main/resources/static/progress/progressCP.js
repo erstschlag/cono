@@ -1,37 +1,44 @@
-let connection = null;
+let backend;
+let storage;
 
-function setProgress() {
-    send({
-        cmd: 'progress', 
-        progress: parseInt($("#progressValue").val()) 
-    });
-};
-
-function changeProgress() {
-    send({
-        cmd: 'progress', 
-        progressChange: parseInt($("#progressValue").val()) 
-    });
-};
-
-function applyConfiguration() {
-    send({
-        cmd: 'progressConfig', 
-        redeemProgressAmount: parseInt($("#redeemProgressAmount").val()), 
-        bitsProgressAmount: parseInt($("#bitsProgressAmount").val())  
-    });
+function storageChanged() {
+    $('#targetProgress').val(storage.data.targetProgress);
+    $('#bitsProgressAmount').val(storage.data.config.bitsProgressAmount);
+    $('#redeemProgressAmount').val(storage.data.config.redeemProgressAmount);
+    $('#riggingValue').val(storage.data.config.riggingValue);
+    $('#maxInactiveVisibleTime').val(storage.data.config.maxInactiveVisibleTime);
 }
 
-function send(object) {
-    connection.sendObject("/app/object", object);
-}
-
-$(function () {
-    connection = Backend.connect();
-    $("form").on('submit', function (e) {
-        e.preventDefault();
+$(() => {
+    storage = new ProgressStorage(storageChanged);
+    backend = new Backend(undefined, storage);
+    $('#bitsProgressAmount').on('change', () => {
+        storage.data.config.bitsProgressAmount = parseInt($('#bitsProgressAmount').val());
+        backend.pushStorage();
     });
-    $( "#setProgress" ).click(function() { setProgress(); });
-    $( "#changeProgress" ).click(function() { changeProgress(); });
-    $( "#applyConfiguration" ).click(function() { applyConfiguration(); });
+    $('#redeemProgressAmount').on('change', () => {
+        storage.data.config.redeemProgressAmount = parseInt($('#redeemProgressAmount').val());
+        backend.pushStorage();
+    });
+    $('#riggingValue').on('change', () => {
+        storage.data.config.riggingValue = parseInt($('#riggingValue').val());
+        backend.pushStorage();
+    });
+    $('#maxInactiveVisibleTime').on('change', () => {
+        storage.data.config.maxInactiveVisibleTime = parseInt($('#maxInactiveVisibleTime').val());
+        backend.pushStorage();
+    });
+    $('#targetProgress').on('change', () => {
+        storage.data.targetProgress = parseInt($('#targetProgress').val());
+        backend.pushStorage();
+    });
+    $('#changeValue').on('change', () => {
+        storage.data.targetProgress += parseInt($('#changeValue').val());
+        $('#changeValue').val('');
+        backend.pushStorage();
+    });
+    $("#minus1kButton").click(() => {
+        storage.data.targetProgress -= 1000;
+        backend.pushStorage();
+    });
 });

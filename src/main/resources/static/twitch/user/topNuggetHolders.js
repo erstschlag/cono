@@ -1,5 +1,5 @@
 let TOP_X = 5;
-let connection = null;
+let backend = null;
 
 function displayUsers(users, filteredColNames, showHeader) {
     // Extract value from table header. 
@@ -44,7 +44,7 @@ function displayUsers(users, filteredColNames, showHeader) {
 }
 
 function retrieveTopXNuggetHolders() {
-    connection.sendStr("/app/topNuggetHolders", TOP_X);
+    backend.sendStr("/app/topNuggetHolders", TOP_X);
 }
 
 function onTopNuggetHoldersReceived(data) {
@@ -62,12 +62,12 @@ function onUserAwardedReceived(data) {
     retrieveTopXNuggetHolders();
 }
 
-function onBackendConnect(connection) {
-    connection.subscribe('/topic/topNuggetHolders', onTopNuggetHoldersReceived);
-    connection.subscribe('/topic/userAwarded', onUserAwardedReceived);
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/topNuggetHolders', onTopNuggetHoldersReceived);
+    backend.subscribe('/topic/userAwarded', onUserAwardedReceived);
     retrieveTopXNuggetHolders();
 }
 
-$(function () {
-    connection = Backend.connect(onBackendConnect);
+$(() => {
+    backend = new Backend(onBackendConnect);
 });

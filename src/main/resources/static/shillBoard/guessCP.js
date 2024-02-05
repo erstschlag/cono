@@ -1,4 +1,4 @@
-let connection = null;
+let backend = null;
 
 function initialize() {
     let cols = parseInt($("#cols").val());
@@ -24,11 +24,11 @@ function takeGuess() {
 };
 
 function send(object) {
-    connection.sendObject("/app/object", object);
+    backend.sendObject("/app/object", object);
 }
 
-$(function () {
-    connection = Backend.connect();
+$(() => {
+    backend = new Backend();
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

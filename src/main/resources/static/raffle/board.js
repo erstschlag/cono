@@ -5,6 +5,8 @@ let textYOffset = 30;
 let shipSize = 200;
 let bombSize = 150;
 let winnerHorizontalPosition = 3500;
+let backend;
+const CHAOS_USERNAME ="chaos1298";
 
 let state = {};
 
@@ -41,12 +43,16 @@ var launch = function () {
 var requestAddParticipant = function(name, userId, availableNuggets, requestedShipName) {
     if (state.isRunning && !state.participants.has(name)) {
         if(availableNuggets >=1 && requestedShipName !== null && fileExists('ships/' + requestedShipName + '.png')) {
-            Backend.connection.chargeUser(userId, 1, 'customizing raffle ship',
+            backend.chargeUser(userId, 1, 'customizing raffle ship',
                 () => {
                     addParticipant(name, requestedShipName + '.png');
                 });
         } else {
-            addParticipant(name, globalShipImage);
+            if (name !== CHAOS_USERNAME) {
+                addParticipant(name, globalShipImage);
+            } else {
+                addParticipant(name, "Capsule.png");
+            }
         }
     }
 };
@@ -241,12 +247,12 @@ function onChatMessageReceived(chatMessageEvent) {
     });
 }
 
-function onBackendConnect(connection) {
-    connection.subscribe('/topic/object', onCommandReceived);
-    connection.subscribe('/topic/raffleEntered', onRaffleEntered);
-    connection.subscribe('/topic/chatMessageReceived', onChatMessageReceived);
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/object', onCommandReceived);
+    backend.subscribe('/topic/raffleEntered', onRaffleEntered);
+    backend.subscribe('/topic/chatMessageReceived', onChatMessageReceived);
 }
 
-$(function () {
-    Backend.connect(onBackendConnect);
+$(() => {
+    backend = new Backend(onBackendConnect);
 });

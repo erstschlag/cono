@@ -1,4 +1,5 @@
-let connection;
+let backend;
+let storage;
 
 let currentWiggles = 0;
 let widgetShown = false;
@@ -7,14 +8,12 @@ let riggingCost = 1;
 const audio = new Audio('wiggle.wav');
 audio.loop = false;
 audio.volume = 0.6;
-const WIGGLES_STORAGE_UUID = "7ad8bc22-ed67-4e90-beaa-9a3673f86931";
 
 function updateWigglesDisplay(wiggles) {
-    currentWiggles = wiggles;
     const widget = document.getElementById('back');
-    widget.innerHTML = '' + currentWiggles;
-    showWidget(currentWiggles !== 0, widget);
-};
+    widget.innerHTML = '' + wiggles;
+    showWidget(wiggles !== 0, widget);
+}
 
 function showWidget(show, widget) {
     if (widgetShown !== show) {
@@ -32,9 +31,9 @@ function onRigRequestReceived(riggingEvent) {
         if (riggingEvent.command !== "") {
             amount = parseInt(riggingEvent.command, 10);
         }
-        connection.chargeUser(riggingEvent.user.id, riggingCost * amount, 'rigging wiggles',
+        backend.chargeUser(riggingEvent.user.id, riggingCost * amount, 'rigging wiggles',
                 () => {
-                    changeWiggles(amount);
+            changeWiggles(amount);
         });
     }
 }
@@ -46,26 +45,20 @@ function onTwitchRewardRedeemed(redemptionEvent) {
 }
 
 function changeWiggles(change) {
-    connection.store(WIGGLES_STORAGE_UUID, currentWiggles + change);
+    storage.data.currentWiggles += change;
+    backend.pushStorage();
 }
 
-function storageEventReceived(event) {
-    if (event.uuid !== WIGGLES_STORAGE_UUID) {
-        return;
-    }
-    if (event.data !== null) {
-        updateWigglesDisplay(parseInt(event.data, 10));
-    } else {
-        connection.store(WIGGLES_STORAGE_UUID, 0);
-    }
+function storageChanged() {
+    updateWigglesDisplay(storage.data.currentWiggles);
 }
 
-function onBackendConnect(connection) {
-    connection.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
-    connection.subscribe('/topic/riggingRequested', onRigRequestReceived);
-    connection.loadFromStorage(WIGGLES_STORAGE_UUID);
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
+    backend.subscribe('/topic/riggingRequested', onRigRequestReceived);
 }
 
 $(() => {
-    connection = Backend.connect(onBackendConnect, storageEventReceived);
+    storage = new WigglesStorage(storageChanged);
+    backend = new Backend(onBackendConnect, storage);
 });

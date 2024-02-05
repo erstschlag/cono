@@ -1,29 +1,26 @@
 let backend;
+let storage;
 
 function addToGoal(change) {
-    store.state.currentValue += change;
-    store.push();
+    storage.data.currentValue += change;
+    backend.pushStorage();
 }
 
 function toggleGoal() {
-    store.state.config.enabled = !store.state.config.enabled;
-    store.push();
+    storage.data.config.enabled = !storage.data.config.enabled;
+    backend.pushStorage();
 }
 
-function goalStorageEventReceived(event) {
-    store.storageEventReceived(event);
-    $('#currentAmount').val(store.state.currentValue);
-    $('#riggingValue').val(store.state.config.riggingValue);
-    $("#enableGoal").attr("class", store.state.config.enabled ? "btn btn-success" : "btn btn-danger");
-    $("#enableGoal").text(store.state.config.enabled ? "disable" : "enable");
-}
-
-function onBackendConnect(backend) {
-    store.pull();
+function storageChanged() {
+    $('#currentAmount').val(storage.data.currentValue);
+    $('#riggingValue').val(storage.data.config.riggingValue);
+    $("#enableGoal").attr("class", storage.data.config.enabled ? "btn btn-success" : "btn btn-danger");
+    $("#enableGoal").text(storage.data.config.enabled ? "disable" : "enable");
 }
 
 $(() =>  {
-    backend = Backend.connect(onBackendConnect, goalStorageEventReceived);
+    storage = new GoalStorage(storageChanged);
+    backend = new Backend(undefined, storage);
     $("#addToGoal").click(() => {
         addToGoal(10);
     });
@@ -34,11 +31,11 @@ $(() =>  {
         toggleGoal();
     });
     $('#currentAmount').on('change', () => {
-        store.state.currentValue = parseInt($('#currentAmount').val());
-        store.push();
+        storage.data.currentValue = parseInt($('#currentAmount').val());
+        backend.pushStorage();
     });
     $('#riggingValue').on('change', () => {
-        store.state.config.riggingValue = parseInt($('#riggingValue').val());
-        store.push();
+        storage.data.config.riggingValue = parseInt($('#riggingValue').val());
+        backend.pushStorage();
     });
 });

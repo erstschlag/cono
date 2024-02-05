@@ -1,33 +1,25 @@
-let connection;
-let currentAmount = 0;
-
-const WIGGLES_STORAGE_UUID = "7ad8bc22-ed67-4e90-beaa-9a3673f86931";
+let backend;
+let storage;
 
 function addWiggle(change) {
-    connection.store(WIGGLES_STORAGE_UUID, currentAmount + change);
-};
-
-function storageEventReceived(event) {
-    if (event.uuid !== WIGGLES_STORAGE_UUID) {
-        return;
-    }
-    if (event.data !== null) {
-        $('#currentAmount').html(event.data);
-        currentAmount = parseInt(event.data, 10);
-    } else {
-        connection.store(WIGGLES_STORAGE_UUID, 0);
-    }
+    storage.data.currentWiggles += change;
+    backend.pushStorage();
 }
 
-function onBackendConnect(connection) {
-    connection.loadFromStorage(WIGGLES_STORAGE_UUID);
+function storageChanged() {
+    $('#currentAmount').html(storage.data.currentWiggles);
 }
 
-$(function () {
-    connection = Backend.connect(onBackendConnect, storageEventReceived);
+$(() => {
+    storage = new WigglesStorage(storageChanged);
+    backend = new Backend(undefined, storage);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $( "#addWiggle" ).click(function() { addWiggle(1); });
-    $( "#removeWiggle" ).click(function() { addWiggle(-1); });
+    $("#addWiggle").click(function () {
+        addWiggle(1);
+    });
+    $("#removeWiggle").click(function () {
+        addWiggle(-1);
+    });
 });

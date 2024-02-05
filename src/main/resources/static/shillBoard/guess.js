@@ -81,11 +81,11 @@ function onTwitchBitsReceived(bitsEvent) {
     guess(bitsEvent.bitsUsed);
 }
 
-function onBackendConnect(connection) {
-    connection.subscribe('/topic/object', onMessageReceived);
-    connection.subscribe('/topic/twitchBitsReceived', onTwitchBitsReceived);
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/object', onMessageReceived);
+    backend.subscribe('/topic/twitchBitsReceived', onTwitchBitsReceived);
 }
 
-$(function () {
-    Backend.connect(onBackendConnect);
+$(() => {
+    new Backend(onBackendConnect);
 });

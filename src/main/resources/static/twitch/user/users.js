@@ -1,4 +1,4 @@
-let connection = null;
+let backend = null;
 
 var pagination = {
     page:0,
@@ -81,28 +81,28 @@ function showModifyUserDialog(userId) {
 
 function retrieveUsers() {
     if($("#userNameSearch").val() === ""){
-        this.connection.sendObject("/app/users", pagination);
+        backend.sendObject("/app/users", pagination);
     }else{
         retrieveUsersByNameLike($("#userNameSearch").val());
     }
 }
 
 function retrieveUsersByNameLike(search) {
-    this.connection.sendObject("/app/usersWithNameLike", {search: search,
+    backend.sendObject("/app/usersWithNameLike", {search: search,
         pageableRequest: pagination});
 }
 
 function retrieveLPCollectionStatus() {
-    this.connection.sendObject("/app/users/isLPCollectionEnabled", "");
+    backend.sendObject("/app/users/isLPCollectionEnabled", "");
 }
 
 function retrieveWeeklyLPSum() {
-    this.connection.sendObject("/app/users/weeklyLPSum", "");
+    backend.sendObject("/app/users/weeklyLPSum", "");
 }
 
 function resetWeeklyLP() {
     document.getElementById("resetWeeklyLPConfirmationDialog").close();
-    this.connection.sendObject("/app/users/resetWeeklyLP", "");
+    backend.sendObject("/app/users/resetWeeklyLP", "");
 }
 
 function showResetWeeklyConfirmationDialog() {
@@ -110,7 +110,7 @@ function showResetWeeklyConfirmationDialog() {
 }
 
 function enableLPCollection(enable) {
-    this.connection.sendObject("/app/users/enableLPCollection", enable);
+    backend.sendObject("/app/users/enableLPCollection", enable);
 }
 
 function switchPage(relativeOffset) {
@@ -126,22 +126,21 @@ function modifyUserCredits(userId, amount) {
         return;
     }
     if(amount > 0) {
-        Backend.connection.awardUser(userId, amount, 'Erst wants it!',
+        backend.awardUser(userId, amount, 'Erst wants it!',
                 () => {retrieveUsers();});
     } else {
-        Backend.connection.chargeUser(userId, -amount, 'Erst wants it!',
+        backend.chargeUser(userId, -amount, 'Erst wants it!',
                 () => {retrieveUsers();});
     }
     document.getElementById("modifyUserDialog").close();
 }
 
 
-function onBackendConnect(connection) {
-    this.connection = connection;
-    connection.subscribe('/topic/users', function (object) {
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/users', function (object) {
             displayUsers(object.content);
         });
-    connection.subscribe('/topic/isLPCollectionEnabled', function (object) {
+    backend.subscribe('/topic/isLPCollectionEnabled', function (object) {
             isLPCollectionEnabled = object;
             var enableButton = document.getElementById('enableLPCollection');
             if(isLPCollectionEnabled) {
@@ -152,7 +151,7 @@ function onBackendConnect(connection) {
                 enableButton.textContent = 'enable';
             }
         });
-    connection.subscribe('/topic/weeklyLPSum', function (object) {
+    backend.subscribe('/topic/weeklyLPSum', function (object) {
         $("#totalWeeklyLP").html(Math.round(parseInt(object) / 20) + 'm ISK');
     });    
     retrieveUsers();
@@ -160,8 +159,8 @@ function onBackendConnect(connection) {
     retrieveWeeklyLPSum();
 }
 
-$(function () {
-    Backend.connect(onBackendConnect);
+$(() => {
+    backend = new Backend(onBackendConnect);
     $( "#previousPage" ).click(function() { switchPage(-1); });
     $( "#nextPage" ).click(function() { switchPage(1); });
     $( "#enableLPCollection" ).click(function() { enableLPCollection(!isLPCollectionEnabled); });

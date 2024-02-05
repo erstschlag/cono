@@ -1,4 +1,5 @@
 let backend;
+let storage;
 
 function updateGoalDisplay(value, show) {
     $('#widget').toggleClass('show', show);
@@ -13,31 +14,30 @@ function updateGoalDisplay(value, show) {
 }
 
 function onRigEventReceived(event) {
-    if (!store.state.config.enabled
-            || store.state.currentValue >= 1000
+    if (!storage.data.config.enabled
+            || storage.data.currentValue >= 1000
             || event.consumer !== 'goal') {
         return;
     }
     let amount = event.command !== "" ? parseInt(event.command, 10) : 1;
-    if (store.state.currentValue + store.state.config.riggingValue * amount > 1000) {
-        amount = (1000 - store.state.currentValue)/ store.state.config.riggingValue;
+    if (storage.data.currentValue + storage.data.config.riggingValue * amount > 1000) {
+        amount = (1000 - storage.data.currentValue)/ storage.data.config.riggingValue;
     }
     backend.chargeUser(event.user.id, amount, 'rigging goal', () => {
-        store.state.currentValue += store.state.config.riggingValue * amount;
-        store.push();
+        storage.data.currentValue += storage.data.config.riggingValue * amount;
+        backend.pushStorage();
     });
 }
 
-function storageEventReceived(event) {
-    store.storageEventReceived(event); 
-    updateGoalDisplay(store.state.currentValue / 10, store.state.config.enabled);
+function storageChanged() {
+    updateGoalDisplay(storage.data.currentValue / 10, storage.data.config.enabled);
 }
 
 function onBackendConnect(backend) {
     backend.subscribe('/topic/riggingRequested', onRigEventReceived);
-    store.pull();
 }
 
 $(() => {
-    backend = Backend.connect(onBackendConnect, storageEventReceived);
+    storage = new GoalStorage(storageChanged);
+    backend = new Backend(onBackendConnect, storage);
 });

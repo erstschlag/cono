@@ -1,4 +1,4 @@
-let connection = null;
+let backend = null;
 let user;
 
 function getData() {
@@ -15,11 +15,11 @@ function saveData() {
 }
 
 function send(destination, object) {
-    connection.sendObject(destination, object);
+    backend.sendObject(destination, object);
 }
 
 function sendStr(destination, user) {
-    connection.sendStr(destination, user);
+    backend.sendStr(destination, user);
 }
 
 function onDataReceived(data) {
@@ -29,15 +29,15 @@ function onDataReceived(data) {
     }
 }
 
-function onBackendConnect(connection) {
-    connection.subscribe('/topic/pg4', onDataReceived);
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/pg4', onDataReceived);
     getData();
 }
 
-$(function () {
+$(() => {
     var urlParams = new URLSearchParams(window.location.search);
     user = urlParams.get('user');
-    connection = Backend.connect(onBackendConnect);
+    backend = new Backend(onBackendConnect);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });

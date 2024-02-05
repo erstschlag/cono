@@ -1,47 +1,20 @@
-class _Backend {
-    connection = null;
-    connect(connectedMethod, storageEventReceivedMethod) {
-        this.connection = new Connection();
-        this.connection.connect(connectedMethod, storageEventReceivedMethod);
-        return this.connection;
-    }
-}
-class Connection {
-    reconnectInterval = null;
-    stompClient = null;
+class Backend {
+    reconnectInterval;
+    stompClient;
     subscriptions = new Map();
     userChargeTransactions = new Map();
     userAwardTransactions = new Map();
-    storageRequests = new Map();
-    storageEventReceivedMethod = undefined;
-    
-    constructor() {}
+    storage = undefined;
+    constructor(onConnectMethod, storage) {
+        this._connect(onConnectMethod, storage);
+    }
 
-    connect(connectedMethod, storageEventReceivedMethod) {
-        this.storageEventReceivedMethod = storageEventReceivedMethod;
-        if (this.reconnectInterval !== null) {
-            clearInterval(this.reconnectInterval);
-        }
-        this.reconnectInterval = setInterval(() => {
-            this.stompClient = Stomp.over(new SockJS('/generic-ws'));
-            this.stompClient.connect({}, (frame) => {
-                clearInterval(this.reconnectInterval);
-                this.subscribe('/topic/userCharged', (event)=> {
-                    this._onUserChargedReceived(event);
-                });
-                this.subscribe('/topic/userAwarded', (event)=> {
-                    this._onUserAwardedReceived(event);
-                });
-                this.subscribe('/topic/store', (event)=> {
-                    this._onStorageEventReceived(event);
-                });
-                if (connectedMethod !== undefined) {
-                    connectedMethod(this);
-                }
-            }, () => {
-                this.connect(connectedMethod);
-            });
-        }, 1000);
+    sendObject(destination, object) {
+        this.stompClient.send(destination, {}, JSON.stringify(object));
+    }
+
+    sendStr(destination, str) {
+        this.stompClient.send(destination, {}, str);
     }
 
     chargeUser(userId, chargingAmount, chargingReason, onSuccessMethod) {
@@ -56,7 +29,7 @@ class Connection {
                 }
         );
     }
-    
+
     awardUser(userId, awardAmount, awardReason, onSuccessMethod) {
         var transactionId = crypto.randomUUID();
         this.userAwardTransactions.set(transactionId, onSuccessMethod);
@@ -69,51 +42,6 @@ class Connection {
                 }
         );
     }
-    
-    loadFromStorage(uuid, onSuccessMethod) {
-        if(onSuccessMethod !== undefined) {
-            this.storageRequests.set(uuid, onSuccessMethod);
-        }
-        this.sendStr("/app/loadFromStorage", uuid);
-    }
-    
-    store(uuid, data, onSuccessMethod) {
-        if(onSuccessMethod !== undefined) {
-            this.storageRequests.set(uuid, onSuccessMethod);
-        }
-        this.sendObject("/app/store", {
-            uuid: uuid,
-            data: JSON.stringify(data)
-        });
-    }
-
-    _onStorageEventReceived(storageEvent) {
-        var onStorageSuccess = this.storageRequests.get(storageEvent.uuid);
-        storageEvent.data = JSON.parse(storageEvent.data);
-        if (onStorageSuccess !== undefined) {
-            onStorageSuccess(storageEvent);
-            this.storageRequests.delete(storageEvent.uuid);
-        }
-        if (this.storageEventReceivedMethod !== undefined) {
-            this.storageEventReceivedMethod(storageEvent);
-        }
-    }
-
-    _onUserChargedReceived(userChargedEvent) {
-        var onUserChargeSuccess = this.userChargeTransactions.get(userChargedEvent.transactionId);
-        if(onUserChargeSuccess !== undefined){
-            onUserChargeSuccess();
-            this.userChargeTransactions.delete(userChargedEvent.transactionId);
-        }
-    }
-
-    _onUserAwardedReceived(userAwardedEvent) {
-        var onUserAwardSuccess = this.userAwardTransactions.get(userAwardedEvent.transactionId);
-        if(onUserAwardSuccess !== undefined){
-            onUserAwardSuccess();
-            this.userAwardTransactions.delete(userAwardedEvent.transactionId);
-        }
-    }
 
     subscribe(topicURI, onMessageMethod) {
         if (!this.subscriptions.has(topicURI)) {
@@ -122,13 +50,89 @@ class Connection {
             }));
         }
     }
-    
-    sendObject(destination, object) {
-        this.stompClient.send(destination, {}, JSON.stringify(object));
+
+    pushStorage() {
+        if (this.storage !== undefined) {
+            this.sendObject("/app/store", {
+                uuid: this.storage.uuid,
+                data: JSON.stringify(this.storage.data)
+            });
+        }
     }
-    
-    sendStr(destination, str) {
-        this.stompClient.send(destination, {}, str);
+
+    _connect(connectedMethod, storage) {
+        this.storage = storage;
+        if (this.reconnectInterval !== undefined) {
+            clearInterval(this.reconnectInterval);
+        }
+        this.reconnectInterval = setInterval(() => {
+            this.stompClient = Stomp.over(new SockJS('/generic-ws'));
+            this.stompClient.connect({}, (frame) => {
+                clearInterval(this.reconnectInterval);
+                this.subscribe('/topic/userCharged', (event) => {
+                    this._onUserChargedReceived(event);
+                });
+                this.subscribe('/topic/userAwarded', (event) => {
+                    this._onUserAwardedReceived(event);
+                });
+                this.subscribe('/topic/store', (event) => {
+                    this._onStorageEventReceived(event);
+                });
+                if (connectedMethod !== undefined) {
+                    connectedMethod(this);
+                }
+                if (this.storage !== undefined) {
+                    this._pullFromStorage();
+                }
+            }, () => {
+                this.connect(connectedMethod);
+            });
+        }, 1000);
+    }
+
+    _pullFromStorage() {
+        this.sendStr("/app/loadFromStorage", this.storage.uuid);
+    }
+
+    _onStorageEventReceived(storageEvent) {
+        if (this.storage !== undefined && this.storage.uuid === storageEvent.uuid) {
+            if (storageEvent.data !== null) {
+                storageEvent.data = JSON.parse(storageEvent.data);
+                this.storage.eventReceived(storageEvent);
+            } else {
+                this.pushStorage();
+            }
+        }
+    }
+
+    _onUserChargedReceived(userChargedEvent) {
+        var onUserChargeSuccess = this.userChargeTransactions.get(userChargedEvent.transactionId);
+        if (onUserChargeSuccess !== undefined) {
+            onUserChargeSuccess();
+            this.userChargeTransactions.delete(userChargedEvent.transactionId);
+        }
+    }
+
+    _onUserAwardedReceived(userAwardedEvent) {
+        var onUserAwardSuccess = this.userAwardTransactions.get(userAwardedEvent.transactionId);
+        if (onUserAwardSuccess !== undefined) {
+            onUserAwardSuccess();
+            this.userAwardTransactions.delete(userAwardedEvent.transactionId);
+        }
     }
 }
-let Backend = new _Backend();
+
+class Storage {
+    uuid;
+    onDataChanged;
+    data;
+    constructor(uuid, data, onDataChanged) {
+        this.uuid = uuid;
+        this.data = data;
+        this.onDataChanged = onDataChanged;
+    }
+    eventReceived(event) {
+        this.data = event.data;
+        this.onDataChanged();
+    }
+}
