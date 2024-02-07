@@ -6,7 +6,7 @@ class Backend {
     userAwardTransactions = new Map();
     storage = undefined;
     constructor(onConnectMethod, storage) {
-        this._connect(onConnectMethod, storage);
+        this.#connect(onConnectMethod, storage);
     }
 
     sendObject(destination, object) {
@@ -18,29 +18,11 @@ class Backend {
     }
 
     chargeUser(userId, chargingAmount, chargingReason, onSuccessMethod) {
-        var transactionId = crypto.randomUUID();
-        this.userChargeTransactions.set(transactionId, onSuccessMethod);
-        this.sendObject("/app/chargeUser",
-                {
-                    userId: userId,
-                    amount: chargingAmount,
-                    reason: chargingReason,
-                    transactionId: transactionId
-                }
-        );
+        this.#awardChargeUser(userId, chargingAmount, chargingReason, onSuccessMethod, false);
     }
 
     awardUser(userId, awardAmount, awardReason, onSuccessMethod) {
-        var transactionId = crypto.randomUUID();
-        this.userAwardTransactions.set(transactionId, onSuccessMethod);
-        this.sendObject("/app/awardUser",
-                {
-                    userId: userId,
-                    amount: awardAmount,
-                    reason: awardReason,
-                    transactionId: transactionId
-                }
-        );
+        this.#awardChargeUser(userId, awardAmount, awardReason, onSuccessMethod, true);
     }
 
     subscribe(topicURI, onMessageMethod) {
@@ -60,7 +42,7 @@ class Backend {
         }
     }
 
-    _connect(connectedMethod, storage) {
+    #connect(connectedMethod, storage) {
         this.storage = storage;
         if (this.reconnectInterval !== undefined) {
             clearInterval(this.reconnectInterval);
@@ -70,19 +52,19 @@ class Backend {
             this.stompClient.connect({}, (frame) => {
                 clearInterval(this.reconnectInterval);
                 this.subscribe('/topic/userCharged', (event) => {
-                    this._onUserChargedReceived(event);
+                    this.#onUserChargedReceived(event);
                 });
                 this.subscribe('/topic/userAwarded', (event) => {
-                    this._onUserAwardedReceived(event);
+                    this.#onUserAwardedReceived(event);
                 });
                 this.subscribe('/topic/store', (event) => {
-                    this._onStorageEventReceived(event);
+                    this.#onStorageEventReceived(event);
                 });
                 if (connectedMethod !== undefined) {
                     connectedMethod(this);
                 }
                 if (this.storage !== undefined) {
-                    this._pullFromStorage();
+                    this.#pullFromStorage();
                 }
             }, () => {
                 this.connect(connectedMethod);
@@ -90,11 +72,28 @@ class Backend {
         }, 1000);
     }
 
-    _pullFromStorage() {
+    #awardChargeUser(userId, amount, reason, onSuccessMethod, isAward) {
+        var transactionId = crypto.randomUUID();
+        if (isAward) {
+            this.userAwardTransactions.set(transactionId, onSuccessMethod);
+        } else {
+            this.userChargeTransactions.set(transactionId, onSuccessMethod);
+        }
+        this.sendObject(isAward?"/app/awardUser":"/app/chargeUser",
+                {
+                    userId: userId,
+                    amount: amount,
+                    reason: reason,
+                    transactionId: transactionId
+                }
+        );
+    }
+    
+    #pullFromStorage() {
         this.sendStr("/app/loadFromStorage", this.storage.uuid);
     }
 
-    _onStorageEventReceived(storageEvent) {
+    #onStorageEventReceived(storageEvent) {
         if (this.storage !== undefined && this.storage.uuid === storageEvent.uuid) {
             if (storageEvent.data !== null) {
                 storageEvent.data = JSON.parse(storageEvent.data);
@@ -105,7 +104,7 @@ class Backend {
         }
     }
 
-    _onUserChargedReceived(userChargedEvent) {
+    #onUserChargedReceived(userChargedEvent) {
         var onUserChargeSuccess = this.userChargeTransactions.get(userChargedEvent.transactionId);
         if (onUserChargeSuccess !== undefined) {
             onUserChargeSuccess();
@@ -113,7 +112,7 @@ class Backend {
         }
     }
 
-    _onUserAwardedReceived(userAwardedEvent) {
+    #onUserAwardedReceived(userAwardedEvent) {
         var onUserAwardSuccess = this.userAwardTransactions.get(userAwardedEvent.transactionId);
         if (onUserAwardSuccess !== undefined) {
             onUserAwardSuccess();
