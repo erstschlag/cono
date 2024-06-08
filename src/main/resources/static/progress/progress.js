@@ -70,7 +70,14 @@ function storageChanged() {
     $('.turbo').css('background-image', 'url(Charge_' + Math.round(storage.data.config.redeemProgressAmount / 10) + '.png)');
 }
 
+function onChatMessageReceived(chatMessageEvent) {
+    if(chatMessageEvent.message.startsWith(storage.data.config.showWidgetChatCommand)) {
+        showWidget(true);
+    }
+}
+
 function onBackendConnect(backend) {
+    backend.subscribe('/topic/chatMessageReceived', onChatMessageReceived);
     backend.subscribe('/topic/twitchRewardRedeemed', onTwitchRewardRedeemed);
     backend.subscribe('/topic/twitchBitsReceived', onTwitchBitsReceived);
     backend.subscribe('/topic/riggingRequested', onRigRequestReceived);
