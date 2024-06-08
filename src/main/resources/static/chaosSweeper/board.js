@@ -245,6 +245,6 @@ function onBackendConnect(backend) {
     backend.subscribe('/topic/riggingRequested', onRigRequestReceived);
 }
 
-$(function () {
+$(() =>  {
     backend = new Backend(onBackendConnect);
 });
