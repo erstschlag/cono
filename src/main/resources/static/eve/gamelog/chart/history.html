@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>History tracker</title>
+    <link rel="stylesheet" href="history.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/utils/Backend.js"></script>
+    <script src="history.js"></script>
+    <style>
+        #dpsChart {
+            max-width: 415px;
+            max-height: 172px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="widget" style="height: 200px;background-image: url(stats.png);background-repeat: no-repeat;">
+        <div id="legend" class="legend" style="padding-top: 2px;padding-left: 10px;">
+        </div>
+        <canvas id="dpsChart" style="padding-top: 0px;"></canvas>
+    </div>
+</body>
+
+</html>

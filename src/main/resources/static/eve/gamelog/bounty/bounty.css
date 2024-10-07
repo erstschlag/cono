@@ -1,0 +1,10 @@
+body {
+    background-color: #292929;
+    font-family: 'Eve Sans Neue', sans-serif;
+    font-weight: bold;
+    font-size: 40px;
+    color:rgb(0, 212, 11);
+    margin: 0;
+    -webkit-text-stroke: #222;
+    -webkit-text-stroke-width: 1px;
+}

@@ -1,0 +1,21 @@
+body {
+    background-color: #292929;
+    font-family: 'Eve Sans Neue', sans-serif;
+    margin: 0;
+}
+
+#widget {
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+#widget.show {
+    opacity: 1;
+}
+
+.legend {
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+    -webkit-text-stroke-width: 0;
+}

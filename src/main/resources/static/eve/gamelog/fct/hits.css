@@ -1,0 +1,63 @@
+body {
+    background-color: #222;
+    font-family: 'Eve Sans Neue', sans-serif;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+#hud {
+    position: relative;
+    width: 550px;
+    height: 550px;
+}
+
+#combatTextContainer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.combat-text-out {
+    position: absolute;
+    animation: floatUpOut 3.5s ease-out forwards;
+}
+
+.combat-text-in {
+    position: absolute;
+    animation: floatUpIn 2.5s ease-out forwards;
+}
+
+@keyframes floatUpIn {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.8);
+    }
+}
+
+@keyframes floatUpOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-80px) scale(0.8);
+    }
+}
