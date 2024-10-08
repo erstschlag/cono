@@ -8,7 +8,7 @@ function extractBountyInfo(log) {
 let filterCharacter = null;
 function onGamelogReceived(gamelogEvent) {
     if (filterCharacter == null || filterCharacter === gamelogEvent.characterName) {
-        extractCombatInfo(gamelogEvent.gamelogLine);
+        extractBountyInfo(gamelogEvent.gamelogLine);
     }
 }
 
