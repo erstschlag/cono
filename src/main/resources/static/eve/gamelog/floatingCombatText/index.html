@@ -1,15 +1,22 @@
+<!--
+    Produces floating combat text for hits. (default is outbound hits)
+    Optional URL parameters:
+        - character (name of the character to limit tracking to)
+        - inbound (track inbound hits)
+ -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Target damage floating combat text</title>
-    <link rel="stylesheet" href="hits.css">
+    <title>Damage floating combat text</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/utils/Backend.js"></script>
-    <script src="hits.js"></script>
+    <script src="../common.js"></script>
+    <script src="script.js"></script>
 </head>
 
 <body>

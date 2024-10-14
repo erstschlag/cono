@@ -1,63 +1,44 @@
 const hitTypeConfigs = {
     "Misses": {
-        hitQuality: "(Miss)",
-        fontSize: 20,
-        outColor: "#9d9d9d"
-    },
-    "Glances Off":
-    {
-        hitQuality: "(Glance)",
-        fontSize: 25,
-        outColor: "#bfbfbf"
+        fontSize: 20
     },
     "Grazes":
     {
-        hitQuality: "(Graze)",
-        fontSize: 25,
-        outColor: "#bfbfbf"
+        fontSize: 25
+    },
+    "Glances Off":
+    {
+        fontSize: 25
     },
     "Hits":
     {
-        hitQuality: "(Hit)",
-        fontSize: 30,
-        outColor: "#ffffff"
+        fontSize: 30
     },
     "Penetrates":
     {
-        hitQuality: "(Penetrate)",
-        fontSize: 30,
-        outColor: "#fff370"
+        fontSize: 30
     },
     "Smashes":
     {
-        hitQuality: "(Smash)",
-        fontSize: 35,
-        outColor: "#fff370"
+        fontSize: 35
     },
     "Wrecks":
     {
-        hitQuality: "(Wreck)",
-        fontSize: 40,
-        outColor: "#ffa200"
+        fontSize: 40
     }
 }
 
 let inbound = false;
 
 function extractCombatInfo(log) {
-    const dmgOut = /<b>(\d+)<\/b> <color=.*>to<\/font> <b><color=.*>(.*?)<\/b><font size=\d+>.*? - (.*?) - (Hits|Grazes|Glances Off|Smashes|Penetrates|Wrecks)/g;
-    const dmgOutMiss = /Your (.*?) misses (.*?) completely - (.*?)/g;
-    const dmgIn = /<b>(\d+)<\/b>.*?<font size=10>from<\/font>.*?<b><color=.*?>(.*?)<\/b><font size=10>.*?(?: - (.*?))? - (Penetrates|Hits|Glances Off|Smashes|Wrecks|Grazes)/g;
-
     let match;
-
-    if (!inbound && (match = dmgOut.exec(log)) !== null) {
+    if (!inbound && (match = PARSE.damageDone.regex.exec(log)) !== null) {
         const damage = match[1];
         const hitQual = match[4];
         createCombatText(damage, hitQual);
-    } else if (!inbound && (match = dmgOutMiss.exec(log)) !== null) {
+    } else if (!inbound && (match = PARSE.damageOutMiss.regex.exec(log)) !== null) {
         createCombatText('', 'Misses');
-    } else if (inbound && (match = dmgIn.exec(log)) !== null) {
+    } else if (inbound && (match = PARSE.damageTaken.regex.exec(log)) !== null) {
         const damage = match[1];
         const hitQual = match[4];
         createCombatText(damage, hitQual);
@@ -69,11 +50,11 @@ function createCombatText(damage, type) {
 
     const combatText = document.createElement('div');
     combatText.classList.add(inbound ? 'combat-text-in' : 'combat-text-out');
-    combatText.style.color = hitTypeConfigs[type].outColor;
+    combatText.style.color = HIT_QUALITY_COLORS[type];
     combatText.style.fontSize = hitTypeConfigs[type].fontSize + 'px';
     combatText.innerText = text;
 
-    randomX = Math.random() * 50 + 45;
+    randomX = Math.random() * 50 + 50;
     randomY = Math.random() * 50;
     if (inbound) {
         randomX = Math.random() * 70;

@@ -1,6 +1,5 @@
 function extractBountyInfo(log) {
-    const iskRegex = /<color=0xff00aa00>([\d,]+) ISK<\/b>/g;
-    while ((match = iskRegex.exec(log)) !== null) {
+    while ((match = PARSE.bounty.regex.exec(log)) !== null) {
         addBounty(parseInt(match[1].replace(/,/g, '')))
     }
 }

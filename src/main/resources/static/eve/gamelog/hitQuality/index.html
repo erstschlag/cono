@@ -1,0 +1,35 @@
+<!--
+    Tracks and plots quality of hits until target is changed.
+    Optional URL parameters:
+        - character (name of the character to limit tracking to)
+        - chartType (type of chart, on of pie|doughnut|polar , doughnut is default)  
+ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hit quality tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/utils/Backend.js"></script>
+    <script src="../common.js"></script>
+    <script src="script.js"></script>
+    <style>
+        #hitsChart {
+            max-width: 500px;
+            max-height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="widget">
+        <canvas id="hitsChart"></canvas>
+    </div>
+</body>
+
+</html>

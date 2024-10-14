@@ -1,23 +1,27 @@
 const dataSets = {
     damageTaken: {
         label: '-HPS', events: [], displayValue: 0, color: 'rgba(255, 51, 0, 1)',
-        regex: /<b>(\d+)<\/b>.*?<font size=10>from<\/font>.*?<b><color=.*?>(.*?)<\/b><font size=10>.*?(?: - (.*?))? - (Penetrates|Hits|Glances Off|Smashes|Wrecks|Grazes)/g
+        regex: PARSE.damageTaken.regex
     },
     damageDone: {
         label: 'DPS', events: [], displayValue: 0, color: 'rgba(0, 183, 255, 1)',
-        regex: /<b>(\d+)<\/b> <color=.*>to<\/font> <b><color=.*>(.*?)<\/b><font size=\d+>.*? - (.*?) - (Hits|Grazes|Glances Off|Smashes|Penetrates|Wrecks)/g
+        regex: PARSE.damageDone.regex
     },
     capOut: {
         label: 'CapOut', events: [], displayValue: 0, color: 'rgba(210, 52, 235, 1)',
-        regex: /<b>(\d+)<\/b><color=0x77ffffff><font size=10> remote capacitor transmitted to/g
+        regex: PARSE.capOut.regex
     },
     neutIn: {
         label: 'NeutIn', events: [], displayValue: 0, color: 'rgba(255, 255, 255, 1)',
-        regex: /<b>(\d+)\sGJ<\/b><color=0x77ffffff><font size=10> energy neutralized /g
+        regex: PARSE.neutIn.regex
+    },
+    neutOut: {
+        label: 'NeutOut', events: [], displayValue: 0, color: 'rgba(200, 150, 150, 1)',
+        regex: PARSE.neutOut.regex
     },
     repOut: {
         label: 'RepOut', events: [], displayValue: 0, color: 'rgba(232, 217, 23, 1)',
-        regex: /<b>(\d+)<\/b><color=0x77ffffff><font size=10> remote (?:armor|shield) repaired to/g
+        regex: PARSE.repOut.regex
     }
 };
 
@@ -70,10 +74,22 @@ function interpolateL(start, end, t) {
 }
 
 function calculate(events) {
-    const someTimeAgo = Date.now() - timeWindowMS;
-    const recentEvents = events.filter(event => event.timestamp >= someTimeAgo);
+    const currentTimeMS = Date.now();
+    const recentEvents = events.filter(event => event.timestamp >= currentTimeMS - timeWindowMS);
+
+    //if less than 2 events are available, we won't calculate the DPS and return 0 instead.
+    if (recentEvents.length < 2) {
+        return 0;
+    }
+
     const totalAmount = recentEvents.reduce((sum, event) => sum + event.amount, 0);
-    return totalAmount / (timeWindowMS / 1000);
+
+    const earliestEventTimeMS = recentEvents[0].timestamp;
+
+    // Calculate the time span between the current time and the earliest event, or use timeWindowMS
+    const effectiveTimeSpanMS = Math.min(timeWindowMS, currentTimeMS - earliestEventTimeMS);
+
+    return totalAmount / (effectiveTimeSpanMS/1000);
 }
 
 let lastChangeTimestamp = 0;

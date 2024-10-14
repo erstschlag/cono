@@ -1,16 +1,22 @@
+<!--
+    Tracks and plots various values over time.
+    Optional URL parameters:
+        - character (name of the character to limit tracking to)
+ -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>History tracker</title>
-    <link rel="stylesheet" href="history.css">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/utils/Backend.js"></script>
-    <script src="history.js"></script>
+    <script src="../common.js"></script>
+    <script src="script.js"></script>
     <style>
         #dpsChart {
             max-width: 415px;
