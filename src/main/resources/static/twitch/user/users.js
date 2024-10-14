@@ -121,15 +121,15 @@ function switchPage(relativeOffset) {
     retrieveUsers();
 }
 
-function modifyUserCredits(userId, amount) {
+function modifyUserCredits(userId, amount, reason) {
     if(amount === 0){
         return;
     }
     if(amount > 0) {
-        backend.awardUser(userId, amount, 'Erst wants it!',
+        backend.awardUser(userId, amount, reason === '' ? 'Erst wants it!':reason,
                 () => {retrieveUsers();});
     } else {
-        backend.chargeUser(userId, -amount, 'Erst wants it!',
+        backend.chargeUser(userId, -amount, reason === '' ? 'Erst wants it!':reason,
                 () => {retrieveUsers();});
     }
     document.getElementById("modifyUserDialog").close();
@@ -152,7 +152,7 @@ function onBackendConnect(backend) {
             }
         });
     backend.subscribe('/topic/weeklyLPSum', function (object) {
-        $("#totalWeeklyLP").html(Math.round(parseInt(object) / 20) + 'm ISK');
+        $("#totalWeeklyLP").html(Math.round(parseInt(object) / 30) + 'm ISK');
     });    
     retrieveUsers();
     retrieveLPCollectionStatus();
@@ -167,7 +167,7 @@ $(() => {
     $( "#requestResetWeeklyLP" ).click(function() { showResetWeeklyConfirmationDialog(); });
     $( "#resetWeeklyLP" ).click(function() { resetWeeklyLP(); });
     $( "#closeResetWeeklyLPButton" ).click(function() { document.getElementById("resetWeeklyLPConfirmationDialog").close(); });
-    $( "#modifyUserCredits" ).click(function() { modifyUserCredits($("#modifyUserCreditsUserId").val(), parseFloat($("#modifyUserCreditsAmount").val())); });
+    $( "#modifyUserCredits" ).click(function() { modifyUserCredits($("#modifyUserCreditsUserId").val(), parseFloat($("#modifyUserCreditsAmount").val()), $("#modifyUserCreditsReason").val()); });
     $( "#cancelModifyUserDialog" ).click(function() { document.getElementById("modifyUserDialog").close(); });
     $( "#searchUserByName" ).click(function() { retrieveUsers(); });
 });
