@@ -33,12 +33,6 @@ function extractCombatInfo(log) {
     });
 };
 
-function simulateEvents() {
-    Object.keys(dataSets).forEach(key => {
-        addEvent(dataSets[key].events, Math.random() * 1000);
-    });
-}
-
 const timeWindowMS = 10000;
 function addEvent(events, amount) {
     const timestamp = Date.now();
@@ -51,6 +45,7 @@ function addEvent(events, amount) {
 let dpsChart;
 
 function updateChart() {
+    if (!isWidgetVisible) return;
     removeOldData = dpsChart.data.labels.length > 200;
     if (removeOldData) {
         dpsChart.data.labels.shift(); // Remove the oldest time
@@ -66,7 +61,6 @@ function updateChart() {
         chartIndex++;
     });
     dpsChart.update();
-    applyVisibility();
 }
 
 function interpolateL(start, end, t) {
@@ -89,24 +83,8 @@ function calculate(events) {
     // Calculate the time span between the current time and the earliest event, or use timeWindowMS
     const effectiveTimeSpanMS = Math.min(timeWindowMS, currentTimeMS - earliestEventTimeMS);
 
-    return totalAmount / (effectiveTimeSpanMS/1000);
+    return totalAmount / (effectiveTimeSpanMS / 1000);
 }
-
-let lastChangeTimestamp = 0;
-function applyVisibility() {
-    if (new Date().getTime() - timeWindowMS > lastChangeTimestamp) {
-        showWidget(false);
-    }
-};
-
-function showWidget(show) {
-    if (show) {
-        lastChangeTimestamp = new Date().getTime();
-    }
-    if (show ^ widget.classList.contains('show')) {
-        widget.classList.toggle('show');
-    }
-};
 
 let filterCharacter = null;
 function onGamelogReceived(gamelogEvent) {
@@ -117,6 +95,12 @@ function onGamelogReceived(gamelogEvent) {
 
 function onBackendConnect(backend) {
     backend.subscribe('/topic/gamelogReceived', onGamelogReceived);
+}
+
+function simulateEvents() {
+    Object.keys(dataSets).forEach(key => {
+        addEvent(dataSets[key].events, Math.random() * 1000);
+    });
 }
 
 $(() => {
@@ -190,10 +174,11 @@ $(() => {
     });
 
     dpsChart = new Chart(ctx, dpsChartConfig);
-    widget = document.getElementById('widget');
+    initWidgetVisibility(10000);
     new Backend(onBackendConnect);
     setInterval(() => {
         updateChart();
     }, 50);
-    //setInterval(simulateEvents, 1500);
+    //setInterval(simulateEvents, 1000);
+    //simulateEvents();
 });

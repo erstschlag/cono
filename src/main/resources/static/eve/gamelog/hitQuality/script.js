@@ -1,5 +1,7 @@
 let hitsChart;
-let widget;
+let inbound = false;
+let dmgRegex;
+let dmgMissRegex;
 
 const hitsChartConfigDoughnut = {
     type: 'doughnut',
@@ -94,11 +96,15 @@ const hitsChartConfigPolar = {
 };
 
 function extractCombatInfo(log) {
-    if ((match = PARSE.damageDone.regex.exec(log)) !== null) {
-        evalTargetChange(match[2]);
+    if ((match = dmgRegex.exec(log)) !== null) {
+        if (!inbound) {
+            evalTargetChange(match[2]);
+        }
         addHit(match[4]);
-    } else if ((match = PARSE.damageOutMiss.regex.exec(log)) !== null) {
-        evalTargetChange(match[2]);
+    } else if ((match = dmgMissRegex.exec(log)) !== null) {
+        if (!inbound) {
+            evalTargetChange(match[2]);
+        }
         addHit('Misses');
     }
 }
@@ -126,11 +132,9 @@ function initEvents() {
     };
 }
 
-let lastHitTimestamp = 0;
 function addHit(quality) {
-    lastHitTimestamp = Date.now();
     hitEvents[quality]++;
-    applyVisibility();
+    showWidget(true);
     updateHitChart();
 }
 
@@ -165,20 +169,23 @@ function initURLParams() {
         filterCharacter = urlParams.get('character');
     }
     if (urlParams.has('chartType')) {
-        switch(urlParams.get('chartType')){
-            case 'doughnut':{
+        switch (urlParams.get('chartType')) {
+            case 'doughnut': {
                 chartTypeConfig = hitsChartConfigDoughnut;
                 break;
             }
-            case 'polar':{
+            case 'polar': {
                 chartTypeConfig = hitsChartConfigPolar;
                 break;
             }
-            case 'pie':{
+            case 'pie': {
                 chartTypeConfig = hitsChartConfigPie;
                 break;
             }
         }
+    }
+    if (urlParams.has('inbound')) {
+        inbound = true;
     }
 }
 
@@ -186,24 +193,14 @@ function simulateEvents() {
     addHit("Glances Off");
 }
 
-const fadeWidgetAfterMS = 10000;
-function applyVisibility() {
-    showWidget(Date.now() - fadeWidgetAfterMS < lastHitTimestamp);
-};
-
-function showWidget(show) {
-    if (show ^ widget.classList.contains('show')) {
-        widget.classList.toggle('show');
-    }
-};
-
 $(() => {
     initURLParams();
+    dmgRegex = inbound ? PARSE.damageTaken.regex : PARSE.damageDone.regex;
+    dmgMissRegex = inbound ? PARSE.damageInMiss.regex : PARSE.damageOutMiss.regex;
     const ctx = document.getElementById('hitsChart').getContext('2d');
     hitsChart = new Chart(ctx, chartTypeConfig);
-    widget = document.getElementById('widget');
+    initWidgetVisibility(10000);
     new Backend(onBackendConnect);
-    setInterval(applyVisibility, 1000);
-    //initEvents();
+    initEvents();
     //setInterval(simulateEvents, 1500);
 });

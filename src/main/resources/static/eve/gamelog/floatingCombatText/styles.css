@@ -1,11 +1,8 @@
 body {
-    background-color: #222;
-    font-family: 'Eve Sans Neue', sans-serif;
     font-weight: bold;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0;
 }
 
 #hud {
