@@ -52,10 +52,9 @@ function changeProgress(change) {
 function showWidget(show) {
     if (show) {
         lastChangeTimestamp = new Date().getTime();
-    }
-    if (show && !widget.classList.contains('show')
-            || !show && widget.classList.contains('show')) {
-        widget.classList.toggle('show');
+        widget.classList.add('show');
+    } else {
+        widget.classList.remove('show');
     }
 }
 

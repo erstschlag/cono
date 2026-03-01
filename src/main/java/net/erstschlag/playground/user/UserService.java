@@ -2,6 +2,7 @@ package net.erstschlag.playground.user;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -60,12 +61,22 @@ public class UserService {
         Optional<UserEntity> oUserEntity = userRepository.findById(userId);
         if (oUserEntity.isPresent()) {
             if (!userName.equals(oUserEntity.get().getName())) {
+                freeupUserName(userName);
                 oUserEntity.get().setName(userName);
                 userRepository.save(oUserEntity.get());
             }
             return oUserEntity.get();
         } else {
+            freeupUserName(userName);
             return userRepository.save(new UserEntity(userId, userName, BigDecimal.ZERO));
+        }
+    }
+    
+    private void freeupUserName(String userName) {
+        Optional<UserEntity> oExistingUserByName = userRepository.findByName(userName);
+        if (oExistingUserByName.isPresent()) {
+            oExistingUserByName.get().setName(UUID.randomUUID().toString());
+            userRepository.save(oExistingUserByName.get());
         }
     }
 }

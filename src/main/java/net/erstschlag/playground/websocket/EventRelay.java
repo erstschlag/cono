@@ -3,14 +3,7 @@ package net.erstschlag.playground.websocket;
 import java.util.HashMap;
 import net.erstschlag.playground.PlaygroundEvent;
 import net.erstschlag.playground.eve.gamelog.events.GamelogEvent;
-import net.erstschlag.playground.twitch.pubsub.events.ChannelBitsEvent;
-import net.erstschlag.playground.twitch.pubsub.events.ChannelGiftedSubscriptionsEvent;
-import net.erstschlag.playground.twitch.pubsub.events.ChannelSubscribeEvent;
-import net.erstschlag.playground.twitch.pubsub.events.ChatMessageEvent;
-import net.erstschlag.playground.twitch.pubsub.events.PurchaseEvent;
-import net.erstschlag.playground.twitch.pubsub.events.RaffleEvent;
-import net.erstschlag.playground.twitch.pubsub.events.RewardRedeemedEvent;
-import net.erstschlag.playground.twitch.pubsub.events.RigEvent;
+import net.erstschlag.playground.twitch.eventsub.events.*;
 import net.erstschlag.playground.user.events.UserAwardedEvent;
 import net.erstschlag.playground.user.events.UserChargedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +31,7 @@ public class EventRelay {
         classTopicLookup.put(ChannelSubscribeEvent.class, "/topic/twitchSubReceived");
         classTopicLookup.put(ChannelGiftedSubscriptionsEvent.class, "/topic/twitchSubGiftsReceived");
         classTopicLookup.put(GamelogEvent.class, "/topic/gamelogReceived");
+        classTopicLookup.put(ChannelViewershipEvent.class, "/topic/channelViewershipReceived");
     }
 
     @EventListener

@@ -10,31 +10,45 @@
                 background-color: black;
                 color: #CCC;
             }
-            #goal{
+            #viewership{
                 position: absolute;
                 top: 0px;
                 left:0px;
             }
+            #goal{
+                position: absolute;
+                top: 450px;
+                left:0px;
+            }
             #wiggles{
                 position: absolute;
-                top: 480px;
+                top: 345px;
                 left:0px;
             }
             #progress{
                 position: absolute;
-                top: 200px;
+                top: 95px;
                 left:0;
             }
             #users{
                 position: absolute;
-                top: 600px;
+                top: 610px;
                 left:0;
             }
         </style>
     </head>
     <body>
+        <div id="viewership">
+            <h4>Viewership</h4>
+            <object data="../twitch/viewership.html"
+                    width="400"
+                    height="100"
+                    type="text/html">
+                Alternative Content
+            </object>
+        </div>
         <div id="wiggles">
-            <h2>Wiggles</h2>
+            <h4>Wiggles</h4>
             <object data="../wiggles/wigglesCP.html"
                     width="400"
                     height="100"
@@ -43,7 +57,7 @@
             </object>
         </div>
         <div id="progress">
-            <h2>Progress</h2>
+            <h4>Progress</h4>
             <object data="../progress/progressCP.html"
                     width="400"
                     height="200"
@@ -52,7 +66,7 @@
             </object>
         </div>
         <div id="goal">
-            <h2>Goal</h2>
+            <h4>Goal</h4>
             <object data="../goal/goalCP.html"
                     width="400"
                     height="130"
@@ -61,7 +75,7 @@
             </object>
         </div>
         <div id="users">
-            <h2>Users</h2>
+            <h4>Users</h4>
             <object data="../twitch/user/usersCP.html"
                     width="400"
                     height="80"

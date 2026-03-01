@@ -1,0 +1,57 @@
+#widget {
+    opacity: 1;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 16px;
+}
+
+.sol {
+    display: flex;
+    align-items: center;
+}
+
+.systemName {
+    width: 120px;
+    text-align: center;
+    font-size: 17pt;
+    color: white;
+}
+
+/*** <--- CIRCLE STYLES ---> ***/
+.wrap-circles {
+    display: flex;
+    justify-content: right;
+    width: 750px;
+    align-items: center;
+    border-radius: 50px;
+    padding-right: 20px;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.circle {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: rgba(0,0,0,0.4);
+    mask-image: radial-gradient(circle, rgba(0,0,0,0) 46%, rgba(255,255,255,1) 47%);
+    -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,0) 46%, rgba(255,255,255,1) 47%);
+}
+
+.inner {
+    text-align: center;
+    width: 100px;
+    margin-left: -120px;
+    font-size: 18pt;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.75);
+}

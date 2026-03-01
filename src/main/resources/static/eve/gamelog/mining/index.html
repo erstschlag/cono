@@ -1,0 +1,29 @@
+<!--
+    Optional URL parameters:
+        - character (name of the character to limit tracking to)
+ -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mining dashboard</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/utils/Backend.js"></script>
+    <script src="../common.js"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <div id="widget">
+        Number of crits: <span id="numOfCrits"></span><br>
+        Additional units: <span id="numOfUnits"></span><br>
+        Last crit ore: <span id="lastCritOre"></span><br>
+    </div>
+</body>
+
+</html>

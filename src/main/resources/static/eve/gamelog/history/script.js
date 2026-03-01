@@ -22,7 +22,11 @@ const dataSets = {
     repOut: {
         label: 'RepOut', events: [], displayValue: 0, color: 'rgba(232, 217, 23, 1)',
         regex: PARSE.repOut.regex
-    }
+    }/*,
+    unitsMined: {
+        label: 'UnitsMined', events: [], displayValue: 0, color: 'rgba(62, 241, 18, 1)',
+        regex: PARSE.oreMined.regex
+    }*/
 };
 
 function extractCombatInfo(log) {
@@ -33,7 +37,8 @@ function extractCombatInfo(log) {
     });
 };
 
-const timeWindowMS = 10000;
+const timeWindowMS = 30000;
+const updateIntervalMS = 33;
 function addEvent(events, amount) {
     const timestamp = Date.now();
     const someTimeAgo = timestamp - timeWindowMS;
@@ -46,7 +51,7 @@ let dpsChart;
 
 function updateChart() {
     if (!isWidgetVisible) return;
-    removeOldData = dpsChart.data.labels.length > 200;
+    removeOldData = dpsChart.data.labels.length > timeWindowMS / updateIntervalMS;
     if (removeOldData) {
         dpsChart.data.labels.shift(); // Remove the oldest time
     }
@@ -57,7 +62,7 @@ function updateChart() {
         if (removeOldData) {
             dpsChart.data.datasets[chartIndex].data.shift();
         }
-        dpsChart.data.datasets[chartIndex].data.push(dataSets[key].displayValue.toFixed(0));
+        dpsChart.data.datasets[chartIndex].data.push(dataSets[key].displayValue);
         chartIndex++;
     });
     dpsChart.update();
@@ -145,9 +150,7 @@ $(() => {
                     }
                 }
             },
-            animation: {
-                duration: 0
-            },
+            animation: false,
             plugins: {
                 legend: {
                     display: false,
@@ -174,11 +177,11 @@ $(() => {
     });
 
     dpsChart = new Chart(ctx, dpsChartConfig);
-    initWidgetVisibility(10000);
+    initWidgetVisibility(30000);
     new Backend(onBackendConnect);
     setInterval(() => {
         updateChart();
-    }, 50);
-    //setInterval(simulateEvents, 1000);
+    }, updateIntervalMS);
+    //setInterval(simulateEvents, 3000);
     //simulateEvents();
 });

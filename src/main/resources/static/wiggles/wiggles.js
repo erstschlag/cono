@@ -1,28 +1,24 @@
 let backend;
 let storage;
 
-let currentWiggles = 0;
-let widgetShown = false;
-let riggingCost = 1;
+const riggingCost = 1;
+
+let widget;
 
 const audio = new Audio('wiggle.wav');
 audio.loop = false;
 audio.volume = 0.6;
 
 function updateWigglesDisplay(wiggles) {
-    const widget = document.getElementById('back');
     widget.innerHTML = '' + wiggles;
-    showWidget(wiggles !== 0, widget);
+    showWidget(wiggles !== 0);
 }
 
-function showWidget(show, widget) {
-    if (widgetShown !== show) {
-        widget.classList.toggle('show');
-        widgetShown = show;
-        if (show) {
-            audio.play();
-        }
+function showWidget(show) {
+    if (show && !widget.classList.contains('show')) {
+        audio.play();
     }
+    show ? widget.classList.add('show') : widget.classList.remove('show');
 }
 
 function onRigRequestReceived(riggingEvent) {
@@ -32,9 +28,9 @@ function onRigRequestReceived(riggingEvent) {
             amount = parseInt(riggingEvent.command, 10);
         }
         backend.chargeUser(riggingEvent.user.id, riggingCost * amount, 'rigging wiggles',
-                () => {
-            changeWiggles(amount);
-        });
+            () => {
+                changeWiggles(amount);
+            });
     }
 }
 
@@ -59,6 +55,7 @@ function onBackendConnect(backend) {
 }
 
 $(() => {
+    widget = document.getElementById('back');
     storage = new WigglesStorage(storageChanged);
     backend = new Backend(onBackendConnect, storage);
 });

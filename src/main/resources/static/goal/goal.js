@@ -3,8 +3,8 @@ let storage;
 
 function updateGoalDisplay(value, show) {
     $('#widget').toggleClass('show', show);
-    if (value !== "" && !isNaN(value) && value <= 100 && value >= 0) {
-        $(".progress .percent").text(`${value}%`);
+    if (value !== "" && !isNaN(value) && value >= 0) {
+        $(".progress .percent").text(`${value/10}`);
         $(".progress .liquid").css("top", `${100 - value}%`);
     } else {
         $(".progress").parent().attr("class", "color");
@@ -30,7 +30,7 @@ function onRigEventReceived(event) {
 }
 
 function storageChanged() {
-    updateGoalDisplay(storage.data.currentValue / 10, storage.data.config.enabled);
+    updateGoalDisplay(storage.data.currentValue * 10, storage.data.config.enabled);
 }
 
 function onBackendConnect(backend) {

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Channel viewership</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/webjars/jquery/jquery.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="/utils/Backend.js"></script>
+        <script src="viewership.js"></script>
+        <style>
+            *{  
+                font-family: 'Eve Sans Neue', sans-serif;
+                font-size: 30px;
+            }
+            html,
+            body {
+                background-color: black;
+                color: #CCC;
+                margin: 0;
+                height: 100%;
+                width: 100%;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <span id="chatterCount" style="color:royalblue">?</span>/<span id="viewerCount" style="color:red">?</span>
+    </body>
+</html>

@@ -25,6 +25,8 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, S
     Optional<UserEntity> findById(String id);
 
     Page<UserEntity> findByNameLike(String name, Pageable pageable);
+    
+    Optional<UserEntity> findByName(String name);
 
     @Modifying
     @Transactional

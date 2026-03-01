@@ -1,12 +1,13 @@
 let numberOfWinners = 1;
-let globalShipImage = 'Retribution.png';
+let globalShipImage = 'Ship.png';
 let textXOffset = 90;
 let textYOffset = 30;
 let shipSize = 200;
 let bombSize = 150;
 let winnerHorizontalPosition = 3500;
 let backend;
-const CHAOS_USERNAME ="chaos1298";
+let gameAssets = 'assets/eve/';
+const POD_USERNAMES = "chaos1298,onecrazymonkeh";
 
 let state = {};
 
@@ -32,7 +33,12 @@ var init = function (shipImage_, numberOfWinners_) {
 var launch = function () {
     resetState();
     state.draw = SVG().addTo('body').size(3840, 1080);
-    state.background = state.draw.image('backgrounds/' + randomNumber(1, 31) + '.png').size(3840, 1080, 3840, 1080).move(-1920, 0);
+    //if (randomNumber(1, 2) > 1) {
+    //    state.background = state.draw.foreignObject(3840, 1080).move(-1920, 0);
+    //    state.background.add(SVG('<video width="3840" height="1080" autoplay muted loop><source src="backgrounds/' + randomNumber(35, 35) + '.mp4" type="video/mp4">Your browser does not support the video tag.</video>', true));
+    //} else {
+        state.background = state.draw.image(gameAssets + 'backgrounds/' + randomNumber(1, 31) + '.png').size(3840, 1080, 3840, 1080).move(-1920, 0);
+    //}
     state.numberOfParticipantsText = state.draw.text(state.numberOfParticipants).font({
         size: 50
         , anchor: 'middle'
@@ -40,15 +46,16 @@ var launch = function () {
     }).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.5))'}).move(1850, 20);
 };
 
-var requestAddParticipant = function(name, userId, availableNuggets, requestedShipName) {
+var requestAddParticipant = function (name, userId, availableNuggets, requestedShipName) {
+    if(exclude(name)) return;
     if (state.isRunning && !state.participants.has(name)) {
-        if(availableNuggets >=1 && requestedShipName !== null && fileExists('ships/' + requestedShipName + '.png')) {
+        if (availableNuggets >= 1 && requestedShipName !== null && fileExists(game + '/entities/' + requestedShipName + '.png')) {
             backend.chargeUser(userId, 1, 'customizing raffle ship',
-                () => {
-                    addParticipant(name, requestedShipName + '.png');
-                });
+                    () => {
+                addParticipant(name, requestedShipName + '.png');
+            });
         } else {
-            if (name !== CHAOS_USERNAME) {
+            if (!POD_USERNAMES.split(",").includes(name)) {
                 addParticipant(name, globalShipImage);
             } else {
                 addParticipant(name, "Capsule.png");
@@ -81,9 +88,9 @@ var createParticipant = function (name, x, y, shipImage) {
     return {
         name: name,
         shipImage: shipImage,
-        ship: state.draw.image('ships/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, y),
+        ship: state.draw.image(gameAssets + 'entities/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, y),
         text: state.draw.text(name).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.9))'}).move(1920 + textXOffset, y + textYOffset),
-        bomb: state.draw.image('nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(x + bombSize), y + (shipSize - bombSize) / 2)
+        bomb: state.draw.image(gameAssets + 'nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(x + bombSize), y + (shipSize - bombSize) / 2)
     };
 };
 
@@ -116,6 +123,7 @@ var selectWinner = function () {
     currentRandomWinner = Array.from(state.participants.entries())[Math.floor(Math.random() * state.participants.size)][1];
     state.winners.set(currentRandomWinner.name, currentRandomWinner);
     state.participants.delete(currentRandomWinner.name);
+    notifyWinnerCommand('notifyWinner', currentRandomWinner.name);
 };
 
 var revealWinner = function () {
@@ -146,29 +154,32 @@ var revealWinner = function () {
 };
 
 var redraw = function () {
-    state.winners.clear();
-    state.numberOfParticipants++;
-    state.numberOfParticipantsText.plain(state.numberOfParticipants);
-    selectWinner();
-    winnerHorizontalPosition -= shipSize;
-    state.winners.forEach((winner) => {
-        state.winners.set(winner.name, createParticipant(winner.name, 0, 0, 'Capsule.png'));
-    });
-    revealWinner();
+    if (state.winnerRevealed) {
+        state.winners.clear();
+        state.numberOfParticipants++;
+        state.numberOfParticipantsText.plain(state.numberOfParticipants);
+        selectWinner();
+        winnerHorizontalPosition -= shipSize;
+        state.winners.forEach((winner) => {
+            state.winners.set(winner.name, createParticipant(winner.name, 0, 0, 'Capsule.png'));
+        });
+        revealWinner();
+    }
 };
 
 var stopWinnerThreat = function (winner) {
-    let laser = state.draw.image('laser.png').css({filter: 'drop-shadow(12px 0px 7px rgba(200, 100, 50, 0.5))'}).size(150, 150).move(winner.ship.x(), winner.ship.y() + (shipSize - bombSize) / 2);
-    let audioLaser = new Audio('laser.mp3');
+    notifyWinnerCommand('confirmWinner', winner.name);
+    let laser = state.draw.image(gameAssets + 'laser.png').css({filter: 'drop-shadow(12px 0px 7px rgba(200, 100, 50, 0.5))'}).size(150, 150).move(winner.ship.x(), winner.ship.y() + (shipSize - bombSize) / 2);
+    let audioLaser = new Audio(gameAssets + 'laser.mp3');
     audioLaser.loop = false;
-    audioLaser.volume = 0.1;
+    audioLaser.volume = 0.3;
     audioLaser.play();
     laser.animate(700, 0, 'now').ease('-').move(winner.bomb.x(), winner.bomb.y()).after(() => {
         winner.bomb.timeline().pause();
-        winner.bomb.css({filter: 'none'}).load('giphy.gif?i=' + uuidv4());
-        let audioBoom = new Audio('boom.mp3');
+        winner.bomb.css({filter: 'none'}).load(gameAssets + 'giphy.gif?i=' + uuidv4());
+        let audioBoom = new Audio(gameAssets + 'boom.mp3');
         audioBoom.loop = false;
-        audioBoom.volume = 0.1;
+        audioBoom.volume = 0.3;
         audioBoom.play();
         laser.remove();
         state.winners.delete(winner.name);
@@ -184,13 +195,22 @@ function uuidv4() {
             });
 }
 
+function notifyWinnerCommand(command, winnerName) {
+    send({
+        cmd: command,
+        name: winnerName
+    });
+};
+
 var explode = function (participant) {
-    let audioBoom = new Audio('boom.mp3');
+    state.winners.delete(participant.name);
+    notifyWinnerCommand('retractWinner', participant.name);
+    let audioBoom = new Audio(gameAssets + 'boom.mp3');
     audioBoom.loop = false;
-    audioBoom.volume = 0.1;
+    audioBoom.volume = 0.3;
     audioBoom.play();
-    participant.ship.css({filter: 'none'}).load('giphy.gif?i=' + uuidv4());
-    participant.bomb.css({filter: 'none'}).load('giphy.gif?i=' + uuidv4());
+    participant.ship.css({filter: 'none'}).load(gameAssets + 'giphy.gif?i=' + uuidv4());
+    participant.bomb.css({filter: 'none'}).load(gameAssets + 'giphy.gif?i=' + uuidv4());
     participant.text.remove();
     state.numberOfParticipants--;
     state.numberOfParticipantsText.plain(state.numberOfParticipants);
@@ -247,6 +267,10 @@ function onChatMessageReceived(chatMessageEvent) {
     });
 }
 
+function send(object) {
+    backend.sendObject("/app/object", object);
+}
+
 function onBackendConnect(backend) {
     backend.subscribe('/topic/object', onCommandReceived);
     backend.subscribe('/topic/raffleEntered', onRaffleEntered);
@@ -254,5 +278,10 @@ function onBackendConnect(backend) {
 }
 
 $(() => {
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('game')) {
+        gameAssets = 'assets/' + urlParams.get('game') + '/';
+    }
     backend = new Backend(onBackendConnect);
+    launch();
 });

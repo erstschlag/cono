@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import net.erstschlag.playground.twitch.pubsub.events.ChatMessageEvent;
-import net.erstschlag.playground.twitch.pubsub.PubSubService;
+import net.erstschlag.playground.twitch.eventsub.EventSubService;
+import net.erstschlag.playground.twitch.eventsub.events.ChatMessageEvent;
 import net.erstschlag.playground.user.repository.UserEntity;
 import net.erstschlag.playground.user.repository.UserRepository;
 import org.springframework.context.event.EventListener;
@@ -17,14 +17,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserLPRecorder {
 
-    private final PubSubService twitchService;
+    private final EventSubService twitchService;
     private final UserRepository userRepository;
     private final HashMap<String, UserDto> eligibleUsersMap = new HashMap<>();
     private final List<String> userBlacklist = new ArrayList<>();
     private boolean lpCollectionEnabled = false;
 
-    public UserLPRecorder(PubSubService pubSubService, UserRepository userRepository, LPConfiguration lpConfiguration) {
-        this.twitchService = pubSubService;
+    public UserLPRecorder(EventSubService eventSubService, UserRepository userRepository, LPConfiguration lpConfiguration) {
+        this.twitchService = eventSubService;
         this.userRepository = userRepository;
         userBlacklist.addAll(Arrays.asList(
                 lpConfiguration.getBlacklist().split(",")));

@@ -24,7 +24,16 @@ const PARSE = {
         regex: /<b>(\d+)<\/b><color=0x77ffffff><font size=10> remote (?:armor repaired|shield boosted) to/g
     },
     bounty: {
-        regex: /<color=0xff00aa00>([\d,]+) ISK<\/b>/g
+        regex: /\(bounty\)[\s\S]*?([\d’']+)\s*ISK/g
+    },
+    oreMined: {
+        regex: /<color=#ff8dc169>(.*?)<color=0xffffffff><font size=12>(.*?)/g
+    },
+    oreMinedCrit: {
+        regex: /\(mining\).*?additional.*?<font size=12>(\d+)<color=[^>]*><font size=10> units of <color=0xffffffff><font size=12>([^<\r\n]+)/g
+    },
+    oreResidue: {
+        regex: /<color=#ffff454b>(.*?)/g
     }
 };
 

@@ -1,4 +1,5 @@
 let backend = null;
+let winnerList = null;
 
 function initialize() {
     send({
@@ -9,6 +10,7 @@ function initialize() {
 };
 
 function stopRaffleEntries() {
+    winnerList.innerHTML = "";
     send({
         cmd: 'stopRaffleEntries'
     });
@@ -50,8 +52,61 @@ function send(object) {
     backend.sendObject("/app/object", object);
 }
 
+
+const winnerListEntryIdPrefix = "wLId_";
+
+function onChatMessageReceived(chatMessageEvent) {
+    //Eve2Twitch: @JohanB: IGN "Rubok"
+    //Eve2Twitch: @Alski_: No IGN registered.
+
+    if (chatMessageEvent.user.name === 'eve2twitch') {
+        const ingameName = chatMessageEvent.message.match(/"([^"]+)"/)?.[1];
+        const twitchName = chatMessageEvent.message.match(/@(\w+)/)[1].toLowerCase();
+        if (ingameName) {
+            let winnerListItem = document.getElementById(winnerListEntryIdPrefix + twitchName);
+            if (winnerListItem) {
+                winnerListItem.onclick = () => {
+                    navigator.clipboard.writeText(ingameName)
+                        .then(() => {
+                            winnerListItem.style.color = "yellow";
+                        });
+                };
+                winnerListItem.style.color = "blue";
+            }
+        }
+    }
+}
+
+function onCommandReceived(commandObj) {
+    if (commandObj.cmd === 'notifyWinner') {
+        /*
+        <ul>
+            <li id='wLId_winner1Id'>winner1Name</li>
+            <li id='wLId_winner2Id'>winner2Name</li>
+        </ul>
+        */
+        const li = document.createElement("li");
+        li.id = winnerListEntryIdPrefix + commandObj.name;
+        li.textContent = commandObj.name;
+        winnerList.appendChild(li);
+    }
+    if (commandObj.cmd === 'confirmWinner') {
+        let winnerListItem = document.getElementById(winnerListEntryIdPrefix + commandObj.name);
+        winnerListItem.style.color = "green";
+    }
+    if (commandObj.cmd === 'retractWinner') {
+        let winnerListItem = document.getElementById(winnerListEntryIdPrefix + commandObj.name);
+        winnerListItem.style.color = "red";
+    }
+}
+
+function onBackendConnect(backend) {
+    backend.subscribe('/topic/object', onCommandReceived);
+    backend.subscribe('/topic/chatMessageReceived', onChatMessageReceived);
+}
+
 $(() => {
-    backend = new Backend();
+    backend = new Backend(onBackendConnect);
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
@@ -62,5 +117,5 @@ $(() => {
     $( "#addTestParticipant" ).click(function() { addTestParticipant(); });
     $( "#stopWinnerThreat" ).click(function() { stopWinnerThreat(); });
     $( "#redraw" ).click(function() { redraw(); });
-    
+    winnerList = document.getElementById("winnerList");
 });

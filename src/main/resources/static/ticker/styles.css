@@ -1,0 +1,23 @@
+body {
+    font-family: 'Eve Sans Neue', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: transparent;
+}
+
+.widget {
+    padding: 20px;
+    text-align: center;
+}
+
+#typewriter-container {
+    font-size: 24px;
+    color: #AAA;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid;
+    display: inline-block;
+}

@@ -1,0 +1,28 @@
+<!--
+    Tracks winter nexus data site completions and shows respawn timers
+ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Session bounty tracker</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/utils/Backend.js"></script>
+    <script src="../common.js"></script>
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <button id="signatureRemovedButton">Signature removed</button>
+    <button id="jumpedToButton">Jump to Jita</button><input type="text" value="Jita" id="jumpToSystemInput">
+    <div id="widget">
+
+    </div>
+</body>
+
+</html>
