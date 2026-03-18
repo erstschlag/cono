@@ -19,13 +19,15 @@ public class UserLPRecorder {
 
     private final EventSubService twitchService;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final HashMap<String, UserDto> eligibleUsersMap = new HashMap<>();
     private final List<String> userBlacklist = new ArrayList<>();
     private boolean lpCollectionEnabled = false;
 
-    public UserLPRecorder(EventSubService eventSubService, UserRepository userRepository, LPConfiguration lpConfiguration) {
+    public UserLPRecorder(EventSubService eventSubService, UserRepository userRepository, UserService userService, LPConfiguration lpConfiguration) {
         this.twitchService = eventSubService;
         this.userRepository = userRepository;
+        this.userService = userService;
         userBlacklist.addAll(Arrays.asList(
                 lpConfiguration.getBlacklist().split(",")));
     }
@@ -52,6 +54,7 @@ public class UserLPRecorder {
                     userEntity.get().setTotalLP(userEntity.get().getTotalLP() + 1);
                     userEntity.get().setWeeklyLP(userEntity.get().getWeeklyLP() + 1);
                     userRepository.save(userEntity.get());
+                    userService.invalidateCache(userEntity.get().getId());
                 }
             }
         }

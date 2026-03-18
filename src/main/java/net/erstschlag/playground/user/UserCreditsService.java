@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class UserCreditsService {
 
     private final UserRepository userRepository;
+    private final UserService userService;
     private final UserConfiguration userConfiguration;
     private final MapStructMapper mapstructMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -27,6 +28,7 @@ public class UserCreditsService {
             MapStructMapper mapstructMapper,
             ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
+        this.userService = userService;
         this.userConfiguration = userConfiguration;
         this.mapstructMapper = mapstructMapper;
         this.applicationEventPublisher = applicationEventPublisher;
@@ -66,7 +68,7 @@ public class UserCreditsService {
     }
 
     private synchronized void modifyUserCredits(String userId, BigDecimal nuggetsChange, String reason, String transactionId) {
-        if (nuggetsChange == BigDecimal.ZERO) {
+        if (nuggetsChange.compareTo(BigDecimal.ZERO) == 0) {
             return;
         }
         UserEntity uE = userRepository.findById(userId).orElse(null);
@@ -76,6 +78,7 @@ public class UserCreditsService {
         if (nuggetsChange.compareTo(BigDecimal.ZERO) >= 0) {
             uE.setNuggets(uE.getNuggets().add(nuggetsChange));
             userRepository.save(uE);
+            userService.invalidateCache(userId);
             applicationEventPublisher.publishEvent(
                     new UserAwardedEvent(
                             mapstructMapper.userEntityToUserDto(uE),
@@ -85,6 +88,7 @@ public class UserCreditsService {
         } else if (hasEnoughNuggets(uE, nuggetsChange.negate())) {
             uE.setNuggets(uE.getNuggets().add(nuggetsChange));
             userRepository.save(uE);
+            userService.invalidateCache(userId);
             applicationEventPublisher.publishEvent(
                     new UserChargedEvent(
                             mapstructMapper.userEntityToUserDto(uE),
