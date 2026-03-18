@@ -49,7 +49,7 @@ var launch = function () {
 var requestAddParticipant = function (name, userId, availableNuggets, requestedShipName) {
     if(exclude(name)) return;
     if (state.isRunning && !state.participants.has(name)) {
-        if (availableNuggets >= 1 && requestedShipName !== null && fileExists(game + '/entities/' + requestedShipName + '.png')) {
+        if (availableNuggets >= 1 && requestedShipName !== null && fileExists(gameAssets + '/entities/' + requestedShipName + '.png')) {
             backend.chargeUser(userId, 1, 'customizing raffle ship',
                     () => {
                 addParticipant(name, requestedShipName + '.png');
@@ -89,7 +89,7 @@ var createParticipant = function (name, x, y, shipImage) {
         name: name,
         shipImage: shipImage,
         ship: state.draw.image(gameAssets + 'entities/' + shipImage).css({filter: 'drop-shadow(12px 0px 7px rgba(200, 200, 200, 0.5))'}).size(shipSize, shipSize).move(1920, y),
-        text: state.draw.text(name).fill('#fff').css({filter: 'drop-shadow(6px 0px 7px rgba(0, 0, 0, 0.9))'}).move(1920 + textXOffset, y + textYOffset),
+        text: state.draw.text(name).fill('#fff').font('size', 30).css({filter: 'drop-shadow(3px 3px 1px rgba(0, 0, 0, 1.0))'}).move(1920 + textXOffset, y + textYOffset),
         bomb: state.draw.image(gameAssets + 'nuke.png').css({filter: 'drop-shadow(-12px 0px 7px rgba(200, 150, 150, 0.5))'}).size(bombSize, bombSize).move(-(x + bombSize), y + (shipSize - bombSize) / 2)
     };
 };
@@ -220,6 +220,20 @@ var explode = function (participant) {
     }, 1500);
 };
 
+var pause = function() {
+    if (!state.winnerRevealed) return;
+    state.winners.forEach((winner) => {
+        winner.bomb.timeline().pause();
+    });
+};
+
+var resume = function() {
+    if (!state.winnerRevealed) return;
+    state.winners.forEach((winner) => {
+        winner.bomb.timeline().play();
+    });
+};
+
 var randomNumber = function (min, max) {
     return Math.round(Math.random() * (max - min) + min);
 };
@@ -239,6 +253,12 @@ function onCommandReceived(commandObj) {
     }
     if (commandObj.cmd === 'redraw') {
         redraw();
+    }
+    if (commandObj.cmd === 'pause') {
+        pause();
+    }
+    if (commandObj.cmd === 'resume') {
+        resume();
     }
     if (commandObj.cmd === 'stopWinnerThreat') {
         if (state.winners.has(commandObj.winnerName)) {

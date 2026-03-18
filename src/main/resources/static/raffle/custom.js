@@ -2,8 +2,7 @@ const EXCLUDED = [
     "sgtoddball1975",
     "erupharm1975",
     "generalgeorgespatton1975",
-    "cavetrol1975",
-    "erst"
+    "cavetrol1975"
 ];
 
 var exclude = function (test) {

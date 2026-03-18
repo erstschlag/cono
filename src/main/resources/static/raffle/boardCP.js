@@ -34,6 +34,18 @@ function redraw() {
     });
 };
 
+function pause() {
+    send({
+        cmd: 'pause'
+    });
+};
+
+function resume() {
+    send({
+        cmd: 'resume'
+    });
+};
+
 function addTestParticipant() {
     send({
         cmd: 'addTestParticipant',
@@ -117,5 +129,7 @@ $(() => {
     $( "#addTestParticipant" ).click(function() { addTestParticipant(); });
     $( "#stopWinnerThreat" ).click(function() { stopWinnerThreat(); });
     $( "#redraw" ).click(function() { redraw(); });
+    $( "#pause").click(function(){ pause(); });
+    $( "#resume").click(function(){ resume(); });
     winnerList = document.getElementById("winnerList");
 });
