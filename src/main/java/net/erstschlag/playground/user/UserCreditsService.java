@@ -66,7 +66,7 @@ public class UserCreditsService {
     }
 
     private synchronized void modifyUserCredits(String userId, BigDecimal nuggetsChange, String reason, String transactionId) {
-        if (nuggetsChange == BigDecimal.ZERO) {
+        if (nuggetsChange.compareTo(BigDecimal.ZERO) == 0) {
             return;
         }
         UserEntity uE = userRepository.findById(userId).orElse(null);
