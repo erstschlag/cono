@@ -96,13 +96,13 @@ public class EventConvertor {
         if (eSUCE.getUserId() == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(userService.getOrCreateUser(eSUCE.getUserId(), eSUCE.getUserLogin()));
+        return Optional.ofNullable(userService.getOrCreateUser(eSUCE.getUserId(), eSUCE.getUserLogin(), eSUCE.getUserName()));
     }
 
     private Optional<UserDto> extractUser(com.github.twitch4j.eventsub.events.ChannelChatUserEvent cCUE) {
         if (cCUE.getChatterUserId() == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(userService.getOrCreateUser(cCUE.getChatterUserId(), cCUE.getChatterUserLogin()));
+        return Optional.ofNullable(userService.getOrCreateUser(cCUE.getChatterUserId(), cCUE.getChatterUserLogin(), cCUE.getChatterUserName()));
     }
 }

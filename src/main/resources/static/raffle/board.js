@@ -273,7 +273,7 @@ function onCommandReceived(commandObj) {
 }
 
 function onRaffleEntered(raffleEvent) {
-    requestAddParticipant(raffleEvent.user.name, raffleEvent.user.id, raffleEvent.user.nuggets, raffleEvent.raffleArg1);
+    requestAddParticipant(raffleEvent.user.displayName, raffleEvent.user.id, raffleEvent.user.nuggets, raffleEvent.raffleArg1);
 }
 
 function onChatMessageReceived(chatMessageEvent) {
@@ -281,7 +281,7 @@ function onChatMessageReceived(chatMessageEvent) {
         return;
     }
     state.winners.forEach((winner) => {
-        if (chatMessageEvent.user.name === winner.name) {
+        if (chatMessageEvent.user.displayName === winner.name) {
             stopWinnerThreat(winner);
         }
     });

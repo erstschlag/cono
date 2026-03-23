@@ -1,4 +1,4 @@
-let commands = ["!erst", "!bequiet", "!hetzner"];
+let commands = ["!erst", "!bequiet", "!hetzner", "!wiki", "!operagx", "!live", "!wehype"];
 
 function typeWriter(text, element) {
     let index = 0;

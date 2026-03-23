@@ -13,6 +13,8 @@ public class UserDto {
     private String id;
     @JsonProperty("name")
     private String name;
+    @JsonProperty("displayName")
+    private String displayName;
     @JsonProperty("nuggets")
     @JsonSerialize(using = BigDecimalAsStringSerializer.class)
     @JsonDeserialize(using = BigDecimalAsStringDeserializer.class)
@@ -32,6 +34,14 @@ public class UserDto {
 
     public String getName() {
         return name;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public void setName(String name) {
@@ -64,7 +74,7 @@ public class UserDto {
 
     @Override
     public String toString() {
-        return "UserDto{" + "id=" + id + ", name=" + name + ", nuggets=" + nuggets + ", weeklyLP=" + weeklyLP + ", totalLP=" + totalLP + '}';
+        return "UserDto{" + "id=" + id + ", name=" + name + ", displayName=" + displayName + ", nuggets=" + nuggets + ", weeklyLP=" + weeklyLP + ", totalLP=" + totalLP + '}';
     }
 
 }

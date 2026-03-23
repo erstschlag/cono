@@ -29,8 +29,10 @@ public class UserService {
         return userRepository.findByNameLike(search, pageable).map(mapstructMapper::userEntityToUserDto);
     }
 
-    public UserDto getOrCreateUser(String userId, String userName) {
-        return mapstructMapper.userEntityToUserDto(retrieveOrCreateUser(userId, userName));
+    public UserDto getOrCreateUser(String userId, String userName, String displayName) {
+        UserDto user = mapstructMapper.userEntityToUserDto(retrieveOrCreateUser(userId, userName));
+        user.setDisplayName(displayName);
+        return user;
     }
 
     public Optional<UserDto> getUser(String userId) {

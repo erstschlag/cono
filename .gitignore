@@ -120,3 +120,5 @@ src/main/resources/static/tracking/wehype/chrome/wrapper.js
 src/main/java/net/erstschlag/playground/obs/OBSIntegrationService.java
 src/main/java/net/erstschlag/playground/websocket/client/TestEventController.java
 src/main/resources/static/raffle/assets/albion/entities/Capsule.png
+src/main/resources/static/raffle/board.js
+src/main/resources/static/ticker/script.js

@@ -359,6 +359,6 @@ public class EventSubService {
         if (cCUE.getChatterUserId() == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(userService.getOrCreateUser(cCUE.getChatterUserId(), cCUE.getChatterUserLogin()));
+        return Optional.ofNullable(userService.getOrCreateUser(cCUE.getChatterUserId(), cCUE.getChatterUserLogin(), cCUE.getChatterUserName()));
     }
 }
