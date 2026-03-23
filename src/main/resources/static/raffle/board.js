@@ -122,8 +122,9 @@ var play = function () {
 var selectWinner = function () {
     currentRandomWinner = Array.from(state.participants.entries())[Math.floor(Math.random() * state.participants.size)][1];
     state.winners.set(currentRandomWinner.name, currentRandomWinner);
+    currentRandomWinner.rank = state.winners.size;
     state.participants.delete(currentRandomWinner.name);
-    notifyWinnerCommand('notifyWinner', currentRandomWinner.name);
+    notifyWinnerCommand('notifyWinner', currentRandomWinner);
 };
 
 var revealWinner = function () {
@@ -168,7 +169,7 @@ var redraw = function () {
 };
 
 var stopWinnerThreat = function (winner) {
-    notifyWinnerCommand('confirmWinner', winner.name);
+    notifyWinnerCommand('confirmWinner', winner);
     let laser = state.draw.image(gameAssets + 'laser.png').css({filter: 'drop-shadow(12px 0px 7px rgba(200, 100, 50, 0.5))'}).size(150, 150).move(winner.ship.x(), winner.ship.y() + (shipSize - bombSize) / 2);
     let audioLaser = new Audio(gameAssets + 'laser.mp3');
     audioLaser.loop = false;
@@ -195,16 +196,17 @@ function uuidv4() {
             });
 }
 
-function notifyWinnerCommand(command, winnerName) {
+function notifyWinnerCommand(command, winner) {
     send({
         cmd: command,
-        name: winnerName
+        name: winner.name,
+        rank: winner.rank
     });
 };
 
 var explode = function (participant) {
     state.winners.delete(participant.name);
-    notifyWinnerCommand('retractWinner', participant.name);
+    notifyWinnerCommand('retractWinner', participant);
     let audioBoom = new Audio(gameAssets + 'boom.mp3');
     audioBoom.loop = false;
     audioBoom.volume = 0.3;

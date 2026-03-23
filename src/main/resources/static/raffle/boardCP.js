@@ -91,15 +91,9 @@ function onChatMessageReceived(chatMessageEvent) {
 
 function onCommandReceived(commandObj) {
     if (commandObj.cmd === 'notifyWinner') {
-        /*
-        <ul>
-            <li id='wLId_winner1Id'>winner1Name</li>
-            <li id='wLId_winner2Id'>winner2Name</li>
-        </ul>
-        */
         const li = document.createElement("li");
         li.id = winnerListEntryIdPrefix + commandObj.name;
-        li.textContent = commandObj.name;
+        li.textContent = commandObj.name + ' (' + commandObj.rank + ')';
         winnerList.appendChild(li);
     }
     if (commandObj.cmd === 'confirmWinner') {
