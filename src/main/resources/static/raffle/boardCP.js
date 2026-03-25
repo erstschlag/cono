@@ -73,9 +73,9 @@ function onChatMessageReceived(chatMessageEvent) {
 
     if (chatMessageEvent.user.name === 'eve2twitch') {
         const ingameName = chatMessageEvent.message.match(/"([^"]+)"/)?.[1];
-        const twitchName = chatMessageEvent.message.match(/@(\w+)/)[1].toLowerCase();
+        const twitchDisplayName = chatMessageEvent.message.match(/@(\w+)/)[1];
         if (ingameName) {
-            let winnerListItem = document.getElementById(winnerListEntryIdPrefix + twitchName);
+            let winnerListItem = document.getElementById(winnerListEntryIdPrefix + twitchDisplayName);
             if (winnerListItem) {
                 winnerListItem.onclick = () => {
                     navigator.clipboard.writeText(ingameName)
